@@ -21,6 +21,7 @@
 #include <dirent.h>
 #include <vector>
 #include <string>  
+#include <cstring>
 
 namespace quicky_utils
 {
@@ -38,8 +39,10 @@ namespace quicky_utils
          
 	      while ((l_item = readdir(l_directory)) != NULL)
 		{
-		  p_list.push_back(l_item->d_name);
-		  printf("%s\n", l_item->d_name);
+                  if(strcmp(l_item->d_name,".") && strcmp(l_item->d_name,".."))
+                    {
+                      p_list.push_back(l_item->d_name);
+                    }
 		}
 	      
 	      closedir(l_directory);
