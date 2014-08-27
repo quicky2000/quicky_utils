@@ -42,6 +42,9 @@ namespace quicky_utils
                     const unsigned int & p_size,
                     const unsigned int & p_offset)const;
     inline void reset(void);
+    inline void dump_in(std::ostream & p_stream)const;
+    inline void read_from(std::istream & p_stream);
+    inline const size_t size(void)const;
   private:
     const unsigned int m_size;
     typedef unsigned int t_array_unit;
@@ -59,6 +62,23 @@ namespace quicky_utils
         }
       return p_stream;
     }
+  //----------------------------------------------------------------------------
+  const size_t quicky_bitfield::size(void)const
+    {
+      return m_array_size * sizeof(t_array_unit);
+    }
+
+  //----------------------------------------------------------------------------
+  void quicky_bitfield::dump_in(std::ostream & p_stream)const
+  {
+    p_stream.write((char*)m_array,m_array_size * sizeof(t_array_unit));
+  }
+
+  //----------------------------------------------------------------------------
+  void quicky_bitfield::read_from(std::istream & p_stream)
+  {
+    p_stream.read((char*)m_array,m_array_size * sizeof(t_array_unit));
+  }
 
   //----------------------------------------------------------------------------
   quicky_bitfield::quicky_bitfield(const unsigned int & p_size):
@@ -124,7 +144,6 @@ namespace quicky_utils
         assert(p_size < 8 * sizeof(unsigned int));
         assert(p_offset + p_size -1 < m_array_size * 8 * sizeof(t_array_unit));
         assert(p_size <= 8 * sizeof(t_array_unit));
-        assert(p_data < pow(2,p_size));
         unsigned int l_min_index = p_offset / (8 * sizeof(t_array_unit));
         unsigned int l_max_index = ( p_offset + p_size - 1) / ( 8 * sizeof(t_array_unit));
         if(l_min_index == l_max_index)
