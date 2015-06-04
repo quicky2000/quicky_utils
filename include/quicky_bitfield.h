@@ -117,7 +117,7 @@ namespace quicky_utils
         assert(p_size < 8 * sizeof(unsigned int));
         assert(p_offset + p_size -1 < m_array_size * 8 * sizeof(t_array_unit));
         assert(p_size <= 8 * sizeof(t_array_unit));
-        assert(p_data < ( 1 << p_size));
+        assert(p_data < ( (unsigned int)1 << p_size));
 
         unsigned int l_data = (( 1 << p_size) - 1) & p_data;
 
