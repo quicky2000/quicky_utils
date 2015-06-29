@@ -49,6 +49,9 @@ namespace quicky_utils
     inline void dump_in(std::ostream & p_stream)const;
     inline void read_from(std::istream & p_stream);
     inline const size_t size(void)const;
+    inline void apply_and(const quicky_bitfield & p_operand1,
+			  const quicky_bitfield & p_operand2);
+    inline int ffs(void)const;
   private:
     const unsigned int m_size;
     typedef unsigned int t_array_unit;
@@ -66,6 +69,37 @@ namespace quicky_utils
         }
       return p_stream;
     }
+
+  //----------------------------------------------------------------------------
+  int quicky_bitfield::ffs(void)const
+  {
+    unsigned int l_index = 0;
+    int l_result = 0;
+    do
+      {
+	l_result = ::ffs(m_array[l_index]);
+	if(l_result)
+	  {
+	    return l_result + 8 * sizeof(t_array_unit) * l_index;
+	  }
+	++l_index;
+      }
+    while(l_index < m_array_size);
+    return 0;
+  }
+
+  //----------------------------------------------------------------------------
+  void quicky_bitfield::apply_and(const quicky_bitfield & p_operand1,
+				  const quicky_bitfield & p_operand2)
+  {
+    assert(m_size == p_operand1.m_size);
+    assert(m_size == p_operand2.m_size);
+    for(unsigned int l_index = 0 ; l_index < m_array_size ; ++l_index)
+      {
+	m_array[l_index] = p_operand1.m_array[l_index] & p_operand2.m_array[l_index];
+      }
+  }
+
   //----------------------------------------------------------------------------
   const size_t quicky_bitfield::size(void)const
     {
