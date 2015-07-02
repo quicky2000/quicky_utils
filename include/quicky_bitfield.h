@@ -36,7 +36,7 @@ namespace quicky_utils
        Constructor of bitfield
        @param p_size : bitfield size in bits
      */
-    inline quicky_bitfield(const unsigned int & p_size);
+    inline quicky_bitfield(const unsigned int & p_size, bool p_reset_value=false);
     inline quicky_bitfield(const quicky_bitfield & p_bitfield);
     inline ~quicky_bitfield(void);
     inline void set(const unsigned int & p_data,
@@ -45,13 +45,15 @@ namespace quicky_utils
     inline void get(unsigned int & p_data,
                     const unsigned int & p_size,
                     const unsigned int & p_offset)const;
-    inline void reset(void);
+    inline void reset(bool p_reset_value=false);
     inline void dump_in(std::ostream & p_stream)const;
     inline void read_from(std::istream & p_stream);
     inline const size_t size(void)const;
+    inline const size_t bitsize(void)const;
     inline void apply_and(const quicky_bitfield & p_operand1,
 			  const quicky_bitfield & p_operand2);
     inline int ffs(void)const;
+    inline quicky_utils::quicky_bitfield & operator=(const quicky_bitfield & p_bitfield);
   private:
     const unsigned int m_size;
     typedef unsigned int t_array_unit;
@@ -68,6 +70,14 @@ namespace quicky_utils
           p_stream << std::hex << std::setfill('0') << std::setw(2*sizeof(quicky_bitfield::t_array_unit)) << p_bitfield.m_array[l_index] ;
         }
       return p_stream;
+    }
+
+  //----------------------------------------------------------------------------
+  quicky_utils::quicky_bitfield & quicky_bitfield::operator=(const quicky_bitfield & p_bitfield)
+    {
+      assert(m_size == p_bitfield.m_size);
+      memcpy(m_array, p_bitfield.m_array,sizeof(t_array_unit) * m_array_size);
+      return *this;
     }
 
   //----------------------------------------------------------------------------
@@ -101,6 +111,12 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
+  const size_t quicky_bitfield::bitsize(void)const
+    {
+      return m_size;
+    }
+
+  //----------------------------------------------------------------------------
   const size_t quicky_bitfield::size(void)const
     {
       return m_array_size * sizeof(t_array_unit);
@@ -119,13 +135,13 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  quicky_bitfield::quicky_bitfield(const unsigned int & p_size):
+  quicky_bitfield::quicky_bitfield(const unsigned int & p_size,bool p_reset_value):
     m_size(p_size),
     m_array_size(p_size / (8 * sizeof(t_array_unit)) + (p_size % (8 * sizeof(t_array_unit)) ? 1 : 0)),
     m_array(new t_array_unit[m_array_size])
       {
         if(!m_array) throw quicky_exception::quicky_runtime_exception("Unable to allocate array memory",__LINE__,__FILE__);
-        reset();
+        reset(p_reset_value);
       }
     //----------------------------------------------------------------------------
     quicky_bitfield::quicky_bitfield(const quicky_bitfield & p_bitfield):
@@ -138,9 +154,9 @@ namespace quicky_utils
         }
     
       //----------------------------------------------------------------------------
-      void quicky_bitfield::reset(void)
+      void quicky_bitfield::reset(bool p_reset_value)
       {
-        memset(m_array,0,sizeof(t_array_unit) * m_array_size);
+        memset(m_array,p_reset_value ? 0xFF : 0,sizeof(t_array_unit) * m_array_size);
       }
 
       //----------------------------------------------------------------------------
