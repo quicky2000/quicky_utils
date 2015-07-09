@@ -76,7 +76,14 @@ namespace quicky_utils
   quicky_utils::quicky_bitfield & quicky_bitfield::operator=(const quicky_bitfield & p_bitfield)
     {
       assert(m_size == p_bitfield.m_size);
+#ifdef USE_MEMCPY
       memcpy(m_array, p_bitfield.m_array,sizeof(t_array_unit) * m_array_size);
+#else
+      for(unsigned int l_index = 0 ; l_index < m_array_size ; ++l_index)
+        {
+          m_array[l_index] = p_bitfield.m_array[l_index];
+        }
+#endif
       return *this;
     }
 
@@ -87,16 +94,57 @@ namespace quicky_utils
     int l_result = 0;
     do
       {
-	l_result = ::ffs(m_array[l_index]);
-	if(l_result)
-	  {
-	    return l_result + 8 * sizeof(t_array_unit) * l_index;
-	  }
-	++l_index;
+	unsigned int v = m_array[l_index];
+#ifndef USE_HARDWARE_FFS
+        static const unsigned char MultiplyDeBruijnBitPosition[32] =
+          {
+                1,  // 0,
+                2,  // 1,
+                29, //28,
+                3,  // 2,
+                30, //29,
+                15, //14,
+                25, //24,
+                4,  // 3,
+                31, //30,
+                23, //22,
+                21, //20,
+                16, //15,
+                26, //25,
+                18, //17,
+                5,  // 4,
+                9,  // 8,
+                32, //31,
+                28, //27,
+                14, //13,
+                24, //23,
+                22, //21,
+                20, //19,
+                17, //16,
+                8,  // 7,
+                27, //26,
+                13, //12,
+                19, //18,
+                7,  // 6,
+                12, //11,
+                6,  // 5,
+                11, //10,
+                10, // 9
+          };
+        l_result = v ? MultiplyDeBruijnBitPosition[((uint32_t)((v & -v) * 0x077CB531U)) >> 27] : 0;
+#else
+	l_result = ::ffs(v);
+#endif // USE_HARDWARE_FFS
+
+        if(l_result)
+          {
+            return l_result + 8 * sizeof(t_array_unit) * l_index;
+          }
+        ++l_index;
       }
     while(l_index < m_array_size);
     return 0;
-  }
+ }
 
   //----------------------------------------------------------------------------
   void quicky_bitfield::apply_and(const quicky_bitfield & p_operand1,
