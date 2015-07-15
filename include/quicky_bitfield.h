@@ -56,7 +56,7 @@ namespace quicky_utils
     inline quicky_utils::quicky_bitfield & operator=(const quicky_bitfield & p_bitfield);
   private:
     const unsigned int m_size;
-    typedef unsigned int t_array_unit;
+    typedef uint32_t t_array_unit;
     const unsigned int m_array_size;
     t_array_unit * m_array;
   };
