@@ -36,6 +36,7 @@ namespace quicky_utils
        Constructor of bitfield
        @param p_size : bitfield size in bits
      */
+    inline quicky_bitfield(void);
     inline quicky_bitfield(const unsigned int & p_size, bool p_reset_value=false);
     inline quicky_bitfield(const quicky_bitfield & p_bitfield);
     inline ~quicky_bitfield(void);
@@ -92,9 +93,9 @@ namespace quicky_utils
   {
     unsigned int l_index = 0;
     int l_result = 0;
-    do
+    while(l_index < m_array_size)
       {
-	unsigned int v = m_array[l_index];
+	t_array_unit v = m_array[l_index];
 #ifndef USE_HARDWARE_FFS
         static const unsigned char MultiplyDeBruijnBitPosition[32] =
           {
@@ -142,7 +143,6 @@ namespace quicky_utils
           }
         ++l_index;
       }
-    while(l_index < m_array_size);
     return 0;
  }
 
@@ -183,12 +183,19 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
+  quicky_bitfield::quicky_bitfield(void):
+    m_size(0),
+    m_array_size(0),
+    m_array(nullptr)
+      {
+      }
+
+  //----------------------------------------------------------------------------
   quicky_bitfield::quicky_bitfield(const unsigned int & p_size,bool p_reset_value):
     m_size(p_size),
     m_array_size(p_size / (8 * sizeof(t_array_unit)) + (p_size % (8 * sizeof(t_array_unit)) ? 1 : 0)),
     m_array(new t_array_unit[m_array_size])
       {
-        if(!m_array) throw quicky_exception::quicky_runtime_exception("Unable to allocate array memory",__LINE__,__FILE__);
         reset(p_reset_value);
       }
     //----------------------------------------------------------------------------
@@ -197,7 +204,6 @@ namespace quicky_utils
       m_array_size(p_bitfield.m_array_size),
       m_array(new t_array_unit[m_array_size])
         {
-          if(!m_array) throw quicky_exception::quicky_runtime_exception("Unable to allocate array memory",__LINE__,__FILE__);
           memcpy(m_array,p_bitfield.m_array,sizeof(t_array_unit) * m_array_size);
         }
     
@@ -217,26 +223,26 @@ namespace quicky_utils
         assert(p_size <= 8 * sizeof(t_array_unit));
         assert(p_data < ( (unsigned int)1 << p_size));
 
-        unsigned int l_data = (( 1 << p_size) - 1) & p_data;
+        t_array_unit l_data = (( ((t_array_unit)1) << p_size) - 1) & p_data;
 
         unsigned int l_min_index = p_offset / (8 * sizeof(t_array_unit));
         unsigned int l_max_index = ( p_offset + p_size - 1) / ( 8 * sizeof(t_array_unit));
         if(l_min_index == l_max_index)
           {
             t_array_unit l_mask = l_data << p_offset;
-            m_array[l_min_index] &= ~(((( 1 << p_size) - 1)) << p_offset);
+            m_array[l_min_index] &= ~(((( ((t_array_unit)1) << p_size) - 1)) << p_offset);
             m_array[l_min_index] |= l_mask;
           }
         else
           {
             unsigned int l_min_mod = p_offset % (8 * sizeof(t_array_unit));
             unsigned int l_size = 8 * sizeof(t_array_unit) - l_min_mod;
-            m_array[l_min_index] &= ~((( 1 << l_size) - 1) << l_min_mod);
-            t_array_unit l_mask = ((( 1 << l_size) - 1) & l_data) << l_min_mod;
+            m_array[l_min_index] &= ~((( ((t_array_unit)1) << l_size) - 1) << l_min_mod);
+            t_array_unit l_mask = ((( ((t_array_unit)1) << l_size) - 1) & l_data) << l_min_mod;
              m_array[l_min_index] |= l_mask;
        
             l_mask = p_data >> l_size;
-            m_array[l_max_index] &= ~((( 1 << (p_size - l_size)) -1));
+            m_array[l_max_index] &= ~((( ((t_array_unit)1) << (p_size - l_size)) -1));
             m_array[l_max_index] |= l_mask;
 
           }
@@ -255,15 +261,15 @@ namespace quicky_utils
         if(l_min_index == l_max_index)
           {
             t_array_unit l_data = m_array[l_min_index] >> p_offset;
-            p_data = l_data & ((t_array_unit)(pow(2,p_size) - 1));
+            p_data = l_data & (( ((t_array_unit)1) << p_size) - 1);
           }
         else
           {
             unsigned int l_min_mod = p_offset % (8 * sizeof(t_array_unit));
             unsigned int l_size = 8 * sizeof(t_array_unit) - l_min_mod;
-            p_data = (m_array[l_min_index] >> l_min_mod ) & ((1 << l_size) - 1);
+            p_data = (m_array[l_min_index] >> l_min_mod ) & ((((t_array_unit)1) << l_size) - 1);
        
-            t_array_unit l_data = m_array[l_max_index] & ((1 << (p_size - l_size)) - 1);
+            t_array_unit l_data = m_array[l_max_index] & ((((t_array_unit)1) << (p_size - l_size)) - 1);
             p_data |= (l_data << l_size);
           }
       }
