@@ -57,7 +57,12 @@ namespace quicky_utils
     inline quicky_utils::quicky_bitfield & operator=(const quicky_bitfield & p_bitfield);
   private:
     const unsigned int m_size;
+    //#define INTERNAL_64_BIT_ARRAY_UNIT
+#ifndef INTERNAL_64_BIT_ARRAY_UNIT
     typedef uint32_t t_array_unit;
+#else
+    typedef uint64_t t_array_unit;
+#endif // INTERNAL_64_BIT_ARRAY_UNIT
     const unsigned int m_array_size;
     t_array_unit * m_array;
   };
@@ -88,6 +93,18 @@ namespace quicky_utils
       return *this;
     }
 
+#if 0
+   0x000000000041f4a6 <+342>:   je     0x41f4c2 <edge_matching_puzzle::emp_strategy::run()+370>
+   0x000000000041f4a8 <+344>:   mov    0x8(%rax),%r8
+   0x000000000041f4ac <+348>:   xor    %eax,%eax
+   0x000000000041f4ae <+350>:   xchg   %ax,%ax
+   0x000000000041f4b0 <+352>:   mov    %eax,%edx
+   0x000000000041f4b2 <+354>:   add    $0x1,%eax
+   0x000000000041f4b5 <+357>:   mov    (%r8,%rdx,4),%ecx
+   0x000000000041f4b9 <+361>:   mov    %ecx,(%rdi,%rdx,4)
+   0x000000000041f4bc <+364>:   cmp    0x64(%r10),%eax
+   0x000000000041f4c0 <+368>:   jb     0x41f4b0 <edge_matching_puzzle::emp_strategy::run()+352>
+#endif
   //----------------------------------------------------------------------------
   int quicky_bitfield::ffs(void)const
   {
@@ -97,7 +114,8 @@ namespace quicky_utils
       {
 	t_array_unit v = m_array[l_index];
 #ifndef USE_HARDWARE_FFS
-        static const unsigned char MultiplyDeBruijnBitPosition[32] =
+#ifndef INTERNAL_64_BIT_ARRAY_UNIT
+         static const unsigned char MultiplyDeBruijnBitPosition[32] =
           {
                 1,  // 0,
                 2,  // 1,
@@ -133,6 +151,77 @@ namespace quicky_utils
                 10, // 9
           };
         l_result = v ? MultiplyDeBruijnBitPosition[((uint32_t)((v & -v) * 0x077CB531U)) >> 27] : 0;
+#else
+        static const unsigned char MultiplyDeBruijnBitPosition[64] =
+          {
+                1,
+                2,
+                3,
+                8,
+                4,
+                14,
+                9,
+                20,
+                5,
+                26,
+                15,
+                29,
+                10,
+                35,
+                21,
+                41,
+                6,
+                18,
+                27,
+                39,
+                16,
+                47,
+                30,
+                49,
+                11,
+                32,
+                36,
+                55,
+                22,
+                51,
+                42,
+                58,
+                64,
+                7,
+                13,
+                19,
+                25,
+                28,
+                34,
+                40,
+                17,
+                38,
+                46,
+                48,
+                31,
+                54,
+                50,
+                57,
+                63,
+                12,
+                24,
+                33,
+                37,
+                45,
+                53,
+                56,
+                62,
+                23,
+                44,
+                52,
+                61,
+                43,
+                60,
+                59
+          };
+        l_result = v ? MultiplyDeBruijnBitPosition[((uint64_t)((v & -v) * 0x0218a392cd3d5dbfL)) >> 58] : 0;
+#endif //INTERNAL_64_BIT_ARRAY_UNIT
+
 #else
 	l_result = ::ffs(v);
 #endif // USE_HARDWARE_FFS
