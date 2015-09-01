@@ -18,6 +18,9 @@
 #define SIGNAL_HANDLER_H
 
 #include <signal.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include "signal_handler_listener_if.h"
 #include <iostream>
 
