@@ -28,9 +28,16 @@
 
 namespace quicky_utils
 {
+  template <class T>
+  class quicky_bitfield;
+
+  template <class T>
+  std::ostream & operator<<(std::ostream & p_stream,const quicky_bitfield<T> & p_bitfield);
+
+  template <class T>
   class quicky_bitfield
   {
-    friend std::ostream & operator<<(std::ostream & p_stream,const quicky_bitfield & p_bitfield);
+    friend std::ostream & operator<< <>(std::ostream & p_stream,const quicky_bitfield<T> & p_bitfield);
   public:
     /**
        Constructor of bitfield
@@ -54,7 +61,7 @@ namespace quicky_utils
     inline void apply_and(const quicky_bitfield & p_operand1,
 			  const quicky_bitfield & p_operand2);
     inline int ffs(void)const;
-    inline quicky_utils::quicky_bitfield & operator=(const quicky_bitfield & p_bitfield);
+    inline quicky_utils::quicky_bitfield<T> & operator=(const quicky_bitfield<T> & p_bitfield);
   private:
     const unsigned int m_size;
     //#define INTERNAL_64_BIT_ARRAY_UNIT
@@ -68,45 +75,55 @@ namespace quicky_utils
   };
 
   //----------------------------------------------------------------------------
-  inline std::ostream & operator<<(std::ostream & p_stream,const quicky_bitfield & p_bitfield)
-    {
-      p_stream << "0x";
-      for(unsigned int l_index = 0 ; l_index < p_bitfield.m_array_size ; ++l_index)
-        {
-          p_stream << std::hex << std::setfill('0') << std::setw(2*sizeof(quicky_bitfield::t_array_unit)) << p_bitfield.m_array[l_index] ;
-        }
-      return p_stream;
-    }
+  template <class T>
+  inline std::ostream & operator<<(std::ostream & p_stream,const quicky_bitfield<T> & p_bitfield)
+  {
+    p_stream << "0x";
+    for(unsigned int l_index = 0 ; l_index < p_bitfield.m_array_size ; ++l_index)
+      {
+	p_stream << std::hex << std::setfill('0') << std::setw(2*sizeof(quicky_bitfield<T>::t_array_unit)) << p_bitfield.m_array[l_index] ;
+      }
+    return p_stream;
+  }
 
   //----------------------------------------------------------------------------
-  quicky_utils::quicky_bitfield & quicky_bitfield::operator=(const quicky_bitfield & p_bitfield)
-    {
-      assert(m_size == p_bitfield.m_size);
+  template <class T>
+  quicky_utils::quicky_bitfield<T> & quicky_bitfield<T>::operator=(const quicky_bitfield<T> & p_bitfield)
+  {
+    assert(m_size == p_bitfield.m_size);
 #ifdef USE_MEMCPY
-      memcpy(m_array, p_bitfield.m_array,sizeof(t_array_unit) * m_array_size);
+    memcpy(m_array, p_bitfield.m_array,sizeof(t_array_unit) * m_array_size);
 #else
-      for(unsigned int l_index = 0 ; l_index < m_array_size ; ++l_index)
-        {
-          m_array[l_index] = p_bitfield.m_array[l_index];
-        }
+    for(unsigned int l_index = 0 ; l_index < m_array_size ; ++l_index)
+      {
+	m_array[l_index] = p_bitfield.m_array[l_index];
+      }
 #endif
-      return *this;
-    }
+    return *this;
+  }
 
-#if 0
-   0x000000000041f4a6 <+342>:   je     0x41f4c2 <edge_matching_puzzle::emp_strategy::run()+370>
-   0x000000000041f4a8 <+344>:   mov    0x8(%rax),%r8
-   0x000000000041f4ac <+348>:   xor    %eax,%eax
-   0x000000000041f4ae <+350>:   xchg   %ax,%ax
-   0x000000000041f4b0 <+352>:   mov    %eax,%edx
-   0x000000000041f4b2 <+354>:   add    $0x1,%eax
-   0x000000000041f4b5 <+357>:   mov    (%r8,%rdx,4),%ecx
-   0x000000000041f4b9 <+361>:   mov    %ecx,(%rdi,%rdx,4)
-   0x000000000041f4bc <+364>:   cmp    0x64(%r10),%eax
-   0x000000000041f4c0 <+368>:   jb     0x41f4b0 <edge_matching_puzzle::emp_strategy::run()+352>
-#endif
   //----------------------------------------------------------------------------
-  int quicky_bitfield::ffs(void)const
+  template <class T>
+  int quicky_bitfield<T>::ffs(void)const
+  {
+    unsigned int l_index = 0;
+    int l_result = 0;
+    while(l_index < m_array_size)
+      {
+	t_array_unit v = m_array[l_index];
+	l_result = ::ffs(v);
+        if(l_result)
+          {
+            return l_result + 8 * sizeof(t_array_unit) * l_index;
+          }
+        ++l_index;
+      }
+    return 0;
+ }
+
+  //----------------------------------------------------------------------------
+  template <>
+  inline int quicky_bitfield<uint32_t>::ffs(void)const
   {
     unsigned int l_index = 0;
     int l_result = 0;
@@ -114,7 +131,6 @@ namespace quicky_utils
       {
 	t_array_unit v = m_array[l_index];
 #ifndef USE_HARDWARE_FFS
-#ifndef INTERNAL_64_BIT_ARRAY_UNIT
          static const unsigned char MultiplyDeBruijnBitPosition[32] =
           {
                 1,  // 0,
@@ -152,6 +168,28 @@ namespace quicky_utils
           };
         l_result = v ? MultiplyDeBruijnBitPosition[((uint32_t)((v & -v) * 0x077CB531U)) >> 27] : 0;
 #else
+	l_result = ::ffs(v);
+#endif // USE_HARDWARE_FFS
+
+        if(l_result)
+          {
+            return l_result + 8 * sizeof(t_array_unit) * l_index;
+          }
+        ++l_index;
+      }
+    return 0;
+ }
+
+  //----------------------------------------------------------------------------
+  template <>
+  inline int quicky_bitfield<uint64_t>::ffs(void)const
+  {
+    unsigned int l_index = 0;
+    int l_result = 0;
+    while(l_index < m_array_size)
+      {
+	t_array_unit v = m_array[l_index];
+#ifndef USE_HARDWARE_FFS
         static const unsigned char MultiplyDeBruijnBitPosition[64] =
           {
                 1,
@@ -220,8 +258,6 @@ namespace quicky_utils
                 59
           };
         l_result = v ? MultiplyDeBruijnBitPosition[((uint64_t)((v & -v) * 0x0218a392cd3d5dbfL)) >> 58] : 0;
-#endif //INTERNAL_64_BIT_ARRAY_UNIT
-
 #else
 	l_result = ::ffs(v);
 #endif // USE_HARDWARE_FFS
@@ -233,11 +269,12 @@ namespace quicky_utils
         ++l_index;
       }
     return 0;
- }
+  }
 
   //----------------------------------------------------------------------------
-  void quicky_bitfield::apply_and(const quicky_bitfield & p_operand1,
-				  const quicky_bitfield & p_operand2)
+  template <class T>
+  void quicky_bitfield<T>::apply_and(const quicky_bitfield & p_operand1,
+				     const quicky_bitfield & p_operand2)
   {
     assert(m_size == p_operand1.m_size);
     assert(m_size == p_operand2.m_size);
@@ -248,126 +285,137 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  const size_t quicky_bitfield::bitsize(void)const
-    {
-      return m_size;
-    }
+  template <class T>
+  const size_t quicky_bitfield<T>::bitsize(void)const
+  {
+    return m_size;
+  }
 
   //----------------------------------------------------------------------------
-  const size_t quicky_bitfield::size(void)const
-    {
-      return m_array_size * sizeof(t_array_unit);
-    }
+  template <class T>
+  const size_t quicky_bitfield<T>::size(void)const
+  {
+    return m_array_size * sizeof(t_array_unit);
+  }
 
   //----------------------------------------------------------------------------
-  void quicky_bitfield::dump_in(std::ostream & p_stream)const
+  template <class T>
+  void quicky_bitfield<T>::dump_in(std::ostream & p_stream)const
   {
     p_stream.write((char*)m_array,m_array_size * sizeof(t_array_unit));
   }
 
   //----------------------------------------------------------------------------
-  void quicky_bitfield::read_from(std::istream & p_stream)
+  template <class T>
+  void quicky_bitfield<T>::read_from(std::istream & p_stream)
   {
     p_stream.read((char*)m_array,m_array_size * sizeof(t_array_unit));
   }
 
   //----------------------------------------------------------------------------
-  quicky_bitfield::quicky_bitfield(void):
+  template <class T>
+  quicky_bitfield<T>::quicky_bitfield(void):
     m_size(0),
     m_array_size(0),
     m_array(nullptr)
-      {
-      }
+  {
+  }
 
   //----------------------------------------------------------------------------
-  quicky_bitfield::quicky_bitfield(const unsigned int & p_size,bool p_reset_value):
+  template <class T>
+  quicky_bitfield<T>::quicky_bitfield(const unsigned int & p_size,bool p_reset_value):
     m_size(p_size),
     m_array_size(p_size / (8 * sizeof(t_array_unit)) + (p_size % (8 * sizeof(t_array_unit)) ? 1 : 0)),
     m_array(new t_array_unit[m_array_size])
-      {
-        reset(p_reset_value);
-      }
-    //----------------------------------------------------------------------------
-    quicky_bitfield::quicky_bitfield(const quicky_bitfield & p_bitfield):
+  {
+    reset(p_reset_value);
+  }
+
+  //----------------------------------------------------------------------------
+  template <class T>
+    quicky_bitfield<T>::quicky_bitfield(const quicky_bitfield & p_bitfield):
       m_size(p_bitfield.m_size),
       m_array_size(p_bitfield.m_array_size),
       m_array(new t_array_unit[m_array_size])
-        {
-          memcpy(m_array,p_bitfield.m_array,sizeof(t_array_unit) * m_array_size);
-        }
+   {
+     memcpy(m_array,p_bitfield.m_array,sizeof(t_array_unit) * m_array_size);
+   }
     
-      //----------------------------------------------------------------------------
-      void quicky_bitfield::reset(bool p_reset_value)
+  //----------------------------------------------------------------------------
+  template <class T>
+  void quicky_bitfield<T>::reset(bool p_reset_value)
+  {
+    memset(m_array,p_reset_value ? 0xFF : 0,sizeof(t_array_unit) * m_array_size);
+  }
+
+  //----------------------------------------------------------------------------
+  template <class T>
+  void quicky_bitfield<T>::set(const unsigned int & p_data,
+			    const unsigned int & p_size,
+			    const unsigned int & p_offset)
+  {
+    assert(p_size < 8 * sizeof(unsigned int));
+    assert(p_offset + p_size -1 < m_array_size * 8 * sizeof(t_array_unit));
+    assert(p_size <= 8 * sizeof(t_array_unit));
+    assert(p_data < ( (unsigned int)1 << p_size));
+
+    t_array_unit l_data = (( ((t_array_unit)1) << p_size) - 1) & p_data;
+
+    unsigned int l_min_index = p_offset / (8 * sizeof(t_array_unit));
+    unsigned int l_max_index = ( p_offset + p_size - 1) / ( 8 * sizeof(t_array_unit));
+    if(l_min_index == l_max_index)
       {
-        memset(m_array,p_reset_value ? 0xFF : 0,sizeof(t_array_unit) * m_array_size);
+	t_array_unit l_mask = l_data << p_offset;
+	m_array[l_min_index] &= ~(((( ((t_array_unit)1) << p_size) - 1)) << p_offset);
+	m_array[l_min_index] |= l_mask;
       }
-
-      //----------------------------------------------------------------------------
-      void quicky_bitfield::set(const unsigned int & p_data,
-                                const unsigned int & p_size,
-                                const unsigned int & p_offset)
+    else
       {
-        assert(p_size < 8 * sizeof(unsigned int));
-        assert(p_offset + p_size -1 < m_array_size * 8 * sizeof(t_array_unit));
-        assert(p_size <= 8 * sizeof(t_array_unit));
-        assert(p_data < ( (unsigned int)1 << p_size));
-
-        t_array_unit l_data = (( ((t_array_unit)1) << p_size) - 1) & p_data;
-
-        unsigned int l_min_index = p_offset / (8 * sizeof(t_array_unit));
-        unsigned int l_max_index = ( p_offset + p_size - 1) / ( 8 * sizeof(t_array_unit));
-        if(l_min_index == l_max_index)
-          {
-            t_array_unit l_mask = l_data << p_offset;
-            m_array[l_min_index] &= ~(((( ((t_array_unit)1) << p_size) - 1)) << p_offset);
-            m_array[l_min_index] |= l_mask;
-          }
-        else
-          {
-            unsigned int l_min_mod = p_offset % (8 * sizeof(t_array_unit));
-            unsigned int l_size = 8 * sizeof(t_array_unit) - l_min_mod;
-            m_array[l_min_index] &= ~((( ((t_array_unit)1) << l_size) - 1) << l_min_mod);
-            t_array_unit l_mask = ((( ((t_array_unit)1) << l_size) - 1) & l_data) << l_min_mod;
-             m_array[l_min_index] |= l_mask;
+	unsigned int l_min_mod = p_offset % (8 * sizeof(t_array_unit));
+	unsigned int l_size = 8 * sizeof(t_array_unit) - l_min_mod;
+	m_array[l_min_index] &= ~((( ((t_array_unit)1) << l_size) - 1) << l_min_mod);
+	t_array_unit l_mask = ((( ((t_array_unit)1) << l_size) - 1) & l_data) << l_min_mod;
+	m_array[l_min_index] |= l_mask;
        
-            l_mask = p_data >> l_size;
-            m_array[l_max_index] &= ~((( ((t_array_unit)1) << (p_size - l_size)) -1));
-            m_array[l_max_index] |= l_mask;
-
-          }
+	l_mask = p_data >> l_size;
+	m_array[l_max_index] &= ~((( ((t_array_unit)1) << (p_size - l_size)) -1));
+	m_array[l_max_index] |= l_mask;
       }
+  }
 
-      //----------------------------------------------------------------------------
-      void quicky_bitfield::get(unsigned int & p_data,
-                                const unsigned int & p_size,
-                                const unsigned int & p_offset)const
+  //----------------------------------------------------------------------------
+  template <class T>
+  void quicky_bitfield<T>::get(unsigned int & p_data,
+			    const unsigned int & p_size,
+			    const unsigned int & p_offset)const
+  {
+    assert(p_size < 8 * sizeof(unsigned int));
+    assert(p_offset + p_size -1 < m_array_size * 8 * sizeof(t_array_unit));
+    assert(p_size <= 8 * sizeof(t_array_unit));
+    unsigned int l_min_index = p_offset / (8 * sizeof(t_array_unit));
+    unsigned int l_max_index = ( p_offset + p_size - 1) / ( 8 * sizeof(t_array_unit));
+    if(l_min_index == l_max_index)
       {
-        assert(p_size < 8 * sizeof(unsigned int));
-        assert(p_offset + p_size -1 < m_array_size * 8 * sizeof(t_array_unit));
-        assert(p_size <= 8 * sizeof(t_array_unit));
-        unsigned int l_min_index = p_offset / (8 * sizeof(t_array_unit));
-        unsigned int l_max_index = ( p_offset + p_size - 1) / ( 8 * sizeof(t_array_unit));
-        if(l_min_index == l_max_index)
-          {
-            t_array_unit l_data = m_array[l_min_index] >> p_offset;
-            p_data = l_data & (( ((t_array_unit)1) << p_size) - 1);
-          }
-        else
-          {
-            unsigned int l_min_mod = p_offset % (8 * sizeof(t_array_unit));
-            unsigned int l_size = 8 * sizeof(t_array_unit) - l_min_mod;
-            p_data = (m_array[l_min_index] >> l_min_mod ) & ((((t_array_unit)1) << l_size) - 1);
-       
-            t_array_unit l_data = m_array[l_max_index] & ((((t_array_unit)1) << (p_size - l_size)) - 1);
-            p_data |= (l_data << l_size);
-          }
+	t_array_unit l_data = m_array[l_min_index] >> p_offset;
+	p_data = l_data & (( ((t_array_unit)1) << p_size) - 1);
       }
+    else
+      {
+	unsigned int l_min_mod = p_offset % (8 * sizeof(t_array_unit));
+	unsigned int l_size = 8 * sizeof(t_array_unit) - l_min_mod;
+	p_data = (m_array[l_min_index] >> l_min_mod ) & ((((t_array_unit)1) << l_size) - 1);
 
-      //----------------------------------------------------------------------------
-      quicky_bitfield::~quicky_bitfield(void)
-        {
-          delete[] m_array;
-        }
+	t_array_unit l_data = m_array[l_max_index] & ((((t_array_unit)1) << (p_size - l_size)) - 1);
+	p_data |= (l_data << l_size);
+      }
+  }
+
+  //----------------------------------------------------------------------------
+  template <class T>
+  quicky_bitfield<T>::~quicky_bitfield(void)
+  {
+    delete[] m_array;
+  }
 }
 #endif // QUICKY_BITFIELD
 //EOF
