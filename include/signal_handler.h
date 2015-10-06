@@ -44,9 +44,9 @@ namespace quicky_utils
       //Preparing signal handling to manage stop
       // Structure declaration to put handlers in place
       struct sigaction l_signal_action;
-  
+
       // Filling the structure
-      // with handler address 
+      // with handler address
       l_signal_action.sa_handler=handler;
 
       // This flag is theorically ignored but put as zero to be clean
@@ -54,7 +54,7 @@ namespace quicky_utils
 
       // we don't block specific signals
       sigemptyset(&l_signal_action.sa_mask);
-    
+
       // Handlers are put in place for 3 signals
       sigaction(SIGINT,&l_signal_action,0);
       sigaction(SIGTERM,&l_signal_action,0);
