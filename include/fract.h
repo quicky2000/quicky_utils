@@ -279,5 +279,15 @@ namespace quicky_utils
   }
 }
 
+namespace std
+{
+  template<>
+    class is_signed<quicky_utils::fract>
+    {
+    public:
+      static const bool value = true;
+    };
+}
+
 #endif // _FRACT_H_
 // EOF
