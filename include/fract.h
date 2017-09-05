@@ -63,7 +63,9 @@ namespace quicky_utils
 
     inline bool operator!=(const fract & p_op)const;
 
-    /**
+    inline fract operator-(void)const;
+
+   /**
        Pre increment
     */
     inline fract & operator++(void);
@@ -209,6 +211,12 @@ namespace quicky_utils
     fract tmp(*this); 
     *this = *this - 1;
     return tmp;
+  }
+
+  //----------------------------------------------------------------------------
+  fract fract::operator-(void)const
+  {
+    return fract(m_num, m_den);
   }
 
 #if 0
