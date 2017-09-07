@@ -581,6 +581,36 @@ int main(int argc,char ** argv)
       std::cout << l_x << std::endl;
       l_x--;
       std::cout << l_x << std::endl;
+
+      quicky_utils::fract l_zero(1,2);
+      assert(l_zero);
+      l_zero -= quicky_utils::fract(1,2);
+      assert(!l_zero);
+
+      l_x = quicky_utils::fract(1,2);
+      l_y = quicky_utils::fract(2,5);
+      std::cout << l_x << " < " << l_y << " => " << (l_x < l_y ?"true":"false") << std::endl;
+      assert(!(l_x < l_y));
+      std::cout << l_x << " > " << l_y << " => " << (l_x > l_y ?"true":"false") << std::endl;
+      assert(l_x > l_y);
+      std::cout << l_x << " <= " << l_y << " => " << (l_x <= l_y ?"true":"false") << std::endl;
+      assert(!(l_x <= l_y));
+      std::cout << l_x << " >= " << l_y << " => " << (l_x >= l_y ?"true":"false") << std::endl;
+      assert(l_x >= l_y);
+      l_y = quicky_utils::fract(1,5);
+      std::cout << l_x << " != " << l_y << " => " << (l_x != l_y ?"true":"false") << std::endl;
+      assert(l_x != l_y);
+      std::cout << l_x << " == " << l_y << " => " << (l_x == l_y ?"true":"false") << std::endl;
+      assert(!(l_x == l_y));
+
+
+      l_y = - quicky_utils::fract(1,5);
+      std::cout << l_y << std::endl;
+      l_y = + quicky_utils::fract(1,5);
+      std::cout << l_y << std::endl;
+      l_y += 3;
+      std::cout << l_y << std::endl;
+
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {

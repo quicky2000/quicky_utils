@@ -33,6 +33,15 @@ namespace quicky_utils
     friend fract operator+(const int & p_op1,
 			   const fract & p_op2
 			   );
+    friend fract operator-(const int & p_op1,
+			   const fract & p_op2
+			   );
+    friend fract operator*(const int & p_op1,
+			   const fract & p_op2
+			   );
+    friend fract operator/(const int & p_op1,
+			   const fract & p_op2
+			   );
     friend bool operator==(const int & p_op1,
 			   const fract & p_op2
 			   );
@@ -64,6 +73,7 @@ namespace quicky_utils
     inline bool operator!=(const fract & p_op)const;
 
     inline fract operator-(void)const;
+    inline fract operator+(void)const;
 
    /**
        Pre increment
@@ -85,9 +95,23 @@ namespace quicky_utils
      */
     inline fract operator--(int);
 
-#if 0
-    fract& operator=(fract&& p_other) noexcept;
-#endif
+    /**
+       Conversion operator
+    */
+    inline operator bool(void)const;
+
+    inline fract & operator+=(const fract & p_op1);
+    inline fract & operator-=(const fract & p_op1);
+    inline fract & operator*=(const fract & p_op1);
+    inline fract & operator/=(const fract & p_op1);
+
+    inline bool operator<(const fract & p_op)const;
+    inline bool operator<=(const fract & p_op)const;
+    inline bool operator>(const fract & p_op)const;
+    inline bool operator>=(const fract & p_op)const;
+
+    inline fract& operator=(fract&& p_other) noexcept;
+    inline fract(const fract & p_op);
 
     /**
        Return PGCD computed yusing Euclide algorithm
@@ -186,7 +210,7 @@ namespace quicky_utils
   //----------------------------------------------------------------------------
   fract & fract::operator++(void)
   {
-    *this = *this + 1;
+    *this = *this + fract(1);
     return *this;
   }
 
@@ -194,14 +218,14 @@ namespace quicky_utils
   fract fract::operator++(int)
   {
     fract tmp(*this); 
-    *this = *this + 1;
+    *this = *this + fract(1);
     return tmp;
   }
 
   //----------------------------------------------------------------------------
   fract & fract::operator--(void)
   {
-    *this = *this - 1;
+    *this = *this - fract(1);
     return *this;
   }
 
@@ -209,29 +233,110 @@ namespace quicky_utils
   fract fract::operator--(int)
   {
     fract tmp(*this); 
-    *this = *this - 1;
+    *this = *this - fract(1);
     return tmp;
   }
 
   //----------------------------------------------------------------------------
   fract fract::operator-(void)const
   {
+    return fract(-m_num, m_den);
+  }
+
+  //----------------------------------------------------------------------------
+  fract fract::operator+(void)const
+  {
     return fract(m_num, m_den);
   }
 
-#if 0
   //----------------------------------------------------------------------------
-  fract& operator=(fract&& p_other) noexcept
+  fract::operator bool(void)const
+  {
+    return m_num;
+  }
+
+  //----------------------------------------------------------------------------
+  fract & fract::operator+=(const fract & p_op1)
+  {
+    *this = *this + p_op1;
+    return * this;
+  }
+
+  //----------------------------------------------------------------------------
+  fract & fract::operator-=(const fract & p_op1)
+  {
+    *this = *this - p_op1;
+    return * this;
+  }
+
+  //----------------------------------------------------------------------------
+  fract & fract::operator*=(const fract & p_op1)
+  {
+    *this = *this * p_op1;
+    return * this;
+  }
+
+  //----------------------------------------------------------------------------
+  fract & fract::operator/=(const fract & p_op1)
+  {
+    *this = *this / p_op1;
+    return * this;
+  }
+
+  //----------------------------------------------------------------------------
+  bool fract::operator<(const fract & p_op)const
+  {
+    t_coef_den l_ppcm = PPCM(this->m_den,
+			     p_op.m_den
+			     );
+    return ((t_coef_num)(l_ppcm / this->m_den) * this->m_num) < ((t_coef_num)(l_ppcm / p_op.m_den) * p_op.m_num);
+  }
+
+  //----------------------------------------------------------------------------
+  bool fract::operator<=(const fract & p_op)const
+  {
+    t_coef_den l_ppcm = PPCM(this->m_den,
+			     p_op.m_den
+			     );
+    return ((t_coef_num)(l_ppcm / this->m_den) * this->m_num) <= ((t_coef_num)(l_ppcm / p_op.m_den) * p_op.m_num);
+  }
+
+  //----------------------------------------------------------------------------
+  bool fract::operator>(const fract & p_op)const
+  {
+    t_coef_den l_ppcm = PPCM(this->m_den,
+			     p_op.m_den
+			     );
+    return ((t_coef_num)(l_ppcm / this->m_den) * this->m_num) > ((t_coef_num)(l_ppcm / p_op.m_den) * p_op.m_num);
+  }
+
+  //----------------------------------------------------------------------------
+  bool fract::operator>=(const fract & p_op)const
+  {
+    t_coef_den l_ppcm = PPCM(this->m_den,
+			     p_op.m_den
+			     );
+    return ((t_coef_num)(l_ppcm / this->m_den) * this->m_num) >= ((t_coef_num)(l_ppcm / p_op.m_den) * p_op.m_num);
+  }
+
+  //----------------------------------------------------------------------------
+  fract::fract(const fract & p_op):
+    m_num(p_op.m_num),
+    m_den(p_op.m_den)
+  {
+  }
+
+  //----------------------------------------------------------------------------
+  fract& fract::operator=(fract&& p_other) noexcept
   {
 	// no-op on self-move-assignment
     if(this != &p_other)
       {
-	std::exchange(m_num,p_other.m_num);
-	std::exchange(m_den,p_other.m_den);
+	std::swap(m_num,p_other.m_num);
+	std::swap(m_den,p_other.m_den);
       }
     return *this;
   }
-#endif
 
   //----------------------------------------------------------------------------
   fract::t_coef_den fract::PGCD(const t_coef_den & p_a,
@@ -276,6 +381,30 @@ namespace quicky_utils
 			 )
   {
     return fract(p_op1) + p_op2;
+  }
+
+  //----------------------------------------------------------------------------
+  inline fract operator-(const int & p_op1,
+			 const fract & p_op2
+			 )
+  {
+    return fract(p_op1) - p_op2;
+  }
+
+  //----------------------------------------------------------------------------
+  inline fract operator*(const int & p_op1,
+			 const fract & p_op2
+			 )
+  {
+    return fract(p_op1) * p_op2;
+  }
+
+  //----------------------------------------------------------------------------
+  inline fract operator/(const int & p_op1,
+			 const fract & p_op2
+			 )
+  {
+    return fract(p_op1) / p_op2;
   }
 
   //----------------------------------------------------------------------------
