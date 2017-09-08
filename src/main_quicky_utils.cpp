@@ -611,6 +611,14 @@ int main(int argc,char ** argv)
       l_y += 3;
       std::cout << l_y << std::endl;
 
+      std::cout << l_x << " < " << 2 << " => " << (l_x < 2 ? "true" : "false") << std::endl;
+      assert(l_x < 2);
+      std::cout << l_x << " <= " << 2 << " => " << (l_x <= 2 ? "true" : "false") << std::endl;
+      assert(l_x <= 2);
+      std::cout << l_x << " > " << 2 << " => " << (l_x > 2 ? "true" : "false") << std::endl;
+      assert(!(l_x > 2));
+      std::cout << l_x << " >= " << 2 << " => " << (l_x >= 2 ? "true" : "false") << std::endl;
+      assert(!(l_x >= 2));
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {

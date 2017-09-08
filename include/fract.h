@@ -45,6 +45,21 @@ namespace quicky_utils
     friend bool operator==(const int & p_op1,
 			   const fract & p_op2
 			   );
+    friend bool operator==(const fract & p_op1,
+			   const int & p_op2
+			   );
+    friend bool operator<(const fract & p_op1,
+			  const int & p_op2
+			  );
+    friend bool operator<=(const fract & p_op1,
+			   const int & p_op2
+			   );
+    friend bool operator>(const fract & p_op1,
+			  const int & p_op2
+			  );
+    friend bool operator>=(const fract & p_op1,
+			   const int & p_op2
+			   );
     public:
     typedef uint32_t t_coef;
     typedef std::make_signed<t_coef>::type t_coef_num;
@@ -111,6 +126,7 @@ namespace quicky_utils
     inline bool operator>=(const fract & p_op)const;
 
     inline fract& operator=(fract&& p_other) noexcept;
+    inline fract& operator=(const fract& p_other);
     inline fract(const fract & p_op);
 
     /**
@@ -339,6 +355,14 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
+  fract& fract::operator=(const fract& p_other)
+  {
+    this->m_num = p_other.m_num;
+    this->m_den = p_other.m_den;
+    return *this;
+  }
+
+  //----------------------------------------------------------------------------
   fract::t_coef_den fract::PGCD(const t_coef_den & p_a,
 				const t_coef_den & p_b
 				)
@@ -413,6 +437,46 @@ namespace quicky_utils
 			 )
   {
       return fract(p_op1) == p_op2;
+  }
+
+  //----------------------------------------------------------------------------
+  inline bool operator==(const fract & p_op1,
+			 const int & p_op2
+			 )
+  {
+    return p_op1 == fract(p_op2);
+  }
+
+  //----------------------------------------------------------------------------
+  inline bool operator<(const fract & p_op1,
+			const int & p_op2
+			)
+  {
+    return p_op1 < fract(p_op2);
+  }
+
+  //----------------------------------------------------------------------------
+  inline bool operator<=(const fract & p_op1,
+			const int & p_op2
+			)
+  {
+    return p_op1 <= fract(p_op2);
+  }
+
+  //----------------------------------------------------------------------------
+  inline bool operator>(const fract & p_op1,
+			const int & p_op2
+			)
+  {
+    return p_op1 > fract(p_op2);
+  }
+
+  //----------------------------------------------------------------------------
+  inline bool operator>=(const fract & p_op1,
+			const int & p_op2
+			)
+  {
+    return p_op1 >= fract(p_op2);
   }
 }
 
