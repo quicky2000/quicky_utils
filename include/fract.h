@@ -65,7 +65,11 @@ namespace quicky_utils
     typedef std::make_signed<t_coef>::type t_coef_num;
     typedef std::make_unsigned<t_coef>::type t_coef_den;
 
-    inline fract(const t_coef_num & p_num);
+    inline constexpr fract(void) noexcept;
+
+    inline constexpr fract(const t_coef_num & p_num);
+
+    inline constexpr fract(const t_coef_den & p_den,std::nullptr_t);
 
     inline fract(const t_coef_num & p_num,
 		 const t_coef_num & p_den
@@ -147,14 +151,21 @@ namespace quicky_utils
     */
     inline static t_coef_den PPCM(const t_coef_den & p_a,
 				  const t_coef_den & p_b
-			      );
+				  );
   private:
     t_coef_num m_num;
     t_coef_den m_den;
   };
 
   //----------------------------------------------------------------------------
-  fract::fract(const t_coef_num & p_num):
+  constexpr fract::fract(void) noexcept:
+    m_num(0),
+    m_den(1)
+  {
+  }
+
+  //----------------------------------------------------------------------------
+  constexpr fract::fract(const t_coef_num & p_num):
     m_num(p_num),
     m_den(1)
   {
@@ -173,6 +184,15 @@ namespace quicky_utils
 	m_num = -m_num;
       }
     m_den = (t_coef_den)(abs(p_den)) / l_pgcd;
+  }
+
+  //----------------------------------------------------------------------------
+  constexpr fract::fract(const t_coef_den & p_den,
+			 std::nullptr_t
+			 ):
+    m_num(1),
+    m_den(p_den)
+  {
   }
 
   //----------------------------------------------------------------------------
@@ -367,6 +387,7 @@ namespace quicky_utils
 				const t_coef_den & p_b
 				)
   {
+    assert(p_b);
     t_coef_den l_a = abs(p_a);
     t_coef_den l_b = abs(p_b);
     t_coef_den l_r;
@@ -381,7 +402,7 @@ namespace quicky_utils
   //----------------------------------------------------------------------------
   fract::t_coef_den fract::PPCM(const t_coef_den & p_a,
 				const t_coef_den & p_b
-			    )
+				)
   {
     return p_a * p_b / PGCD(p_a,p_b);
   }
@@ -480,6 +501,8 @@ namespace quicky_utils
   }
 }
 
+#include <limits>
+
 namespace std
 {
   template<>
@@ -487,6 +510,63 @@ namespace std
     {
     public:
       static const bool value = true;
+    };
+
+  template<>
+    class numeric_limits<quicky_utils::fract>
+    {
+    public:
+      static constexpr bool is_specialized = true;
+      static constexpr quicky_utils::fract min() noexcept
+	{
+	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_num>::min());
+	}
+      static constexpr quicky_utils::fract max() noexcept
+	{
+	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_num>::max());
+	}
+      static constexpr quicky_utils::fract lowest() noexcept
+	{
+	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_num>::lowest());
+	}
+      static constexpr int digits = std::numeric_limits<quicky_utils::fract::t_coef_num>::digits;
+      static constexpr int digits10 = std::numeric_limits<quicky_utils::fract::t_coef_num>::digits10;
+      static constexpr int max_digits10 = std::numeric_limits<quicky_utils::fract::t_coef_num>::max_digits10;
+      static constexpr bool is_signed = true;
+      static constexpr bool is_integer = false;
+      static constexpr bool is_exact = true;
+      static constexpr int radix = 2;
+      static constexpr quicky_utils::fract epsilon() noexcept
+	{
+	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_den>::max(),
+				     nullptr
+				     );
+	}
+      static constexpr quicky_utils::fract round_error() noexcept
+	{
+	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_den>::max(),
+				     nullptr
+				     );
+	}
+      static constexpr int min_exponent = 0; // No sense
+      static constexpr int min_exponent10 = 0; // No sense
+      static constexpr int max_exponent = 0; // No sense
+      static constexpr int max_exponent10 = 0; // No sense
+      static constexpr bool has_infinity = false;
+      static constexpr bool has_quiet_NaN = false;
+      static constexpr bool has_signaling_NaN = false;
+      static constexpr float_denorm_style has_denorm = denorm_absent;
+      static constexpr bool has_denorm_loss = false;
+      static constexpr bool infinity() noexcept { return 0; } // No sense
+      static constexpr bool quiet_NaN() noexcept { return 0; } // No sense
+      static constexpr bool signaling_NaN() noexcept { return 0; } // No sense
+      static constexpr bool denorm_min() noexcept { return 0; } // No sense
+      static constexpr bool is_iec559 = false;
+      static constexpr bool is_bounded = true;
+      static constexpr bool is_modulo = true;
+      static constexpr bool traps = false;
+      static constexpr bool tinyness_before = false;
+      static constexpr float_round_style round_style = round_toward_zero;
     };
 }
 
