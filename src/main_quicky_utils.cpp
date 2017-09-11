@@ -16,9 +16,15 @@
 */
 #ifdef QUICKY_UTILS_SELF_TEST
 #include "quicky_exception.h"
+#include "quicky_bitfield.h"
 #include "fract.h"
 #include <iostream>
 
+template<unsigned int NB>
+void display_NB(void)
+{
+  std::cout << NB << std::endl;
+}
 
 //------------------------------------------------------------------------------
 int main(int argc,char ** argv)
@@ -619,6 +625,9 @@ int main(int argc,char ** argv)
       assert(!(l_x > 2));
       std::cout << l_x << " >= " << 2 << " => " << (l_x >= 2 ? "true" : "false") << std::endl;
       assert(!(l_x >= 2));
+
+      display_NB<quicky_utils::fract::PGCD(20,15,nullptr)>();
+      display_NB<quicky_utils::fract::PPCM(20,15,nullptr)>();
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {
