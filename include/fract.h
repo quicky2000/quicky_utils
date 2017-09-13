@@ -477,7 +477,7 @@ namespace quicky_utils
 				   )
   {
     p_stream << p_fract.m_num;
-    if(1 != p_fract.m_den)
+    if(p_fract.m_num && 1 != p_fract.m_den)
       {
 	p_stream << "/" << p_fract.m_den;
       }

@@ -31,6 +31,8 @@ int main(int argc,char ** argv)
 {
   try
     {
+      std::cout << quicky_utils::fract(0,6) << std::endl;
+
       quicky_utils::fract l_nb1(1,2);
       quicky_utils::fract l_nb2(2);
       quicky_utils::fract l_nb3(10,2);
