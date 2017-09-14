@@ -148,8 +148,8 @@ namespace quicky_utils
        implementation
        @return PGCD of first and second number
     */
-    inline static constexpr t_coef_den PGCD(const t_coef_den & p_a,
-					    const t_coef_den & p_b,
+    inline static constexpr t_coef_den PGCD(const t_coef_num & p_a,
+					    const t_coef_num & p_b,
 					    std::nullptr_t
 					    );
 
@@ -159,8 +159,8 @@ namespace quicky_utils
        @param second number
        @return PGCD of first and second number
     */
-    inline static t_coef_den PGCD(const t_coef_den & p_a,
-				  const t_coef_den & p_b
+    inline static t_coef_den PGCD(const t_coef_num & p_a,
+				  const t_coef_num & p_b
 				  );
 
     /**
@@ -169,8 +169,8 @@ namespace quicky_utils
        @param second number
        @return PPCM of first and second number
     */
-    inline static t_coef_den PPCM(const t_coef_den & p_a,
-				  const t_coef_den & p_b
+    inline static t_coef_den PPCM(const t_coef_num & p_a,
+				  const t_coef_num & p_b
 				  );
 
     /**
@@ -181,8 +181,8 @@ namespace quicky_utils
        implementation
        @return PPCM of first and second number
     */
-    inline static constexpr t_coef_den PPCM(const t_coef_den & p_a,
-					    const t_coef_den & p_b,
+    inline static constexpr t_coef_den PPCM(const t_coef_num & p_a,
+					    const t_coef_num & p_b,
 					    std::nullptr_t
 					    );
   private:
@@ -429,8 +429,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract::t_coef_den fract::PGCD(const t_coef_den & p_a,
-				const t_coef_den & p_b
+  fract::t_coef_den fract::PGCD(const t_coef_num & p_a,
+				const t_coef_num & p_b
 				)
   {
     assert(p_b);
@@ -446,29 +446,29 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  constexpr fract::t_coef_den fract::PGCD(const t_coef_den & p_a,
-					  const t_coef_den & p_b,
+  constexpr fract::t_coef_den fract::PGCD(const t_coef_num & p_a,
+					  const t_coef_num & p_b,
 					  std::nullptr_t
 					  )
   {
-    return ((p_a % p_b) ? PGCD(p_b,p_a % p_b,nullptr) : p_b);
+    return ((p_a % p_b) ? PGCD(abs(p_b),abs(p_a) % abs(p_b),nullptr) : abs(p_b));
   }
 
   //----------------------------------------------------------------------------
-  fract::t_coef_den fract::PPCM(const t_coef_den & p_a,
-				const t_coef_den & p_b
+  fract::t_coef_den fract::PPCM(const t_coef_num & p_a,
+				const t_coef_num & p_b
 				)
   {
-    return p_a * p_b / PGCD(p_a,p_b);
+    return abs(p_a) * abs(p_b) / PGCD(abs(p_a),abs(p_b));
   }
 
   //----------------------------------------------------------------------------
-  constexpr fract::t_coef_den fract::PPCM(const t_coef_den & p_a,
-					  const t_coef_den & p_b,
+  constexpr fract::t_coef_den fract::PPCM(const t_coef_num & p_a,
+					  const t_coef_num & p_b,
 					  std::nullptr_t
 					  )
   {
-    return p_a * p_b / PGCD(p_a,p_b,nullptr);
+    return abs(p_a) * abs(p_b) / PGCD(abs(p_a),abs(p_b),nullptr);
   }
 
   //----------------------------------------------------------------------------

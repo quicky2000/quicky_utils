@@ -31,7 +31,89 @@ int main(int argc,char ** argv)
 {
   try
     {
-      std::cout << quicky_utils::fract(0,6) << std::endl;
+      std::cout << "---------------------------------------" << std::endl;
+      std::cout << "- PGCD" << std::endl;
+      std::cout << "---------------------------------------" << std::endl;
+
+      quicky_utils::fract::t_coef_den l_pos_num = 3;
+      quicky_utils::fract::t_coef_num l_neg_num = -3;
+      quicky_utils::fract::t_coef_den l_pos_den = 6;
+      quicky_utils::fract::t_coef_num l_neg_den = -6;
+
+      quicky_utils::fract::t_coef l_result = quicky_utils::fract::PGCD( l_pos_num, l_pos_den);
+      std::cout << "PGCD( 3, 6) = " << l_result << std::endl;
+      assert(3 == l_result);
+
+      l_result = quicky_utils::fract::PGCD(l_neg_num, l_pos_den);
+      std::cout << "PGCD(-3, 6) = " << l_result << std::endl;
+      assert(3 == l_result);
+      
+      l_result = quicky_utils::fract::PGCD( l_pos_num,l_neg_den);
+      std::cout << "PGCD( 3,-6) = " << l_result << std::endl;
+      assert(3 == l_result);
+
+      l_result = quicky_utils::fract::PGCD(l_neg_num,l_neg_den);
+      std::cout << "PGCD(-3,-6) = " << l_result << std::endl;
+      assert(3 == l_result);
+
+      l_result = quicky_utils::fract::PGCD(1071,1029);
+      std::cout << "PGCD(1071,1029) = " << l_result << std::endl;
+      assert(21 == l_result);
+
+      l_result = quicky_utils::fract::PGCD(1029,1071);
+      std::cout << "PGCD(1029,1071) = " << l_result << std::endl;
+      assert(21 == l_result);
+
+      l_result = quicky_utils::fract::PGCD(60,168);
+      std::cout << "PGCD(60,168) = " << l_result << std::endl;
+      assert(12 == l_result);
+
+      l_result = quicky_utils::fract::PGCD(168,60);
+      std::cout << "PGCD(168,60) = " << l_result << std::endl;
+      assert(12 == l_result);
+
+      l_result = quicky_utils::fract::PGCD(6,9);
+      std::cout << "PGCD(6,9) = " << l_result << std::endl;
+      assert(3 == l_result);
+
+      std::cout << std::endl;
+      std::cout << "---------------------------------------" << std::endl;
+      std::cout << "- PPCM" << std::endl;
+      std::cout << "---------------------------------------" << std::endl;
+
+      l_result = quicky_utils::fract::PPCM( l_pos_num, l_pos_den);
+      std::cout << "PPCM( 3, 6) = " << l_result << std::endl;
+      assert(6 == l_result);
+
+      l_result = quicky_utils::fract::PPCM(l_neg_num, l_pos_den);
+      std::cout << "PPCM(-3, 6) = " << l_result << std::endl;
+      assert(6 == l_result);
+      
+      l_result = quicky_utils::fract::PPCM( l_pos_num,l_neg_den);
+      std::cout << "PPCM( 3,-6) = " << l_result << std::endl;
+      assert(6 == l_result);
+
+      l_result = quicky_utils::fract::PPCM(l_neg_num,l_neg_den);
+      std::cout << "PPCM(-3,-6) = " << l_result << std::endl;
+      assert(6 == l_result);
+
+      l_result = quicky_utils::fract::PPCM(60,168);
+      std::cout << "PPCM(60,168) = " << l_result << std::endl;
+      assert(840 == l_result);
+
+      l_result = quicky_utils::fract::PPCM(168,60);
+      std::cout << "PPCM(168,60) = " << l_result << std::endl;
+      assert(840 == l_result);
+
+      l_result = quicky_utils::fract::PPCM(6,9);
+      std::cout << "PPCM(6,9) = " << l_result << std::endl;
+      assert(18 == l_result);
+
+      std::cout << "---------------------------------------" << std::endl;
+
+      std::cout << quicky_utils::fract(-3,1) * quicky_utils::fract(7,1) << std::endl;
+      std::cout << quicky_utils::fract(-21,1) / quicky_utils::fract(6,1) << std::endl;
+      std::cout << quicky_utils::fract(-4,1) - quicky_utils::fract(-21,6) << std::endl;
 
       quicky_utils::fract l_nb1(1,2);
       quicky_utils::fract l_nb2(2);
@@ -39,33 +121,6 @@ int main(int argc,char ** argv)
       std::cout << l_nb1 << std::endl;
       std::cout << l_nb2 << std::endl;
       std::cout << l_nb3 << std::endl;
-
-      quicky_utils::fract::t_coef l_result = quicky_utils::fract::PGCD(1071,1029);
-      std::cout << l_result << std::endl;
-      assert(21 == l_result);
-
-      l_result = quicky_utils::fract::PGCD(1029,1071);
-      std::cout << l_result << std::endl;
-      assert(21 == l_result);
-
-      l_result = quicky_utils::fract::PGCD(60,168);
-      std::cout << l_result << std::endl;
-      assert(12 == l_result);
-
-      l_result = quicky_utils::fract::PGCD(168,60);
-      std::cout << l_result << std::endl;
-      assert(12 == l_result);
-
-      l_result = quicky_utils::fract::PPCM(60,168);
-      assert(840 == l_result);
-      std::cout << l_result << std::endl;
-
-      l_result = quicky_utils::fract::PPCM(168,60);
-      assert(840 == l_result);
-      std::cout << l_result << std::endl;
-
-      std::cout << quicky_utils::fract::PPCM(6,9) << std::endl;
-      std::cout << quicky_utils::fract::PGCD(6,9) << std::endl;
 
       quicky_utils::fract l_a(1,3);
       quicky_utils::fract l_b(1,4);
