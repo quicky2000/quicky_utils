@@ -140,6 +140,9 @@ namespace quicky_utils
     inline fract& operator=(const fract& p_other);
     inline fract(const fract & p_op);
 
+    inline float to_float(void)const;
+    inline double to_double(void)const;
+
     /**
        Return PGCD computed yusing Euclide algorithm
        @param first number
@@ -426,6 +429,19 @@ namespace quicky_utils
     this->m_num = p_other.m_num;
     this->m_den = p_other.m_den;
     return *this;
+  }
+
+  //----------------------------------------------------------------------------
+  float fract::to_float(void)const
+  {
+    return ((float)m_num)/((float)m_den);
+
+  }
+
+  //----------------------------------------------------------------------------
+  double fract::to_double(void)const
+  {
+    return ((double)m_num)/((double)m_den);
   }
 
   //----------------------------------------------------------------------------

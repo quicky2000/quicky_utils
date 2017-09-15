@@ -685,6 +685,16 @@ int main(int argc,char ** argv)
 
       display_NB<quicky_utils::fract::PGCD(20,15,nullptr)>();
       display_NB<quicky_utils::fract::PPCM(20,15,nullptr)>();
+
+      std::cout << "---------------------------------------" << std::endl;
+      std::cout << "- to_float and to double" << std::endl;
+      std::cout << "---------------------------------------" << std::endl;
+      l_a = quicky_utils::fract(1,2);
+      l_b = quicky_utils::fract(1,3);
+      std::cout << l_a << " == " << l_a.to_float() << std::endl;
+      std::cout << l_b << " == " << l_b.to_float() << std::endl;
+      std::cout << l_a << " == " << l_a.to_double() << std::endl;
+      std::cout << l_b << " == " << l_b.to_double() << std::endl;
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {
