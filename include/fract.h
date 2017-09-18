@@ -195,12 +195,21 @@ namespace quicky_utils
 					    std::nullptr_t
 					    );
   private:
+#ifdef FRACT_DOUBLE_CHECK
+    inline static bool double_equal(const double & p_op1,
+				    const double & p_op2
+				    );
+    double m_double;
+#endif // FRACT_DOUBLE_CHECK
     t_coef_num m_num;
     t_coef_den m_den;
   };
 
   //----------------------------------------------------------------------------
   constexpr fract::fract(void) noexcept:
+#ifdef FRACT_DOUBLE_CHECK
+    m_double(0.0),
+#endif // FRACT_DOUBLE_CHECK
     m_num(0),
     m_den(1)
   {
@@ -208,6 +217,9 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   constexpr fract::fract(const t_coef_num & p_num):
+#ifdef FRACT_DOUBLE_CHECK
+    m_double(p_num),
+#endif // FRACT_DOUBLE_CHECK
     m_num(p_num),
     m_den(1)
   {
@@ -217,17 +229,18 @@ namespace quicky_utils
   fract::fract(const t_coef_num & p_num,
 	       const t_coef_num & p_den
 	       )
+#ifdef FRACT_DOUBLE_CHECK
+    :m_double(((double)p_num)/((double)p_den))
+#endif // FRACT_DOUBLE_CHECK
   {
-    {
-      assert(p_den);
-      t_coef_den l_pgcd = PGCD(p_num,p_den);
-      m_num = abs(p_num) / ((t_coef_num)l_pgcd);
-      if(p_num * p_den < 0)
-	{
-	  m_num = -m_num;
-	}
-      m_den = (t_coef_den)(abs(p_den)) / l_pgcd;
-    }
+    assert(p_den);
+    t_coef_den l_pgcd = PGCD(p_num,p_den);
+    m_num = abs(p_num) / ((t_coef_num)l_pgcd);
+    if(p_num * p_den < 0)
+      {
+	m_num = -m_num;
+      }
+    m_den = (t_coef_den)(abs(p_den)) / l_pgcd;
   }
 
   //----------------------------------------------------------------------------
@@ -235,6 +248,9 @@ namespace quicky_utils
 			 const t_coef_num & p_den,
 			 std::nullptr_t
 			 ):
+#ifdef FRACT_DOUBLE_CHECK
+    m_double(((double)p_num)/((double)p_den)),
+#endif // FRACT_DOUBLE_CHECK
     m_num((abs(p_num) / ((t_coef_num)PGCD(p_num,p_den,nullptr))) * ((p_num * p_den < 0) ? -1 : 1)),
     m_den((t_coef_den)(abs(p_den)) / PGCD(p_num,p_den,nullptr))
   {
@@ -245,6 +261,9 @@ namespace quicky_utils
   constexpr fract::fract(const t_coef_den & p_den,
 			 std::nullptr_t
 			 ):
+#ifdef FRACT_DOUBLE_CHECK
+    m_double(((double)1)/((double)p_den)),
+#endif // FRACT_DOUBLE_CHECK
     m_num(1),
     m_den(p_den)
   {
@@ -258,7 +277,11 @@ namespace quicky_utils
 			 p_op.m_den
 			 );
     t_coef_num l_num = (t_coef_num)(l_ppcm / this->m_den) * this->m_num + (t_coef_num)(l_ppcm / p_op.m_den) * p_op.m_num;
-    return fract(l_num, l_ppcm);
+    fract l_result = fract(l_num, l_ppcm);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(l_result.to_double(), (this->to_double() + p_op.to_double())));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
@@ -269,39 +292,65 @@ namespace quicky_utils
 			 p_op.m_den
 			 );
     t_coef_num l_num = (t_coef_num)(l_ppcm / this->m_den) * this->m_num - (t_coef_num)(l_ppcm / p_op.m_den) * p_op.m_num;
-    return fract(l_num, l_ppcm);
+    fract l_result = fract(l_num, l_ppcm);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(l_result.to_double(), (this->to_double() - p_op.to_double())));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
   fract fract::operator*(const fract & p_op
 			 ) const 
   {
-    return fract(m_num * p_op.m_num,m_den * p_op.m_den);
+    fract l_result = fract(m_num * p_op.m_num,m_den * p_op.m_den);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(l_result.to_double(), (this->to_double() * p_op.to_double())));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
   fract fract::operator/(const fract & p_op
 			 )const
   {
-    return fract(m_num * (t_coef_num)p_op.m_den,((t_coef_num)(m_den)) * p_op.m_num);
+    fract l_result = fract(m_num * (t_coef_num)p_op.m_den,((t_coef_num)(m_den)) * p_op.m_num);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(l_result.to_double(), (this->to_double() / p_op.to_double())));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
   bool fract::operator==(const fract & p_op)const
   {
-    return m_num == p_op.m_num && m_den == p_op.m_den;
+    bool l_result = m_num == p_op.m_num && m_den == p_op.m_den;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(l_result == double_equal(this->to_double(), p_op.to_double()));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
   bool fract::operator!=(const fract & p_op)const
   {
-    return m_num != p_op.m_num || m_den != p_op.m_den;
+    bool l_result = m_num != p_op.m_num || m_den != p_op.m_den;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(l_result != double_equal(this->to_double(), p_op.to_double()));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
   fract & fract::operator++(void)
   {
+#ifdef FRACT_DOUBLE_CHECK
+    double l_before = this->to_double();
+#endif // FRACT_DOUBLE_CHECK
     *this = *this + fract(1);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(this->to_double(), (l_before + 1)));
+#endif // FRACT_DOUBLE_CHECK
     return *this;
   }
 
@@ -310,13 +359,22 @@ namespace quicky_utils
   {
     fract tmp(*this); 
     *this = *this + fract(1);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(this->to_double(), (tmp.to_double() + 1)));
+#endif // FRACT_DOUBLE_CHECK
     return tmp;
   }
 
   //----------------------------------------------------------------------------
   fract & fract::operator--(void)
   {
+#ifdef FRACT_DOUBLE_CHECK
+    double l_before = this->to_double();
+#endif // FRACT_DOUBLE_CHECK
     *this = *this - fract(1);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(this->to_double(), (l_before - 1)));
+#endif // FRACT_DOUBLE_CHECK
     return *this;
   }
 
@@ -325,13 +383,23 @@ namespace quicky_utils
   {
     fract tmp(*this); 
     *this = *this - fract(1);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(this->to_double(), (tmp.to_double() - 1)));
+#endif // FRACT_DOUBLE_CHECK
     return tmp;
   }
 
   //----------------------------------------------------------------------------
   fract fract::operator-(void)const
   {
-    return fract(-m_num, m_den);
+#ifdef FRACT_DOUBLE_CHECK
+    double l_before = this->to_double();
+#endif // FRACT_DOUBLE_CHECK
+    fract l_result = fract(-m_num, m_den);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(this->to_double(), -l_before));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
@@ -349,28 +417,52 @@ namespace quicky_utils
   //----------------------------------------------------------------------------
   fract & fract::operator+=(const fract & p_op1)
   {
+#ifdef FRACT_DOUBLE_CHECK
+    double l_before = this->to_double();
+#endif // FRACT_DOUBLE_CHECK
     *this = *this + p_op1;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(this->to_double(), (l_before + p_op1.to_double())));
+#endif // FRACT_DOUBLE_CHECK
     return * this;
   }
 
   //----------------------------------------------------------------------------
   fract & fract::operator-=(const fract & p_op1)
   {
+#ifdef FRACT_DOUBLE_CHECK
+    double l_before = this->to_double();
+#endif // FRACT_DOUBLE_CHECK
     *this = *this - p_op1;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(this->to_double(), (l_before - p_op1.to_double())));
+#endif // FRACT_DOUBLE_CHECK
     return * this;
   }
 
   //----------------------------------------------------------------------------
   fract & fract::operator*=(const fract & p_op1)
   {
+#ifdef FRACT_DOUBLE_CHECK
+    double l_before = this->to_double();
+#endif // FRACT_DOUBLE_CHECK
     *this = *this * p_op1;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(this->to_double(), (l_before * p_op1.to_double())));
+#endif // FRACT_DOUBLE_CHECK
     return * this;
   }
 
   //----------------------------------------------------------------------------
   fract & fract::operator/=(const fract & p_op1)
   {
+#ifdef FRACT_DOUBLE_CHECK
+    double l_before = this->to_double();
+#endif // FRACT_DOUBLE_CHECK
     *this = *this / p_op1;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(double_equal(this->to_double(), (l_before / p_op1.to_double())));
+#endif // FRACT_DOUBLE_CHECK
     return * this;
   }
 
@@ -412,6 +504,9 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   fract::fract(const fract & p_op):
+#ifdef FRACT_DOUBLE_CHECK
+    m_double(p_op.m_double),
+#endif // FRACT_DOUBLE_CHECK
     m_num(p_op.m_num),
     m_den(p_op.m_den)
   {
@@ -425,6 +520,9 @@ namespace quicky_utils
       {
 	std::swap(m_num,p_other.m_num);
 	std::swap(m_den,p_other.m_den);
+#ifdef FRACT_DOUBLE_CHECK
+	std::swap(m_double,p_other.m_double);
+#endif // FRACT_DOUBLE_CHECK
       }
     return *this;
   }
@@ -434,6 +532,9 @@ namespace quicky_utils
   {
     this->m_num = p_other.m_num;
     this->m_den = p_other.m_den;
+#ifdef FRACT_DOUBLE_CHECK
+    this->m_double = p_other.m_double;
+#endif // FRACT_DOUBLE_CHECK
     return *this;
   }
 
@@ -511,7 +612,11 @@ namespace quicky_utils
 			 const fract & p_op2
 			 )
   {
-    return fract(p_op1) + p_op2;
+    fract l_result = fract(p_op1) + p_op2;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(fract::double_equal(l_result.to_double(), (((double)p_op1) + p_op2.to_double())));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
@@ -519,7 +624,11 @@ namespace quicky_utils
 			 const fract & p_op2
 			 )
   {
-    return fract(p_op1) - p_op2;
+    fract l_result = fract(p_op1) - p_op2;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(fract::double_equal(l_result.to_double(), (((double)p_op1) - p_op2.to_double())));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
@@ -527,7 +636,11 @@ namespace quicky_utils
 			 const fract & p_op2
 			 )
   {
-    return fract(p_op1) * p_op2;
+    fract l_result = fract(p_op1) * p_op2;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(fract::double_equal(l_result.to_double(), (((double)p_op1) * p_op2.to_double())));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
@@ -535,7 +648,11 @@ namespace quicky_utils
 			 const fract & p_op2
 			 )
   {
-    return fract(p_op1) / p_op2;
+    fract l_result = fract(p_op1) / p_op2;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(fract::double_equal(l_result.to_double(), (((double)p_op1) / p_op2.to_double())));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
@@ -543,7 +660,11 @@ namespace quicky_utils
 			 const fract & p_op2
 			 )
   {
-      return fract(p_op1) == p_op2;
+    bool l_result = fract(p_op1) == p_op2;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(l_result == fract::double_equal((double)p_op1,p_op2));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
@@ -551,7 +672,11 @@ namespace quicky_utils
 			 const int & p_op2
 			 )
   {
-    return p_op1 == fract(p_op2);
+    bool l_result = p_op1 == fract(p_op2);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(l_result == fract::double_equal(p_op1,(double)p_op2));
+#endif // FRACT_DOUBLE_CHECK
+    return l_result;
   }
 
   //----------------------------------------------------------------------------
@@ -560,6 +685,9 @@ namespace quicky_utils
 			 )
   {
     bool l_result = fract(p_op1) != p_op2;
+#ifdef FRACT_DOUBLE_CHECK
+    assert(l_result != fract::double_equal((double)p_op1,p_op2.to_double()));
+#endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
@@ -569,6 +697,9 @@ namespace quicky_utils
 			 )
   {
     bool l_result = p_op1 != fract(p_op2);
+#ifdef FRACT_DOUBLE_CHECK
+    assert(l_result != fract::double_equal(p_op1.to_double(),(double)p_op2));
+#endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
@@ -603,6 +734,17 @@ namespace quicky_utils
   {
     return p_op1 >= fract(p_op2);
   }
+
+#ifdef FRACT_DOUBLE_CHECK
+  bool fract::double_equal(const double & p_op1,
+			   const double & p_op2
+			   )
+  {
+    double l_epsilon = 0.000000000000001;
+    return fabs(fabs(p_op1) - fabs(p_op2)) < l_epsilon;
+  }
+#endif // FRACT_DOUBLE_CHECK
+
 }
 
 #include <limits>
