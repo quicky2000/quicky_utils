@@ -236,7 +236,9 @@ namespace quicky_utils
     assert(p_den);
     t_coef_den l_pgcd = PGCD(p_num,p_den);
     m_num = abs(p_num) / ((t_coef_num)l_pgcd);
-    if(p_num * p_den < 0)
+    if((p_num >0 && p_den < 0) ||
+       (p_num < 0 && p_den > 0)
+       )
       {
 	m_num = -m_num;
       }
@@ -251,7 +253,7 @@ namespace quicky_utils
 #ifdef FRACT_DOUBLE_CHECK
     m_double(((double)p_num)/((double)p_den)),
 #endif // FRACT_DOUBLE_CHECK
-    m_num((abs(p_num) / ((t_coef_num)PGCD(p_num,p_den,nullptr))) * ((p_num * p_den < 0) ? -1 : 1)),
+    m_num((abs(p_num) / ((t_coef_num)PGCD(p_num,p_den,nullptr))) * (((p_num > 0 && p_den < 0) || (p_num < 0 && p_den > 0))? -1 : 1)),
     m_den((t_coef_den)(abs(p_den)) / PGCD(p_num,p_den,nullptr))
   {
     //    static_assert(p_den);
