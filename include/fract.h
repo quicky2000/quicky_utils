@@ -48,6 +48,12 @@ namespace quicky_utils
     friend bool operator==(const fract & p_op1,
 			   const int & p_op2
 			   );
+    friend bool operator!=(const int & p_op1,
+			   const fract & p_op2
+			   );
+    friend bool operator!=(const fract & p_op1,
+			   const int & p_op2
+			   );
     friend bool operator<(const fract & p_op1,
 			  const int & p_op2
 			  );
@@ -546,6 +552,24 @@ namespace quicky_utils
 			 )
   {
     return p_op1 == fract(p_op2);
+  }
+
+  //----------------------------------------------------------------------------
+  inline bool operator!=(const int & p_op1,
+			 const fract & p_op2
+			 )
+  {
+    bool l_result = fract(p_op1) != p_op2;
+    return l_result;
+  }
+
+  //----------------------------------------------------------------------------
+  inline bool operator!=(const fract & p_op1,
+			 const int & p_op2
+			 )
+  {
+    bool l_result = p_op1 != fract(p_op2);
+    return l_result;
   }
 
   //----------------------------------------------------------------------------

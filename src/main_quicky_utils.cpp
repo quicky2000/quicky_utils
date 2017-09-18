@@ -686,6 +686,9 @@ int main(int argc,char ** argv)
       display_NB<quicky_utils::fract::PGCD(20,15,nullptr)>();
       display_NB<quicky_utils::fract::PPCM(20,15,nullptr)>();
 
+      std::cout << (1 != l_x) << std::endl;
+      std::cout << (l_x != 1) << std::endl;
+
       std::cout << "---------------------------------------" << std::endl;
       std::cout << "- to_float and to double" << std::endl;
       std::cout << "---------------------------------------" << std::endl;
