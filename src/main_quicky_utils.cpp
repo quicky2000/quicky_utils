@@ -772,7 +772,7 @@ template <typename SAFE_TYPE, typename REFERENCE_TYPE>
 void test_safe_type(void)
 {
     static_assert(std::is_signed<SAFE_TYPE>::value == std::is_signed<REFERENCE_TYPE>::value,"Check sign coherency between safe_type and reference type");
-    std::array<char,3> l_operators = {'+', '-', '*'};
+    std::array<char,4> l_operators = {'+', '-', '*', '/'};
     for(auto l_operator: l_operators)
     {
         std::cout << "Operator '" << l_operator << "'" << std::endl;
@@ -788,6 +788,7 @@ void test_safe_type(void)
                  ++l_y
                 )
             {
+                if('/' == l_operator && !l_y) break;
                 test_safe_operator<SAFE_TYPE, REFERENCE_TYPE >(l_x,
                                             l_y,
                                             l_operator
