@@ -19,6 +19,7 @@
 #include "quicky_bitfield.h"
 #include "fract.h"
 #include "safe_uint.h"
+#include "safe_int.h"
 #include <iostream>
 #include <functional>
 
@@ -709,6 +710,7 @@ int main(int argc,char ** argv)
     {
       test_fract();
       test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
+      test_safe_type<typename quicky_utils::safe_int<int8_t>, int32_t>();
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {
@@ -769,7 +771,7 @@ void test_safe_operator(const REFERENCE_TYPE l_op1,
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
 void test_safe_type(void)
 {
-    assert(std::is_signed<SAFE_TYPE>::value == std::is_signed<REFERENCE_TYPE>::value);
+    static_assert(std::is_signed<SAFE_TYPE>::value == std::is_signed<REFERENCE_TYPE>::value,"Check sign coherency between safe_type and reference type");
     std::array<char,3> l_operators = {'+', '-', '*'};
     for(auto l_operator: l_operators)
     {
