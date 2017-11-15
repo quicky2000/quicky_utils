@@ -711,6 +711,11 @@ int main(int argc,char ** argv)
       test_fract();
       test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
       test_safe_type<typename quicky_utils::safe_int<int8_t>, int32_t>();
+
+      quicky_utils::safe_int<int16_t> l_safe_int(-128);
+      std::cout << l_safe_int << std::endl;
+      quicky_utils::safe_uint<uint16_t> l_safe_uint(128);
+      std::cout << l_safe_uint << std::endl;
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {
