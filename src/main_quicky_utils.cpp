@@ -737,6 +737,7 @@ void test_safe_operator(const REFERENCE_TYPE l_op1,
                         char p_operator
                        )
 {
+#if __cplusplus==201402L
     auto l_lambda = [] (auto x, auto y, char op)
         {
             switch(op)
@@ -749,6 +750,10 @@ void test_safe_operator(const REFERENCE_TYPE l_op1,
                 default: throw quicky_exception::quicky_logic_exception("Unsupported operator '" + std::string(1,op) +"'",__LINE__,__FILE__);
             }
         };
+#else
+#define l_lambda(x,y,op) (op == '+' ? x + y :(op == '-' ? x - y :(op == '*' ? x * y : (op == '/' ? x / y : (op == '%' ? x % y : (decltype(x))0)))))
+#endif // __cplusplus
+
     typename SAFE_TYPE::base_type l_base_x = (typename SAFE_TYPE::base_type) l_op1;
     typename SAFE_TYPE::base_type l_base_y = (typename SAFE_TYPE::base_type) l_op2;
     SAFE_TYPE l_safe_x(l_base_x);

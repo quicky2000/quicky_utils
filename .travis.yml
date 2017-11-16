@@ -15,6 +15,7 @@ before_install:
   - export QUICKY_REPOSITORY
   - MY_LOCATION=`pwd`
   - cd $MY_LOCATION/repositories
+  - sed -e "s,c++14,c++11,g" -i quicky_utils/infra_infos.txt
   - git clone https://github.com/quicky2000/quicky_tools.git
   - git clone https://github.com/quicky2000/quicky_exception.git
   - cd quicky_tools/setup
