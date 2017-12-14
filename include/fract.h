@@ -25,51 +25,120 @@
 
 namespace quicky_utils
 {
+    template <typename T>
+    class fract;
+
+    template <typename T>
+    std::ostream & operator<<(std::ostream & p_stream,
+                              const fract<T> & p_fract
+                             );
+
+    template <typename T>
+    fract<T> operator+(const int & p_op1,
+			   const fract<T> & p_op2
+			   );
+
+    template <typename T>
+    fract<T> operator-(const int & p_op1,
+                       const fract<T> & p_op2
+                      );
+
+    template <typename T>
+    fract<T> operator*(const int & p_op1,
+			           const fract<T> & p_op2
+			          );
+
+    template <typename T>
+    fract<T> operator/(const int & p_op1,
+                       const fract<T> & p_op2
+                      );
+
+    template <typename T>
+    bool operator==(const int & p_op1,
+                    const fract<T> & p_op2
+                   );
+
+    template <typename T>
+    bool operator==(const fract<T> & p_op1,
+                    const int & p_op2
+                   );
+
+    template <typename T>
+    bool operator!=(const int & p_op1,
+                    const fract<T> & p_op2
+                   );
+
+    template <typename T>
+    bool operator!=(const fract<T> & p_op1,
+                    const int & p_op2
+                   );
+
+    template <typename T>
+    bool operator<(const fract<T> & p_op1,
+                   const int & p_op2
+                  );
+
+    template <typename T>
+    bool operator<=(const fract<T> & p_op1,
+                    const int & p_op2
+                   );
+
+    template <typename T>
+    bool operator>(const fract<T> & p_op1,
+                   const int & p_op2
+                  );
+
+    template <typename T>
+    bool operator>=(const fract<T> & p_op1,
+                    const int & p_op2
+                   );
+
+  template <typename T>
   class fract
   {
-    friend std::ostream & operator<<(std::ostream & p_stream,
-				     const fract & p_fract
+    friend std::ostream & operator<< <>(std::ostream & p_stream,
+				     const fract<T> & p_fract
 				     );
-    friend fract operator+(const int & p_op1,
-			   const fract & p_op2
+    friend fract<T> operator+<>(const int & p_op1,
+			   const fract<T> & p_op2
 			   );
-    friend fract operator-(const int & p_op1,
-			   const fract & p_op2
+    friend fract<T> operator-<>(const int & p_op1,
+			   const fract<T> & p_op2
 			   );
-    friend fract operator*(const int & p_op1,
-			   const fract & p_op2
+    friend fract<T> operator*<>(const int & p_op1,
+			   const fract<T> & p_op2
 			   );
-    friend fract operator/(const int & p_op1,
-			   const fract & p_op2
+    friend fract<T> operator/<>(const int & p_op1,
+			   const fract<T> & p_op2
 			   );
-    friend bool operator==(const int & p_op1,
-			   const fract & p_op2
+    friend bool operator==<>(const int & p_op1,
+			   const fract<T> & p_op2
 			   );
-    friend bool operator==(const fract & p_op1,
+    friend bool operator==<>(const fract<T> & p_op1,
 			   const int & p_op2
 			   );
-    friend bool operator!=(const int & p_op1,
-			   const fract & p_op2
+    friend bool operator!=<>(const int & p_op1,
+			   const fract<T> & p_op2
 			   );
-    friend bool operator!=(const fract & p_op1,
+    friend bool operator!=<>(const fract<T> & p_op1,
 			   const int & p_op2
 			   );
-    friend bool operator<(const fract & p_op1,
+    friend bool operator< <>(const fract<T> & p_op1,
 			  const int & p_op2
 			  );
-    friend bool operator<=(const fract & p_op1,
+    friend bool operator<= <>(const fract<T> & p_op1,
 			   const int & p_op2
 			   );
-    friend bool operator>(const fract & p_op1,
+    friend bool operator> <>(const fract<T> & p_op1,
 			  const int & p_op2
 			  );
-    friend bool operator>=(const fract & p_op1,
+    friend bool operator>= <>(const fract<T> & p_op1,
 			   const int & p_op2
 			   );
     public:
-    typedef uint32_t t_coef;
-    typedef std::make_signed<t_coef>::type t_coef_num;
-    typedef std::make_unsigned<t_coef>::type t_coef_den;
+    typedef T t_coef;
+    typedef typename std::make_signed<t_coef>::type t_coef_num;
+    typedef typename std::make_unsigned<t_coef>::type t_coef_den;
 
     inline constexpr fract(void) noexcept;
 
@@ -206,7 +275,8 @@ namespace quicky_utils
   };
 
   //----------------------------------------------------------------------------
-  constexpr fract::fract(void) noexcept:
+  template <typename T>
+  constexpr fract<T>::fract(void) noexcept:
 #ifdef FRACT_DOUBLE_CHECK
     m_double(0.0),
 #endif // FRACT_DOUBLE_CHECK
@@ -216,7 +286,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  constexpr fract::fract(const t_coef_num & p_num):
+  template <typename T>
+  constexpr fract<T>::fract(const t_coef_num & p_num):
 #ifdef FRACT_DOUBLE_CHECK
     m_double(p_num),
 #endif // FRACT_DOUBLE_CHECK
@@ -226,7 +297,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract::fract(const t_coef_num & p_num,
+  template <typename T>
+  fract<T>::fract(const t_coef_num & p_num,
 	       const t_coef_num & p_den
 	       )
 #ifdef FRACT_DOUBLE_CHECK
@@ -246,7 +318,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  constexpr fract::fract(const t_coef_num & p_num,
+  template <typename T>
+  constexpr fract<T>::fract(const t_coef_num & p_num,
 			 const t_coef_num & p_den,
 			 std::nullptr_t
 			 ):
@@ -260,7 +333,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  constexpr fract::fract(const t_coef_den & p_den,
+  template <typename T>
+  constexpr fract<T>::fract(const t_coef_den & p_den,
 			 std::nullptr_t
 			 ):
 #ifdef FRACT_DOUBLE_CHECK
@@ -272,7 +346,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract fract::operator+(const fract & p_op
+  template <typename T>
+  fract<T> fract<T>::operator+(const fract & p_op
 			 ) const
   {
     t_coef_den l_ppcm = PPCM(this->m_den,
@@ -287,7 +362,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract fract::operator-(const fract & p_op
+  template <typename T>
+  fract<T> fract<T>::operator-(const fract & p_op
 			 ) const
   {
     t_coef_den l_ppcm = PPCM(this->m_den,
@@ -302,7 +378,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract fract::operator*(const fract & p_op
+  template <typename T>
+  fract<T> fract<T>::operator*(const fract & p_op
 			 ) const 
   {
     fract l_result = fract(m_num * p_op.m_num,m_den * p_op.m_den);
@@ -313,7 +390,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract fract::operator/(const fract & p_op
+  template <typename T>
+  fract<T> fract<T>::operator/(const fract & p_op
 			 )const
   {
     fract l_result = fract(m_num * (t_coef_num)p_op.m_den,((t_coef_num)(m_den)) * p_op.m_num);
@@ -324,7 +402,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  bool fract::operator==(const fract & p_op)const
+  template <typename T>
+  bool fract<T>::operator==(const fract & p_op)const
   {
     bool l_result = m_num == p_op.m_num && m_den == p_op.m_den;
 #ifdef FRACT_DOUBLE_CHECK
@@ -334,7 +413,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  bool fract::operator!=(const fract & p_op)const
+  template <typename T>
+  bool fract<T>::operator!=(const fract & p_op)const
   {
     bool l_result = m_num != p_op.m_num || m_den != p_op.m_den;
 #ifdef FRACT_DOUBLE_CHECK
@@ -344,7 +424,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract & fract::operator++(void)
+  template <typename T>
+  fract<T> & fract<T>::operator++(void)
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -357,7 +438,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract fract::operator++(int)
+  template <typename T>
+  fract<T> fract<T>::operator++(int)
   {
     fract tmp(*this); 
     *this = *this + fract(1);
@@ -368,7 +450,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract & fract::operator--(void)
+  template <typename T>
+  fract<T> & fract<T>::operator--(void)
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -381,7 +464,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract fract::operator--(int)
+  template <typename T>
+  fract<T> fract<T>::operator--(int)
   {
     fract tmp(*this); 
     *this = *this - fract(1);
@@ -392,7 +476,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract fract::operator-(void)const
+  template <typename T>
+  fract<T> fract<T>::operator-(void)const
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -405,19 +490,22 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract fract::operator+(void)const
+  template <typename T>
+  fract<T> fract<T>::operator+(void)const
   {
     return fract(m_num, m_den);
   }
 
   //----------------------------------------------------------------------------
-  fract::operator bool(void)const
+  template <typename T>
+  fract<T>::operator bool(void)const
   {
     return m_num;
   }
 
   //----------------------------------------------------------------------------
-  fract & fract::operator+=(const fract & p_op1)
+  template <typename T>
+  fract<T> & fract<T>::operator+=(const fract & p_op1)
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -430,7 +518,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract & fract::operator-=(const fract & p_op1)
+  template <typename T>
+  fract<T> & fract<T>::operator-=(const fract & p_op1)
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -443,7 +532,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract & fract::operator*=(const fract & p_op1)
+  template <typename T>
+  fract<T> & fract<T>::operator*=(const fract & p_op1)
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -456,7 +546,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract & fract::operator/=(const fract & p_op1)
+  template <typename T>
+  fract<T> & fract<T>::operator/=(const fract & p_op1)
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -469,7 +560,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  bool fract::operator<(const fract & p_op)const
+  template <typename T>
+  bool fract<T>::operator<(const fract & p_op)const
   {
     t_coef_den l_ppcm = PPCM(this->m_den,
 			     p_op.m_den
@@ -478,7 +570,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  bool fract::operator<=(const fract & p_op)const
+  template <typename T>
+  bool fract<T>::operator<=(const fract & p_op)const
   {
     t_coef_den l_ppcm = PPCM(this->m_den,
 			     p_op.m_den
@@ -487,7 +580,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  bool fract::operator>(const fract & p_op)const
+  template <typename T>
+  bool fract<T>::operator>(const fract & p_op)const
   {
     t_coef_den l_ppcm = PPCM(this->m_den,
 			     p_op.m_den
@@ -496,7 +590,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  bool fract::operator>=(const fract & p_op)const
+  template <typename T>
+  bool fract<T>::operator>=(const fract & p_op)const
   {
     t_coef_den l_ppcm = PPCM(this->m_den,
 			     p_op.m_den
@@ -505,7 +600,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract::fract(const fract & p_op):
+  template <typename T>
+  fract<T>::fract(const fract & p_op):
 #ifdef FRACT_DOUBLE_CHECK
     m_double(p_op.m_double),
 #endif // FRACT_DOUBLE_CHECK
@@ -515,7 +611,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract& fract::operator=(fract&& p_other) noexcept
+  template <typename T>
+  fract<T>& fract<T>::operator=(fract&& p_other) noexcept
   {
 	// no-op on self-move-assignment
     if(this != &p_other)
@@ -530,7 +627,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract& fract::operator=(const fract& p_other)
+  template <typename T>
+  fract<T>& fract<T>::operator=(const fract& p_other)
   {
     this->m_num = p_other.m_num;
     this->m_den = p_other.m_den;
@@ -541,20 +639,23 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  float fract::to_float(void)const
+  template <typename T>
+  float fract<T>::to_float(void)const
   {
     return ((float)m_num)/((float)m_den);
 
   }
 
   //----------------------------------------------------------------------------
-  double fract::to_double(void)const
+  template <typename T>
+  double fract<T>::to_double(void)const
   {
     return ((double)m_num)/((double)m_den);
   }
 
   //----------------------------------------------------------------------------
-  fract::t_coef_den fract::PGCD(const t_coef_num & p_a,
+  template <typename T>
+  typename fract<T>::t_coef_den fract<T>::PGCD(const t_coef_num & p_a,
 				const t_coef_num & p_b
 				)
   {
@@ -571,7 +672,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  constexpr fract::t_coef_den fract::PGCD(const t_coef_num & p_a,
+  template <typename T>
+  constexpr typename fract<T>::t_coef_den fract<T>::PGCD(const t_coef_num & p_a,
 					  const t_coef_num & p_b,
 					  std::nullptr_t
 					  )
@@ -580,7 +682,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  fract::t_coef_den fract::PPCM(const t_coef_num & p_a,
+  template <typename T>
+  typename fract<T>::t_coef_den fract<T>::PPCM(const t_coef_num & p_a,
 				const t_coef_num & p_b
 				)
   {
@@ -588,7 +691,8 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  constexpr fract::t_coef_den fract::PPCM(const t_coef_num & p_a,
+  template <typename T>
+  constexpr typename fract<T>::t_coef_den fract<T>::PPCM(const t_coef_num & p_a,
 					  const t_coef_num & p_b,
 					  std::nullptr_t
 					  )
@@ -597,8 +701,9 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
+  template <typename T>
   inline std::ostream & operator<<(std::ostream & p_stream,
-				   const fract & p_fract
+				   const fract<T> & p_fract
 				   )
   {
     p_stream << p_fract.m_num;
@@ -610,135 +715,147 @@ namespace quicky_utils
   }
 
   //----------------------------------------------------------------------------
-  inline fract operator+(const int & p_op1,
-			 const fract & p_op2
+  template <typename T>
+  inline fract<T> operator+(const int & p_op1,
+			 const fract<T> & p_op2
 			 )
   {
-    fract l_result = fract(p_op1) + p_op2;
+    fract<T> l_result = fract<T>(p_op1) + p_op2;
 #ifdef FRACT_DOUBLE_CHECK
-    assert(fract::double_equal(l_result.to_double(), (((double)p_op1) + p_op2.to_double())));
+    assert(fract<T>::double_equal(l_result.to_double(), (((double)p_op1) + p_op2.to_double())));
 #endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
   //----------------------------------------------------------------------------
-  inline fract operator-(const int & p_op1,
-			 const fract & p_op2
+  template <typename T>
+  inline fract<T> operator-(const int & p_op1,
+			 const fract<T> & p_op2
 			 )
   {
-    fract l_result = fract(p_op1) - p_op2;
+    fract<T> l_result = fract<T>(p_op1) - p_op2;
 #ifdef FRACT_DOUBLE_CHECK
-    assert(fract::double_equal(l_result.to_double(), (((double)p_op1) - p_op2.to_double())));
+    assert(fract<T>::double_equal(l_result.to_double(), (((double)p_op1) - p_op2.to_double())));
 #endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
   //----------------------------------------------------------------------------
-  inline fract operator*(const int & p_op1,
-			 const fract & p_op2
+  template <typename T>
+  inline fract<T> operator*(const int & p_op1,
+			 const fract<T> & p_op2
 			 )
   {
-    fract l_result = fract(p_op1) * p_op2;
+    fract<T> l_result = fract<T>(p_op1) * p_op2;
 #ifdef FRACT_DOUBLE_CHECK
-    assert(fract::double_equal(l_result.to_double(), (((double)p_op1) * p_op2.to_double())));
+    assert(fract<T>::double_equal(l_result.to_double(), (((double)p_op1) * p_op2.to_double())));
 #endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
   //----------------------------------------------------------------------------
-  inline fract operator/(const int & p_op1,
-			 const fract & p_op2
+  template <typename T>
+  inline fract<T> operator/(const int & p_op1,
+			 const fract<T> & p_op2
 			 )
   {
-    fract l_result = fract(p_op1) / p_op2;
+    fract<T> l_result = fract<T>(p_op1) / p_op2;
 #ifdef FRACT_DOUBLE_CHECK
-    assert(fract::double_equal(l_result.to_double(), (((double)p_op1) / p_op2.to_double())));
+    assert(fract<T>::double_equal(l_result.to_double(), (((double)p_op1) / p_op2.to_double())));
 #endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
   //----------------------------------------------------------------------------
+  template <typename T>
   inline bool operator==(const int & p_op1,
-			 const fract & p_op2
+			 const fract<T> & p_op2
 			 )
   {
-    bool l_result = fract(p_op1) == p_op2;
+    bool l_result = fract<T>(p_op1) == p_op2;
 #ifdef FRACT_DOUBLE_CHECK
-    assert(l_result == fract::double_equal((double)p_op1,p_op2));
+    assert(l_result == fract<T>::double_equal((double)p_op1,p_op2));
 #endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
   //----------------------------------------------------------------------------
-  inline bool operator==(const fract & p_op1,
+  template <typename T>
+  inline bool operator==(const fract<T> & p_op1,
 			 const int & p_op2
 			 )
   {
-    bool l_result = p_op1 == fract(p_op2);
+    bool l_result = p_op1 == fract<T>(p_op2);
 #ifdef FRACT_DOUBLE_CHECK
-    assert(l_result == fract::double_equal(p_op1,(double)p_op2));
+    assert(l_result == fract<T>::double_equal(p_op1,(double)p_op2));
 #endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
   //----------------------------------------------------------------------------
+  template <typename T>
   inline bool operator!=(const int & p_op1,
-			 const fract & p_op2
+			 const fract<T> & p_op2
 			 )
   {
-    bool l_result = fract(p_op1) != p_op2;
+    bool l_result = fract<T>(p_op1) != p_op2;
 #ifdef FRACT_DOUBLE_CHECK
-    assert(l_result != fract::double_equal((double)p_op1,p_op2.to_double()));
+    assert(l_result != fract<T>::double_equal((double)p_op1,p_op2.to_double()));
 #endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
   //----------------------------------------------------------------------------
-  inline bool operator!=(const fract & p_op1,
+  template <typename T>
+  inline bool operator!=(const fract<T> & p_op1,
 			 const int & p_op2
 			 )
   {
-    bool l_result = p_op1 != fract(p_op2);
+    bool l_result = p_op1 != fract<T>(p_op2);
 #ifdef FRACT_DOUBLE_CHECK
-    assert(l_result != fract::double_equal(p_op1.to_double(),(double)p_op2));
+    assert(l_result != fract<T>::double_equal(p_op1.to_double(),(double)p_op2));
 #endif // FRACT_DOUBLE_CHECK
     return l_result;
   }
 
   //----------------------------------------------------------------------------
-  inline bool operator<(const fract & p_op1,
+  template <typename T>
+  inline bool operator<(const fract<T> & p_op1,
 			const int & p_op2
 			)
   {
-    return p_op1 < fract(p_op2);
+    return p_op1 < fract<T>(p_op2);
   }
 
   //----------------------------------------------------------------------------
-  inline bool operator<=(const fract & p_op1,
+  template <typename T>
+  inline bool operator<=(const fract<T> & p_op1,
 			const int & p_op2
 			)
   {
-    return p_op1 <= fract(p_op2);
+    return p_op1 <= fract<T>(p_op2);
   }
 
   //----------------------------------------------------------------------------
-  inline bool operator>(const fract & p_op1,
+  template <typename T>
+  inline bool operator>(const fract<T> & p_op1,
 			const int & p_op2
 			)
   {
-    return p_op1 > fract(p_op2);
+    return p_op1 > fract<T>(p_op2);
   }
 
   //----------------------------------------------------------------------------
-  inline bool operator>=(const fract & p_op1,
+  template <typename T>
+  inline bool operator>=(const fract<T> & p_op1,
 			const int & p_op2
 			)
   {
-    return p_op1 >= fract(p_op2);
+    return p_op1 >= fract<T>(p_op2);
   }
 
 #ifdef FRACT_DOUBLE_CHECK
-  bool fract::double_equal(const double & p_op1,
+  bool fract<T>::double_equal(const double & p_op1,
 			   const double & p_op2
 			   )
   {
@@ -754,45 +871,47 @@ namespace quicky_utils
 namespace std
 {
   template<>
-    class is_signed<quicky_utils::fract>
+  template <typename T>
+    class is_signed<quicky_utils::fract<T>>
     {
     public:
       static const bool value = true;
     };
 
   template<>
-    class numeric_limits<quicky_utils::fract>
+  template <typename T>
+    class numeric_limits<quicky_utils::fract<T>>
     {
     public:
       static constexpr bool is_specialized = true;
-      static constexpr quicky_utils::fract min() noexcept
+      static constexpr quicky_utils::fract<T> min() noexcept
 	{
-	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_num>::min());
+	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::min());
 	}
-      static constexpr quicky_utils::fract max() noexcept
+      static constexpr quicky_utils::fract<T> max() noexcept
 	{
-	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_num>::max());
+	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::max());
 	}
-      static constexpr quicky_utils::fract lowest() noexcept
+      static constexpr quicky_utils::fract<T> lowest() noexcept
 	{
-	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_num>::lowest());
+	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::lowest());
 	}
-      static constexpr int digits = std::numeric_limits<quicky_utils::fract::t_coef_num>::digits;
-      static constexpr int digits10 = std::numeric_limits<quicky_utils::fract::t_coef_num>::digits10;
-      static constexpr int max_digits10 = std::numeric_limits<quicky_utils::fract::t_coef_num>::max_digits10;
+      static constexpr int digits = std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::digits;
+      static constexpr int digits10 = std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::digits10;
+      static constexpr int max_digits10 = std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::max_digits10;
       static constexpr bool is_signed = true;
       static constexpr bool is_integer = false;
       static constexpr bool is_exact = true;
       static constexpr int radix = 2;
-      static constexpr quicky_utils::fract epsilon() noexcept
+      static constexpr quicky_utils::fract<T> epsilon() noexcept
 	{
-	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_den>::max(),
+	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_den>::max(),
 				     nullptr
 				     );
 	}
-      static constexpr quicky_utils::fract round_error() noexcept
+      static constexpr quicky_utils::fract<T> round_error() noexcept
 	{
-	  return quicky_utils::fract(std::numeric_limits<quicky_utils::fract::t_coef_den>::max(),
+	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_den>::max(),
 				     nullptr
 				     );
 	}
