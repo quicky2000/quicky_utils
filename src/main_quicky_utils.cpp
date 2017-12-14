@@ -714,6 +714,9 @@ int main(int argc,char ** argv)
 
       quicky_utils::safe_int<int16_t> l_safe_int(-128);
       std::cout << l_safe_int << std::endl;
+      l_safe_int = abs(l_safe_int);
+      l_safe_int = std::abs(l_safe_int);
+      std::cout << l_safe_int << std::endl;
       quicky_utils::safe_uint<uint16_t> l_safe_uint(128);
       std::cout << l_safe_uint << std::endl;
     }
