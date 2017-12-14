@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(quicky_utils)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 # List source files of project
 set(MY_SOURCE_FILES
@@ -11,6 +11,8 @@ set(MY_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/quicky_C_io.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/quicky_files.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/quicky_utils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_uint.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_uint_exception.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/signal_handler.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/signal_handler_listener_if.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/signal_handler.cpp)

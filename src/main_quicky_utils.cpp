@@ -18,7 +18,9 @@
 #include "quicky_exception.h"
 #include "quicky_bitfield.h"
 #include "fract.h"
+#include "safe_uint.h"
 #include <iostream>
+#include <functional>
 
 template<unsigned int NB>
 void display_NB(void)
@@ -697,13 +699,15 @@ void test_fract(void)
     std::cout << l_b << " == " << l_b.to_double() << std::endl;
 }
 
+void test_safe_uint(void);
 
 //------------------------------------------------------------------------------
 int main(int argc,char ** argv)
 {
   try
     {
-        test_fract();
+      test_fract();
+      test_safe_uint();
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {
@@ -718,5 +722,68 @@ int main(int argc,char ** argv)
   return 0;
   
 }
+
+void test_safe_add(const uint32_t l_op1,
+                   const uint32_t l_op2,
+                   char p_operator
+                  )
+{
+    auto l_lambda = [] (auto x, auto y, char op)
+        {
+            switch(op)
+            {
+                case '+':return x + y;
+                case '-':return x - y;
+                case '/':return x / y;
+                case '*':return x * y;
+                default: throw quicky_exception::quicky_logic_exception("Unsupported operator '" + std::string(1,op) +"'",__LINE__,__FILE__);
+            }
+        };
+    uint8_t l_x8 = (uint8_t) l_op1;
+    uint8_t l_y8 = (uint8_t) l_op2;
+    quicky_utils::safe_uint<uint8_t> l_safe_x8(l_x8);
+    quicky_utils::safe_uint<uint8_t> l_safe_y8(l_y8);
+
+    uint32_t l_ref_result = l_lambda(l_x8, l_y8,p_operator);
+    uint8_t l_result = l_lambda(l_x8, l_y8, p_operator);
+    bool l_compute_ok = true;
+    try
+    {
+        quicky_utils::safe_uint<uint8_t> l_safe_result = l_lambda(l_safe_x8,l_safe_y8, p_operator);
+    }
+    catch(quicky_utils::safe_uint_exception & e)
+    {
+        l_compute_ok = false;
+    }
+    bool l_coherent_result = l_ref_result == (uint32_t)l_result;
+    assert(l_coherent_result == l_compute_ok);
+}
+
+void test_safe_uint(void)
+{
+    std::array<char,3> l_operators = {'+', '-', '*'};
+    for(auto l_operator: l_operators)
+    {
+        std::cout << "Operator '" << l_operator << "'" << std::endl;
+        for (uint32_t l_x = 0;
+             l_x < 256;
+             ++l_x
+                )
+        {
+            uint8_t l_x8 = (uint8_t) l_x;
+            for (uint32_t l_y = 0;
+                 l_y < 256;
+                 ++l_y
+                    )
+            {
+                test_safe_add(l_x,
+                              l_y,
+                              l_operator
+                             );
+            }
+        }
+    }
+}
+
 #endif // QUICKY_UTILS_SELF_TEST
 //EOF
