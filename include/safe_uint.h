@@ -28,6 +28,9 @@ namespace quicky_utils
     class safe_uint;
 
     template <typename T>
+    class safe_int;
+
+    template <typename T>
     std::ostream & operator<<(std::ostream & , const safe_uint<T> & );
     /**
      * Class redefining basic built-in int types but raising exception in case of overflow/underflow etc
@@ -219,6 +222,22 @@ namespace std
     {
       public:
         static const bool value = false;
+    };
+
+    template<>
+    template <typename T>
+    class make_signed<quicky_utils::safe_uint<T> >
+    {
+      public:
+        typedef quicky_utils::safe_int<typename std::make_signed<T>::type> type;
+    };
+
+    template<>
+    template <typename T>
+    class make_unsigned<quicky_utils::safe_uint<T> >
+    {
+      public:
+        typedef quicky_utils::safe_uint<typename std::make_unsigned<T>::type> type;
     };
 
     template<>

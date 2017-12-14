@@ -28,6 +28,9 @@ namespace  quicky_utils
     class safe_int;
 
     template <typename T>
+    class safe_uint;
+
+    template <typename T>
     std::ostream &
     operator<<(std::ostream & p_stream,
                const safe_int<T> & p_safe_int
@@ -337,6 +340,22 @@ namespace std
     {
       public:
         static const bool value = true;
+    };
+
+    template<>
+    template <typename T>
+    class make_signed<quicky_utils::safe_int<T> >
+    {
+      public:
+        typedef quicky_utils::safe_int<typename std::make_signed<T>::type> type;
+    };
+
+    template<>
+    template <typename T>
+    class make_unsigned<quicky_utils::safe_int<T> >
+    {
+      public:
+        typedef quicky_utils::safe_uint<typename std::make_unsigned<T>::type> type;
     };
 
     template <>
