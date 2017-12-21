@@ -241,17 +241,17 @@ namespace quicky_utils
 				  const t_coef_num & p_b
 				  );
 
-    /**
-       Return PPCM using PGCD/PPCM correspondancy
-       @param first number
-       @param second number
-       @return PPCM of first and second number
-    */
-    inline static t_coef_den PPCM(const t_coef_num & p_a,
-				  const t_coef_num & p_b
-				  );
+      /**
+         Return PPCM using PGCD/PPCM correspondancy
+         @param first number
+         @param second number
+         @return PPCM of first and second number
+      */
+      inline static t_coef_den PPCM(const t_coef_num & p_a,
+                                    const t_coef_num & p_b
+                                   );
 
-    /**
+      /**
        Return PPCM using PGCD/PPCM correspondancy
        @param first number
        @param second number
@@ -263,6 +263,7 @@ namespace quicky_utils
 					    const t_coef_num & p_b,
 					    std::nullptr_t
 					    );
+
   private:
 #ifdef FRACT_DOUBLE_CHECK
     inline static bool double_equal(const double & p_op1,
@@ -308,8 +309,9 @@ namespace quicky_utils
     assert(p_den);
     t_coef_den l_pgcd = PGCD(p_num,p_den);
     m_num = abs(p_num) / ((t_coef_num)l_pgcd);
-    if((p_num >0 && p_den < 0) ||
-       (p_num < 0 && p_den > 0)
+
+    if((p_num > (decltype(m_num))0 && p_den < (decltype(m_num))0) ||
+       (p_num < (decltype(m_num))0 && p_den > (decltype(m_num))0)
        )
       {
 	m_num = -m_num;
@@ -684,8 +686,8 @@ namespace quicky_utils
   //----------------------------------------------------------------------------
   template <typename T>
   typename fract<T>::t_coef_den fract<T>::PPCM(const t_coef_num & p_a,
-				const t_coef_num & p_b
-				)
+                                               const t_coef_num & p_b
+                                              )
   {
     return abs(p_a) * abs(p_b) / PGCD(abs(p_a),abs(p_b));
   }
@@ -693,9 +695,9 @@ namespace quicky_utils
   //----------------------------------------------------------------------------
   template <typename T>
   constexpr typename fract<T>::t_coef_den fract<T>::PPCM(const t_coef_num & p_a,
-					  const t_coef_num & p_b,
-					  std::nullptr_t
-					  )
+                                                         const t_coef_num & p_b,
+                                                         std::nullptr_t
+                                                        )
   {
     return abs(p_a) * abs(p_b) / PGCD(abs(p_a),abs(p_b),nullptr);
   }
@@ -707,7 +709,7 @@ namespace quicky_utils
 				   )
   {
     p_stream << p_fract.m_num;
-    if(p_fract.m_num && 1 != p_fract.m_den)
+    if(p_fract.m_num && ((decltype(p_fract.m_den))1) != p_fract.m_den)
       {
 	p_stream << "/" << p_fract.m_den;
       }
