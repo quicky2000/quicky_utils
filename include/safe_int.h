@@ -46,7 +46,14 @@ namespace  quicky_utils
     {
       public:
         safe_int(void);
-        safe_int(T p_value);
+        safe_int(const T & p_value);
+
+        safe_int(const safe_uint<typename std::make_unsigned<T>::type> & p_value);
+
+        explicit operator bool() const;
+
+        bool
+        operator!=(const safe_int & p_op) const;
 
         bool
         operator<(const safe_int & p_op) const;
@@ -75,6 +82,12 @@ namespace  quicky_utils
         safe_int
         operator%(const safe_int & p_op);
 
+        safe_int
+        operator-(void)const;
+
+        safe_int
+        operator+(void)const;
+
         const T & get_value(void)const;
 
         friend std::ostream &
@@ -89,19 +102,48 @@ namespace  quicky_utils
         T m_value;
     };
 
-//-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_int<T>::operator bool() const
+    {
+        return m_value;
+    }
+
+    //-----------------------------------------------------------------------------
     template <typename T>
     safe_int<T>::safe_int(void):
             m_value(0)
     {}
 
-//-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
     template <typename T>
-    safe_int<T>::safe_int(T m_value):
+    safe_int<T>::safe_int(const T & m_value):
             m_value(m_value)
     {}
 
-//-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_int<T>::safe_int(const safe_uint<typename std::make_unsigned<T>::type> & p_value)
+    {
+        if(p_value.get_value() > std::numeric_limits<T>::max())
+        {
+            throw safe_uint_exception("Unsigned to signed constructor overflow",
+                                      __LINE__,
+                                      __FILE__
+                                     );
+        }
+        m_value = (T)p_value.get_value();
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    bool
+    safe_int<T>::operator!=(const safe_int & p_op) const
+    {
+        return m_value != p_op.m_value;
+    }
+
+    //-----------------------------------------------------------------------------
     template <typename T>
     bool
     safe_int<T>::operator<(const safe_int & p_op) const
@@ -109,7 +151,7 @@ namespace  quicky_utils
         return m_value < p_op.m_value;
     }
 
-//-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
     template <typename T>
     bool
     safe_int<T>::operator>(const safe_int & p_op) const
@@ -117,7 +159,7 @@ namespace  quicky_utils
         return m_value > p_op.m_value;
     }
 
-//-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
     template <typename T>
     bool
     safe_int<T>::operator<=(const safe_int & p_op) const
@@ -125,7 +167,7 @@ namespace  quicky_utils
         return m_value <= p_op.m_value;
     }
 
-//-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
     template <typename T>
     bool
     safe_int<T>::operator>=(const safe_int & p_op) const
@@ -303,6 +345,29 @@ namespace  quicky_utils
 
     //-----------------------------------------------------------------------------
     template <typename T>
+    safe_int<T>
+    safe_int<T>::operator-(void)const
+    {
+        if (std::numeric_limits<T>::min() == m_value)
+        {
+            throw quicky_exception::quicky_logic_exception("safe_int unitary - overflow",
+                                                           __LINE__,
+                                                           __FILE__
+                                                          );
+        }
+        return safe_int<T>(-m_value);
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_int<T>
+    safe_int<T>::operator+(void)const
+    {
+
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
     const T &
     safe_int<T>::get_value(void) const
     {
@@ -325,11 +390,15 @@ namespace  quicky_utils
 namespace std
 {
     template <typename T>
-    quicky_utils::safe_int<T> abs(const quicky_utils::safe_int<T> & p_safe_int)
+    quicky_utils::safe_int<T>
+    abs(const quicky_utils::safe_int<T> & p_safe_int)
     {
-        if(std::numeric_limits<T>::min() == p_safe_int.get_value())
+        if (std::numeric_limits<T>::min() == p_safe_int.get_value())
         {
-            throw quicky_exception::quicky_logic_exception("safe_int abs overflow",__LINE__,__FILE__);
+            throw quicky_exception::quicky_logic_exception("safe_int abs overflow",
+                                                           __LINE__,
+                                                           __FILE__
+                                                          );
         }
         return quicky_utils::safe_int<T>(std::abs(p_safe_int.get_value()));
     }
@@ -342,7 +411,7 @@ namespace std
         static const bool value = true;
     };
 
-    template<>
+    template <>
     template <typename T>
     class make_signed<quicky_utils::safe_int<T> >
     {
@@ -350,7 +419,7 @@ namespace std
         typedef quicky_utils::safe_int<typename std::make_signed<T>::type> type;
     };
 
-    template<>
+    template <>
     template <typename T>
     class make_unsigned<quicky_utils::safe_int<T> >
     {
@@ -432,5 +501,11 @@ namespace std
         static constexpr bool tinyness_before = false;
         static constexpr float_round_style round_style = round_toward_zero;
     };
+}
+
+template <typename T>
+quicky_utils::safe_int<T> abs(const quicky_utils::safe_int<T> & p_safe_int)
+{
+    return std::abs(p_safe_int);
 }
 #endif //QUICKY_UTILS_SAFE_INT_H
