@@ -43,6 +43,13 @@ namespace quicky_utils
         safe_uint(void);
         safe_uint(T p_value);
 
+        safe_uint(const safe_int<typename std::make_signed<T>::type> & p_value);
+
+        explicit operator bool() const;
+
+        bool
+        operator!=(const safe_uint & p_op) const;
+
         bool
         operator<(const safe_uint & p_op) const;
 
@@ -70,6 +77,12 @@ namespace quicky_utils
         safe_uint
         operator%(const safe_uint & p_op);
 
+        safe_uint
+        operator-(void)const;
+
+        safe_uint
+        operator+(void)const;
+
         const T & get_value(void)const;
 
         friend std::ostream &
@@ -85,6 +98,13 @@ namespace quicky_utils
 
     //-----------------------------------------------------------------------------
     template <typename T>
+    safe_uint<T>::operator bool() const
+    {
+        return m_value;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
     safe_uint<T>::safe_uint(void):
             m_value(0)
     {}
@@ -94,6 +114,28 @@ namespace quicky_utils
     safe_uint<T>::safe_uint(T m_value):
             m_value(m_value)
     {}
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_uint<T>::safe_uint(const safe_int<typename std::make_signed<T>::type> & p_value):
+    m_value((T)p_value.get_value())
+    {
+        if(p_value.get_value() <0)
+        {
+            throw safe_uint_exception("Convert negative int to uint",
+                                      __LINE__,
+                                      __FILE__
+                                     );
+        }
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    bool
+    safe_uint<T>::operator!=(const safe_uint & p_op) const
+    {
+        return m_value != p_op.m_value;
+    }
 
     //-----------------------------------------------------------------------------
     template <typename T>
@@ -191,6 +233,24 @@ namespace quicky_utils
     {
         T l_result = m_value % p_op.m_value;
         return safe_uint(l_result);
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_uint<T>
+    safe_uint<T>::operator-(void)const
+    {
+        throw safe_uint_exception("Illegal safe_uint operator-",
+                                  __LINE__,
+                                  __FILE__
+                                 );
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_uint<T>
+    safe_uint<T>::operator+(void)const
+    {
     }
 
     //-----------------------------------------------------------------------------
