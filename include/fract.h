@@ -502,7 +502,7 @@ namespace quicky_utils
   template <typename T>
   fract<T>::operator bool(void)const
   {
-    return m_num;
+    return (bool)m_num;
   }
 
   //----------------------------------------------------------------------------
@@ -680,7 +680,7 @@ namespace quicky_utils
 					  std::nullptr_t
 					  )
   {
-    return ((p_a % p_b) ? PGCD(abs(p_b),abs(p_a) % abs(p_b),nullptr) : abs(p_b));
+    return ((p_a % p_b) ? PGCD(abs(p_b),abs(p_a) % abs(p_b),nullptr) : (fract<T>::t_coef_den)abs(p_b));
   }
 
   //----------------------------------------------------------------------------

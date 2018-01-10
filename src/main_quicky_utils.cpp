@@ -779,7 +779,7 @@ void test_fract(void)
     std::cout << l_y << std::endl;
     l_y = + quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,5);
     std::cout << l_y << std::endl;
-    l_y += 3;
+    l_y += (quicky_utils::fract<FRACT_INTERNAL_TYPE>)3;
     std::cout << l_y << std::endl;
 
     std::cout << l_x << " < " << 2 << " => " << (l_x < 2 ? "true" : "false") << std::endl;
