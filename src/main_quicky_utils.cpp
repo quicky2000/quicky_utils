@@ -23,10 +23,67 @@
 #include <iostream>
 #include <functional>
 
+void test_fract(void);
+
+template <typename SAFE_TYPE, typename REFERENCE_TYPE>
+void test_safe_type(void);
+
+template <typename SOURCE_TYPE, typename TARGET_TYPE>
+void test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
+                          bool p_exception_expected
+                         );
+
+//------------------------------------------------------------------------------
+int main(int argc,char ** argv)
+{
+  try
+    {
+      test_fract();
+      test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
+      test_safe_type<typename quicky_utils::safe_int<int8_t>, int32_t>();
+
+      quicky_utils::safe_int<int16_t> l_safe_int(-128);
+      std::cout << l_safe_int << std::endl;
+      l_safe_int = abs(l_safe_int);
+      l_safe_int = std::abs(l_safe_int);
+      std::cout << l_safe_int << std::endl;
+      quicky_utils::safe_uint<uint16_t> l_safe_uint(128);
+      std::cout << l_safe_uint << std::endl;
+      std::cout << abs(l_safe_int) << std::endl;
+      assert(l_safe_uint);
+      assert(l_safe_int);
+      quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract(1,12);
+      quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract2(1,4);
+      std::cout << (l_fract + l_fract2) << std::endl;
+
+      // Try to change a safe_int in a safe_uint
+      test_type_conversion<quicky_utils::safe_int<int8_t>,quicky_utils::safe_uint<uint8_t> >(-128, true);
+      test_type_conversion<quicky_utils::safe_int<int8_t>,quicky_utils::safe_uint<uint8_t> >(-1, true);
+      test_type_conversion<quicky_utils::safe_int<int8_t>,quicky_utils::safe_uint<uint8_t> >(0, false);
+
+      // Try to change a safe_uint in a safe_int
+      test_type_conversion<quicky_utils::safe_uint<uint8_t>,quicky_utils::safe_int<int8_t> >(0, false);
+      test_type_conversion<quicky_utils::safe_uint<uint8_t>,quicky_utils::safe_int<int8_t> >(127, false);
+      test_type_conversion<quicky_utils::safe_uint<uint8_t>,quicky_utils::safe_int<int8_t> >(128, true);
+    }
+  catch(quicky_exception::quicky_runtime_exception & e)
+    {
+      std::cout << "ERROR : " << e.what() << " " << e.get_file() << ":" << e.get_line() << std::endl ;
+      return(-1);
+    }
+  catch(quicky_exception::quicky_logic_exception & e)
+    {
+      std::cout << "ERROR : " << e.what() << e.get_file() << ":" << e.get_line() <<  std::endl ;
+      return(-1);
+    }
+  return 0;
+  
+}
+
 template<unsigned int NB>
 void display_NB(void)
 {
-  std::cout << NB << std::endl;
+    std::cout << NB << std::endl;
 }
 
 void test_fract(void)
@@ -698,61 +755,6 @@ void test_fract(void)
     std::cout << l_b << " == " << l_b.to_float() << std::endl;
     std::cout << l_a << " == " << l_a.to_double() << std::endl;
     std::cout << l_b << " == " << l_b.to_double() << std::endl;
-}
-
-template <typename SAFE_TYPE, typename REFERENCE_TYPE>
-void test_safe_type(void);
-
-template <typename SOURCE_TYPE, typename TARGET_TYPE>
-void test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
-                          bool p_exception_expected
-                         );
-
-//------------------------------------------------------------------------------
-int main(int argc,char ** argv)
-{
-  try
-    {
-      test_fract();
-      test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
-      test_safe_type<typename quicky_utils::safe_int<int8_t>, int32_t>();
-
-      quicky_utils::safe_int<int16_t> l_safe_int(-128);
-      std::cout << l_safe_int << std::endl;
-      l_safe_int = abs(l_safe_int);
-      l_safe_int = std::abs(l_safe_int);
-      std::cout << l_safe_int << std::endl;
-      quicky_utils::safe_uint<uint16_t> l_safe_uint(128);
-      std::cout << l_safe_uint << std::endl;
-      std::cout << abs(l_safe_int) << std::endl;
-      assert(l_safe_uint);
-      assert(l_safe_int);
-      quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract(1,12);
-      quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract2(1,4);
-      std::cout << (l_fract + l_fract2) << std::endl;
-
-      // Try to change a safe_int in a safe_uint
-      test_type_conversion<quicky_utils::safe_int<int8_t>,quicky_utils::safe_uint<uint8_t> >(-128, true);
-      test_type_conversion<quicky_utils::safe_int<int8_t>,quicky_utils::safe_uint<uint8_t> >(-1, true);
-      test_type_conversion<quicky_utils::safe_int<int8_t>,quicky_utils::safe_uint<uint8_t> >(0, false);
-
-      // Try to change a safe_uint in a safe_int
-      test_type_conversion<quicky_utils::safe_uint<uint8_t>,quicky_utils::safe_int<int8_t> >(0, false);
-      test_type_conversion<quicky_utils::safe_uint<uint8_t>,quicky_utils::safe_int<int8_t> >(127, false);
-      test_type_conversion<quicky_utils::safe_uint<uint8_t>,quicky_utils::safe_int<int8_t> >(128, true);
-    }
-  catch(quicky_exception::quicky_runtime_exception & e)
-    {
-      std::cout << "ERROR : " << e.what() << " " << e.get_file() << ":" << e.get_line() << std::endl ;
-      return(-1);
-    }
-  catch(quicky_exception::quicky_logic_exception & e)
-    {
-      std::cout << "ERROR : " << e.what() << e.get_file() << ":" << e.get_line() <<  std::endl ;
-      return(-1);
-    }
-  return 0;
-  
 }
 
 template <typename SOURCE_TYPE, typename TARGET_TYPE>
