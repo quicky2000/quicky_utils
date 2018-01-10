@@ -61,6 +61,24 @@ int main(int argc,char ** argv)
     return 0;
 }
 
+template <typename TYPE>
+void check_safe_equal(const TYPE & p_op1,
+                      const TYPE & p_op2,
+                      bool p_expected
+                     )
+{
+    assert((p_op1 == p_op2) == p_expected);
+}
+
+template <typename TYPE>
+void check_safe_not_equal(const TYPE & p_op1,
+                          const TYPE & p_op2,
+                          bool p_expected
+                         )
+{
+    assert((p_op1 != p_op2) == p_expected);
+}
+
 void test_safe_types(void)
 {
     test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
@@ -105,6 +123,11 @@ void test_safe_types(void)
     test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(128,
                                                                                             true
                                                                                            );
+    // Test equality operator
+    check_safe_equal<quicky_utils::safe_uint<uint8_t>>(1,1,true);
+    check_safe_equal<quicky_utils::safe_uint<uint8_t>>(1,2,false);
+    check_safe_not_equal<quicky_utils::safe_uint<uint8_t>>(1,1,false);
+    check_safe_not_equal<quicky_utils::safe_uint<uint8_t>>(1,2,true);
 }
 
 template<unsigned int NB>

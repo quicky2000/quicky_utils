@@ -53,6 +53,9 @@ namespace  quicky_utils
         explicit operator bool() const;
 
         bool
+        operator==(const safe_int & p_op) const;
+
+        bool
         operator!=(const safe_int & p_op) const;
 
         bool
@@ -133,6 +136,14 @@ namespace  quicky_utils
                                      );
         }
         m_value = (T)p_value.get_value();
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    bool
+    safe_int<T>::operator==(const safe_int & p_op) const
+    {
+        return m_value == p_op.m_value;
     }
 
     //-----------------------------------------------------------------------------
