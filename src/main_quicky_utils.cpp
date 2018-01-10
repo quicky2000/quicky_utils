@@ -30,6 +30,8 @@
 template <typename FRACT_INTERNAL_TYPE>
 void test_fract(void);
 
+void test_safe_types(void);
+
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
 void test_safe_type(void);
 
@@ -44,48 +46,7 @@ int main(int argc,char ** argv)
     try
     {
         test_fract<uint32_t>();
-        test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
-        test_safe_type<typename quicky_utils::safe_int<int8_t>, int32_t>();
-
-        quicky_utils::safe_int<int16_t> l_safe_int(-128);
-        std::cout << l_safe_int << std::endl;
-        l_safe_int = abs(l_safe_int);
-        l_safe_int = std::abs(l_safe_int);
-        std::cout << l_safe_int << std::endl;
-        quicky_utils::safe_uint<uint16_t> l_safe_uint(128);
-        std::cout << l_safe_uint << std::endl;
-        std::cout << abs(l_safe_int) << std::endl;
-        assert(l_safe_uint);
-        assert(l_safe_int);
-        quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract(1,
-                                                                       12
-                                                                      );
-        quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract2(1,
-                                                                        4
-                                                                       );
-        std::cout << (l_fract + l_fract2) << std::endl;
-
-        // Try to change a safe_int in a safe_uint
-        test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(-128,
-                                                                                                true
-                                                                                               );
-        test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(-1,
-                                                                                                true
-                                                                                               );
-        test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(0,
-                                                                                                false
-                                                                                               );
-
-        // Try to change a safe_uint in a safe_int
-        test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(0,
-                                                                                                false
-                                                                                               );
-        test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(127,
-                                                                                                false
-                                                                                               );
-        test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(128,
-                                                                                                true
-                                                                                               );
+        test_safe_types();
     }
     catch (quicky_exception::quicky_runtime_exception & e)
     {
@@ -98,6 +59,52 @@ int main(int argc,char ** argv)
         return (-1);
     }
     return 0;
+}
+
+void test_safe_types(void)
+{
+    test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
+    test_safe_type<typename quicky_utils::safe_int<int8_t>, int32_t>();
+
+    quicky_utils::safe_int<int16_t> l_safe_int(-128);
+    std::cout << l_safe_int << std::endl;
+    l_safe_int = abs(l_safe_int);
+    l_safe_int = std::abs(l_safe_int);
+    std::cout << l_safe_int << std::endl;
+    quicky_utils::safe_uint<uint16_t> l_safe_uint(128);
+    std::cout << l_safe_uint << std::endl;
+    std::cout << abs(l_safe_int) << std::endl;
+    assert(l_safe_uint);
+    assert(l_safe_int);
+    quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract(1,
+                                                                   12
+                                                                  );
+    quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract2(1,
+                                                                    4
+                                                                   );
+    std::cout << (l_fract + l_fract2) << std::endl;
+
+    // Try to change a safe_int in a safe_uint
+    test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(-128,
+                                                                                            true
+                                                                                           );
+    test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(-1,
+                                                                                            true
+                                                                                           );
+    test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(0,
+                                                                                            false
+                                                                                           );
+
+    // Try to change a safe_uint in a safe_int
+    test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(0,
+                                                                                            false
+                                                                                           );
+    test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(127,
+                                                                                            false
+                                                                                           );
+    test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(128,
+                                                                                            true
+                                                                                           );
 }
 
 template<unsigned int NB>
