@@ -46,6 +46,7 @@ int main(int argc,char ** argv)
     try
     {
         test_fract<uint32_t>();
+        test_fract<quicky_utils::safe_int<int32_t>>();
         test_safe_types();
     }
     catch (quicky_exception::quicky_runtime_exception & e)
