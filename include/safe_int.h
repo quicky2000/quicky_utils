@@ -56,6 +56,8 @@ namespace  quicky_utils
         safe_int(const safe_uint<typename std::make_unsigned<T>::type> & p_value);
 
         explicit operator bool() const;
+        explicit operator float() const;
+        explicit operator double() const;
 
         bool
         operator==(const safe_int & p_op) const;
@@ -115,6 +117,20 @@ namespace  quicky_utils
     safe_int<T>::operator bool() const
     {
         return m_value;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_int<T>::operator float() const
+    {
+        return (float)m_value;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_int<T>::operator double() const
+    {
+        return (double)m_value;
     }
 
     //-----------------------------------------------------------------------------
