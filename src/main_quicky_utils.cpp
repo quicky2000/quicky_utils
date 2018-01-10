@@ -17,9 +17,9 @@
 #ifdef QUICKY_UTILS_SELF_TEST
 #include "quicky_exception.h"
 #include "quicky_bitfield.h"
-#include "fract.h"
 #include "safe_uint.h"
 #include "safe_int.h"
+#include "fract.h"
 #include <iostream>
 #include <functional>
 
@@ -703,6 +703,11 @@ void test_fract(void)
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
 void test_safe_type(void);
 
+template <typename SOURCE_TYPE, typename TARGET_TYPE>
+void test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
+                          bool p_exception_expected
+                         );
+
 //------------------------------------------------------------------------------
 int main(int argc,char ** argv)
 {
@@ -719,6 +724,22 @@ int main(int argc,char ** argv)
       std::cout << l_safe_int << std::endl;
       quicky_utils::safe_uint<uint16_t> l_safe_uint(128);
       std::cout << l_safe_uint << std::endl;
+      std::cout << abs(l_safe_int) << std::endl;
+      assert(l_safe_uint);
+      assert(l_safe_int);
+      quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract(1,12);
+      quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract2(1,4);
+      std::cout << (l_fract + l_fract2) << std::endl;
+
+      // Try to change a safe_int in a safe_uint
+      test_type_conversion<quicky_utils::safe_int<int8_t>,quicky_utils::safe_uint<uint8_t> >(-128, true);
+      test_type_conversion<quicky_utils::safe_int<int8_t>,quicky_utils::safe_uint<uint8_t> >(-1, true);
+      test_type_conversion<quicky_utils::safe_int<int8_t>,quicky_utils::safe_uint<uint8_t> >(0, false);
+
+      // Try to change a safe_uint in a safe_int
+      test_type_conversion<quicky_utils::safe_uint<uint8_t>,quicky_utils::safe_int<int8_t> >(0, false);
+      test_type_conversion<quicky_utils::safe_uint<uint8_t>,quicky_utils::safe_int<int8_t> >(127, false);
+      test_type_conversion<quicky_utils::safe_uint<uint8_t>,quicky_utils::safe_int<int8_t> >(128, true);
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {
@@ -732,6 +753,24 @@ int main(int argc,char ** argv)
     }
   return 0;
   
+}
+
+template <typename SOURCE_TYPE, typename TARGET_TYPE>
+void test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
+                          bool p_exception_expected
+                         )
+{
+    SOURCE_TYPE l_source(p_value);
+    bool l_ok = !p_exception_expected;
+    try
+    {
+        TARGET_TYPE l_target(l_source);
+    }
+    catch(quicky_exception::quicky_logic_exception & e)
+    {
+        l_ok = p_exception_expected;
+    }
+    assert(l_ok);
 }
 
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
