@@ -301,7 +301,8 @@ namespace  quicky_utils
     safe_int<T>::operator*(const safe_int & p_op) const
     {
         T l_result = m_value * p_op.m_value;
-        if(m_value && p_op.m_value)
+        // Check if m_value != 1 because in case 2 min<int>() / -m_value lead to SIGFPE on Intel processors
+        if(m_value && m_value != 1 && p_op.m_value)
         {
             unsigned int l_pos1 = m_value >= 0;
             unsigned int l_pos2 = p_op.m_value >= 0;
@@ -323,7 +324,8 @@ namespace  quicky_utils
                         l_exception = (std::numeric_limits<T>::max() / -m_value) < -p_op.m_value;
                         break;
                     case 1:
-                        l_exception = (std::numeric_limits<T>::min() / m_value) < p_op.m_value;
+                        // Check if m_value != -1 because min<int>() / m_value lead to SIGFPE on Intel processors
+                        l_exception = m_value != -1 ? (std::numeric_limits<T>::min() / m_value) < p_op.m_value : false;
                         break;
                     case 2:
                         l_exception = (std::numeric_limits<T>::min() / -m_value) < -p_op.m_value;
