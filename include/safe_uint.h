@@ -32,6 +32,12 @@ namespace quicky_utils
 
     template <typename T>
     std::ostream & operator<<(std::ostream & , const safe_uint<T> & );
+
+    template <typename T>
+    bool operator==(const T & p_op1,
+                    const safe_uint<T> & p_safe_uint
+                   );
+
     /**
      * Class redefining basic built-in int types but raising exception in case of overflow/underflow etc
      * @tparam T build-in types made safe
@@ -66,19 +72,19 @@ namespace quicky_utils
         operator>=(const safe_uint & p_op) const;
 
         safe_uint
-        operator+(const safe_uint & p_op);
+        operator+(const safe_uint & p_op) const;
 
         safe_uint
-        operator-(const safe_uint & p_op);
+        operator-(const safe_uint & p_op) const;
 
         safe_uint
-        operator*(const safe_uint & p_op);
+        operator*(const safe_uint & p_op) const;
 
         safe_uint
-        operator/(const safe_uint & p_op);
+        operator/(const safe_uint & p_op) const;
 
         safe_uint
-        operator%(const safe_uint & p_op);
+        operator%(const safe_uint & p_op) const;
 
         safe_uint
         operator-(void)const;
@@ -183,7 +189,7 @@ namespace quicky_utils
     //-----------------------------------------------------------------------------
     template <typename T>
     safe_uint<T>
-    safe_uint<T>::operator+(const safe_uint & p_op)
+    safe_uint<T>::operator+(const safe_uint & p_op) const
     {
         T l_sum = m_value + p_op.m_value;
         if (l_sum < m_value || l_sum < p_op.m_value)
@@ -199,7 +205,7 @@ namespace quicky_utils
     //-----------------------------------------------------------------------------
     template <typename T>
     safe_uint<T>
-    safe_uint<T>::operator-(const safe_uint & p_op)
+    safe_uint<T>::operator-(const safe_uint & p_op) const
     {
         T l_result = m_value - p_op.m_value;
         if (l_result > m_value)
@@ -215,7 +221,7 @@ namespace quicky_utils
     //-----------------------------------------------------------------------------
     template <typename T>
     safe_uint<T>
-    safe_uint<T>::operator*(const safe_uint & p_op)
+    safe_uint<T>::operator*(const safe_uint & p_op) const
     {
         T l_result = m_value * p_op.m_value;
         if (m_value && (std::numeric_limits<T>::max() / m_value) < p_op.m_value)
@@ -231,7 +237,7 @@ namespace quicky_utils
     //-----------------------------------------------------------------------------
     template <typename T>
     safe_uint<T>
-    safe_uint<T>::operator/(const safe_uint & p_op)
+    safe_uint<T>::operator/(const safe_uint & p_op) const
     {
         T l_result = m_value / p_op.m_value;
         return safe_uint(l_result);
@@ -240,7 +246,7 @@ namespace quicky_utils
     //-----------------------------------------------------------------------------
     template <typename T>
     safe_uint<T>
-    safe_uint<T>::operator%(const safe_uint & p_op)
+    safe_uint<T>::operator%(const safe_uint & p_op) const
     {
         T l_result = m_value % p_op.m_value;
         return safe_uint(l_result);
@@ -283,6 +289,14 @@ namespace quicky_utils
         return p_stream;
     }
 
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    bool operator==(const T & p_op1,
+                    const safe_uint<T> & p_safe_uint
+                   )
+    {
+        return safe_uint<T>(p_op1) == p_safe_uint;
+    }
 }
 
 namespace std
