@@ -18,7 +18,7 @@
 #ifndef QUICKY_UTILS_SAFE_INT_H
 #define QUICKY_UTILS_SAFE_INT_H
 
-#include "safe_uint_exception.h"
+#include "safe_type_exception.h"
 #include <limits>
 #include <iostream>
 
@@ -151,7 +151,7 @@ namespace  quicky_utils
     {
         if(p_value.get_value() > std::numeric_limits<T>::max())
         {
-            throw safe_uint_exception("Unsigned to signed constructor overflow",
+            throw safe_type_exception("Unsigned to signed constructor overflow",
                                       __LINE__,
                                       __FILE__
                                      );
@@ -246,7 +246,7 @@ namespace  quicky_utils
             }
             if (l_exception)
             {
-                throw safe_uint_exception("Addition overflow",
+                throw safe_type_exception("Addition overflow",
                                           __LINE__,
                                           __FILE__
                                          );
@@ -287,7 +287,7 @@ namespace  quicky_utils
         }
         if (l_exception)
         {
-            throw safe_uint_exception("Substraction underflow",
+            throw safe_type_exception("Substraction underflow",
                                       __LINE__,
                                       __FILE__
                                      );
@@ -337,7 +337,7 @@ namespace  quicky_utils
             }
             if(l_exception)
             {
-                throw safe_uint_exception("Multiplication overflow",
+                throw safe_type_exception("Multiplication overflow",
                                           __LINE__,
                                           __FILE__
                                          );
@@ -359,7 +359,7 @@ namespace  quicky_utils
             bool l_pos_result = l_result >= 0;
             if (l_result && (l_pos1 ^ l_pos2) == l_pos_result)
             {
-                throw safe_uint_exception("Division overflow",
+                throw safe_type_exception("Division overflow",
                                           __LINE__,
                                           __FILE__
                                          );

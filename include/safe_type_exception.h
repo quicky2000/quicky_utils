@@ -22,17 +22,17 @@
 
 namespace quicky_utils
 {
-    class safe_uint_exception: public quicky_exception::quicky_logic_exception
+    class safe_type_exception: public quicky_exception::quicky_logic_exception
     {
       public:
-        inline safe_uint_exception (const std::string & p_msg,
+        inline safe_type_exception (const std::string & p_msg,
                                     const unsigned int & p_line,
                                     const std::string & p_file);
       private:
     };
 
     //-------------------------------------------------------------------------
-    safe_uint_exception::safe_uint_exception(const std::string & p_msg,
+    safe_type_exception::safe_type_exception(const std::string & p_msg,
                                              const unsigned int & p_line,
                                              const std::string & p_file
                                             ):

@@ -18,7 +18,7 @@
 #ifndef QUICKY_UTILS_SAFE_UINT_H
 #define QUICKY_UTILS_SAFE_UINT_H
 
-#include "safe_uint_exception.h"
+#include "safe_type_exception.h"
 #include <limits>
 #include <iostream>
 
@@ -147,7 +147,7 @@ namespace quicky_utils
     {
         if(p_value.get_value() <0)
         {
-            throw safe_uint_exception("Convert negative int to uint",
+            throw safe_type_exception("Convert negative int to uint",
                                       __LINE__,
                                       __FILE__
                                      );
@@ -210,7 +210,7 @@ namespace quicky_utils
         T l_sum = m_value + p_op.m_value;
         if (l_sum < m_value || l_sum < p_op.m_value)
         {
-            throw safe_uint_exception("Addition overflow",
+            throw safe_type_exception("Addition overflow",
                                       __LINE__,
                                       __FILE__
                                      );
@@ -226,7 +226,7 @@ namespace quicky_utils
         T l_result = m_value - p_op.m_value;
         if (l_result > m_value)
         {
-            throw safe_uint_exception("Substraction underflow",
+            throw safe_type_exception("Substraction underflow",
                                       __LINE__,
                                       __FILE__
                                      );
@@ -242,7 +242,7 @@ namespace quicky_utils
         T l_result = m_value * p_op.m_value;
         if (m_value && (std::numeric_limits<T>::max() / m_value) < p_op.m_value)
         {
-            throw safe_uint_exception("Multiplication overflow",
+            throw safe_type_exception("Multiplication overflow",
                                       __LINE__,
                                       __FILE__
                                      );
@@ -273,7 +273,7 @@ namespace quicky_utils
     safe_uint<T>
     safe_uint<T>::operator-(void)const
     {
-        throw safe_uint_exception("Illegal safe_uint operator-",
+        throw safe_type_exception("Illegal safe_uint operator-",
                                   __LINE__,
                                   __FILE__
                                  );

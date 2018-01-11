@@ -866,7 +866,7 @@ void test_safe_operator(const REFERENCE_TYPE l_op1,
     {
        l_safe_result = l_lambda(l_safe_x,l_safe_y, p_operator);
     }
-    catch(quicky_utils::safe_uint_exception & e)
+    catch(quicky_utils::safe_type_exception & e)
     {
         l_compute_ok = false;
     }

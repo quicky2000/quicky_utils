@@ -14,7 +14,7 @@ set(MY_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_uint.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_int.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_types.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_uint_exception.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_type_exception.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/signal_handler.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/signal_handler_listener_if.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/signal_handler.cpp)
