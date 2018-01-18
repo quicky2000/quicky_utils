@@ -137,9 +137,94 @@ void display_NB(void)
     std::cout << NB << std::endl;
 }
 
+//-----------------------------------------------------------------------------
+template <typename T1, typename T2>
+void check_comparison_operator(const T1 & p_fract,
+                               const T2 & p_op,
+                               const std::string & p_operator,
+                               bool p_expected_result
+                              )
+{
+#if __cplusplus==201402L
+    auto l_lambda = [] (auto x, auto y, std::string & p_operator)
+        {
+            if(p_operator == "==")
+            {
+                return x == y;
+            }
+            else if(p_operator == "!=")
+            {
+                return x != y;
+            }
+            else if(p_operator == "<")
+            {
+                return x < y;
+            }
+            else if(p_operator == "<=")
+            {
+                return x <= y;
+            }
+            else if(p_operator == ">")
+            {
+                return x > y;
+            }
+            else if(p_operator == ">=")
+            {
+                return x >= y;
+            }
+            else
+            {
+                throw quicky_exception::quicky_logic_exception("Unknown operator \"" + p_operator + "\"", __LINE__, __FILE__);
+            }
+        };
+#else
+#define l_lambda(x,y,op) (op == "==" ? x == y :(op == "<" ? x < y :(op == "<=" ? x <= y :(op == ">" ? x > y : (op == ">=" ? x >= y : (op == "!=" ? x != y : false))))))
+#endif // __cplusplus
+    bool l_result = l_lambda(p_fract, p_op, p_operator);
+    std::cout << p_fract << " " << p_operator << " " << p_op << " => " << (l_result ? "TRUE" : "FALSE") << std::endl;
+    assert(l_result == p_expected_result);
+#if __cplusplus!=201402L
+#undef l_lambda
+#endif // _cpluscplus
+}
+
+template <typename FRACT_INTERNAL_TYPE>
+void check_fract_comparison_operator(const quicky_utils::fract<FRACT_INTERNAL_TYPE> & p_fract,
+                                     typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num & p_op,
+                                     const std::string & p_operator,
+                                     bool p_expected_result
+                                    )
+{
+    check_comparison_operator<quicky_utils::fract<FRACT_INTERNAL_TYPE>,quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num>(p_fract, p_op, p_operator, p_expected_result);
+}
+
 template <typename FRACT_INTERNAL_TYPE>
 void test_fract(void)
 {
+    {
+        auto l_min = std::numeric_limits<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num>::min();
+        auto l_max = std::numeric_limits<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num>::max();
+        typename quicky_utils::fract<FRACT_INTERNAL_TYPE> l_fract(1,10);
+        typename quicky_utils::fract<FRACT_INTERNAL_TYPE> l_fract_min(l_min);
+        typename quicky_utils::fract<FRACT_INTERNAL_TYPE> l_fract_max(l_max);
+        typename quicky_utils::fract<FRACT_INTERNAL_TYPE> l_fract_low(l_min + 2, 2);
+        typename quicky_utils::fract<FRACT_INTERNAL_TYPE> l_fract_high(l_max, 2);
+
+        check_fract_comparison_operator<>(l_fract,l_min,"<",false);
+        check_comparison_operator<FRACT_INTERNAL_TYPE>(l_fract,l_min,"<=",false);
+        std::cout << l_fract << " < " << l_min << " ? " << ((l_fract < l_min) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " <= " << l_min << " ? " << ((l_fract <= l_min) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " > " << l_min << " ? " << ((l_fract > l_min) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " >= " << l_min << " ? " << ((l_fract >= l_min) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " == " << l_min << " ? " << ((l_fract == l_min) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " != " << l_min << " ? " << ((l_fract != l_min) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " < " << l_max << " ? " << ((l_fract < l_max) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " <= " << l_max << " ? " << ((l_fract <= l_max) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " > " << l_max << " ? " << ((l_fract > l_max) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " >= " << l_max << " ? " << ((l_fract >= l_max) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " == " << l_max << " ? " << ((l_fract == l_max) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << l_fract << " != " << l_max << " ? " << ((l_fract != l_max) ? "TRUE" : "FALSE") << std::endl;
+    }
     std::cout << "---------------------------------------" << std::endl;
     std::cout << "- PGCD" << std::endl;
     std::cout << "---------------------------------------" << std::endl;

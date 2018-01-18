@@ -566,10 +566,22 @@ namespace quicky_utils
   template <typename T>
   bool fract<T>::operator<(const fract & p_op)const
   {
-    t_coef_den l_ppcm = PPCM(this->m_den,
-			     p_op.m_den
-			     );
-    return ((t_coef_num)(l_ppcm / this->m_den) * this->m_num) < ((t_coef_num)(l_ppcm / p_op.m_den) * p_op.m_num);
+      if(p_op.m_den != 1 || (p_op.m_num != std::numeric_limits<t_coef_num>::min() && p_op.m_num != std::numeric_limits<t_coef_num>::max()))
+      {
+          t_coef_den l_ppcm = PPCM(this->m_den,
+                                   p_op.m_den
+                                  );
+          return ((t_coef_num) (l_ppcm / this->m_den) * this->m_num) <
+                 ((t_coef_num) (l_ppcm / p_op.m_den) * p_op.m_num);
+      }
+      else if(p_op.m_num == std::numeric_limits<t_coef_num>::min())
+      {
+          return false;
+      }
+      else
+      {
+          return m_num != std::numeric_limits<t_coef_num>::max() || m_den != 1;
+      }
   }
 
   //----------------------------------------------------------------------------
