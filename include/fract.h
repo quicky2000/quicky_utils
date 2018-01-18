@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <type_traits>
 #include <cassert>
+#include <limits>
 
 namespace quicky_utils
 {
