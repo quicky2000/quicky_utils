@@ -95,6 +95,18 @@ namespace quicky_utils
         safe_uint
         operator+(void)const;
 
+        safe_uint
+        operator+=(const safe_uint & p_op);
+
+        safe_uint
+        operator-=(const safe_uint & p_op);
+
+        safe_uint
+        operator*=(const safe_uint & p_op);
+
+        safe_uint
+        operator/=(const safe_uint & p_op);
+
         const T & get_value(void)const;
 
         friend std::ostream &
@@ -285,6 +297,42 @@ namespace quicky_utils
     safe_uint<T>
     safe_uint<T>::operator+(void)const
     {
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_uint<T>
+    safe_uint<T>::operator+=(const safe_uint & p_op)
+    {
+        *this = *this + p_op;
+        return *this;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_uint<T>
+    safe_uint<T>::operator-=(const safe_uint & p_op)
+    {
+        *this = *this - p_op;
+        return *this;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_uint<T>
+    safe_uint<T>::operator*=(const safe_uint & p_op)
+    {
+        *this = *this * p_op;
+        return *this;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    safe_uint<T>
+    safe_uint<T>::operator/=(const safe_uint & p_op)
+    {
+        *this = *this / p_op;
+        return *this;
     }
 
     //-----------------------------------------------------------------------------
