@@ -21,6 +21,7 @@
 #include "safe_type_exception.h"
 #include <limits>
 #include <iostream>
+#include <type_traits>
 
 namespace quicky_utils
 {
@@ -317,6 +318,30 @@ namespace quicky_utils
 
 namespace std
 {
+    template<>
+    template<typename T>
+    struct is_integral<quicky_utils::safe_uint<T>>
+    {
+      public:
+        static constexpr bool value = true;
+    };
+
+    template<>
+    template<typename T>
+    struct is_arithmetic<quicky_utils::safe_uint<T>>
+    {
+      public:
+        static constexpr bool value = true;
+    };
+
+    template<>
+    template<typename T>
+    struct is_scalar<quicky_utils::safe_uint<T>>
+    {
+      public:
+        static constexpr bool value = true;
+    };
+
     template<>
     template <typename T>
     class is_signed<quicky_utils::safe_uint<T> >
