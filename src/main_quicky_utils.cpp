@@ -23,6 +23,7 @@
 #include "fract.h"
 #include <iostream>
 #include <functional>
+#include <sstream>
 
 #define GCC_VERSION (__GNUC__ * 10000 \
                      + __GNUC_MINOR__ * 100 \
@@ -69,12 +70,41 @@ int main(int argc,char ** argv)
     return 0;
 }
 
+/**
+ * Method checking type string representation against expected
+ * @tparam T
+ */
+template <typename T>
+void check_a_type_string(const std::string & p_reference)
+{
+    std::stringstream l_result;
+    l_result <<  quicky_utils::type_string<T>::name();
+    std::cout << "Reference \"" + p_reference + "\"\t Result \"" << l_result.str() << "\"" << std::endl;
+    if(p_reference != l_result.str())
+    {
+        throw quicky_exception::quicky_logic_exception("type_string result don't match with refence", __LINE__, __FILE__);
+    }
+
+}
+#define check(type_name) check_a_type_string<type_name>(#type_name)
+
 //-----------------------------------------------------------------------------
 void test_type_string()
 {
-    std::cout << quicky_utils::type_string<uint32_t>::name() << std::endl;
-    std::cout << quicky_utils::type_string<uint8_t>::name() << std::endl;
-    std::cout << quicky_utils::type_string<char>::name() << std::endl;
+    check(uint8_t);
+    check(uint16_t);
+    check(uint32_t);
+    check(uint64_t);
+
+    check(int8_t);
+    check(int16_t);
+    check(int32_t);
+    check(int64_t);
+
+    check(char);
+    check(double);
+    check(float);
+    check(std::string);
 }
 
 //------------------------------------------------------------------------------
