@@ -18,8 +18,7 @@
 #include "type_string.h"
 #include "quicky_exception.h"
 #include "quicky_bitfield.h"
-#include "safe_uint.h"
-#include "safe_int.h"
+#include "safe_types.h"
 #include "fract.h"
 #include <iostream>
 #include <functional>
@@ -86,7 +85,9 @@ void check_a_type_string(const std::string & p_reference)
     }
 
 }
-#define check(type_name) check_a_type_string<type_name>(#type_name)
+#define check(type) check_a_type_string<type>(#type)
+#define check_name(type,type_name) check_a_type_string<type>(type_name)
+#define check_prefix(prefix,type) check_a_type_string<prefix::type>(#type)
 
 //-----------------------------------------------------------------------------
 void test_type_string()
@@ -105,6 +106,11 @@ void test_type_string()
     check(double);
     check(float);
     check(std::string);
+
+    check_prefix(quicky_utils,safe_uint32_t);
+    check_name(quicky_utils::safe_uint32_t,"safe_uint32_t");
+    check_prefix(quicky_utils,safe_uint64_t);
+    check_name(quicky_utils::safe_uint64_t,"safe_uint64_t");
 }
 
 //------------------------------------------------------------------------------

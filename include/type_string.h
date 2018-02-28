@@ -50,9 +50,9 @@ namespace quicky_utils
     template <typename T>
     const std::string type_string<T>::m_name = "Unknown type";
 
-#define specialise_type_string(type_name)                         \
+#define specialise_type_string(type,type_name)                    \
     template <>                                                   \
-    class type_string<type_name>                                  \
+    class type_string<type>                                       \
     {                                                             \
       public:                                                     \
         type_string() = delete;                                   \
@@ -64,27 +64,30 @@ namespace quicky_utils
         static const std::string m_name;                          \
     };                                                            \
                                                                   \
-    constexpr const std::string & type_string<type_name>::name()  \
+    constexpr const std::string & type_string<type>::name()       \
     {                                                             \
         return m_name;                                            \
     }                                                             \
                                                                   \
-    const std::string type_string<type_name>::m_name = #type_name;
+    const std::string type_string<type>::m_name = type_name;
 
-    specialise_type_string(uint8_t)
-    specialise_type_string(uint16_t)
-    specialise_type_string(uint32_t)
-    specialise_type_string(uint64_t)
+#define simple_type_string(type) specialise_type_string(type,#type)
+#define prefix_type_string(prefix,type) specialise_type_string(prefix::type,#type)
 
-    specialise_type_string(int8_t)
-    specialise_type_string(int16_t)
-    specialise_type_string(int32_t)
-    specialise_type_string(int64_t)
+    simple_type_string(uint8_t)
+    simple_type_string(uint16_t)
+    simple_type_string(uint32_t)
+    simple_type_string(uint64_t)
 
-    specialise_type_string(char)
-    specialise_type_string(float)
-    specialise_type_string(double)
-    specialise_type_string(std::string)
+    simple_type_string(int8_t)
+    simple_type_string(int16_t)
+    simple_type_string(int32_t)
+    simple_type_string(int64_t)
+
+    simple_type_string(char)
+    simple_type_string(float)
+    simple_type_string(double)
+    simple_type_string(std::string)
 
 }
 #endif //TYPE_STRING_H

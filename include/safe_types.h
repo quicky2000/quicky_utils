@@ -33,5 +33,8 @@ namespace quicky_utils
     typedef safe_int<int16_t> safe_int16_t;
     typedef safe_int<int32_t> safe_int32_t;
     typedef safe_int<int64_t> safe_int64_t;
+
+    specialise_type_string(quicky_utils::safe_uint32_t,"safe_uint32_t");
+    prefix_type_string(quicky_utils,safe_uint64_t);
 }
 #endif //QUICKY_UTILS_SAFE_TYPES_H
