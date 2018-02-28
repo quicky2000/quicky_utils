@@ -17,7 +17,9 @@ set(MY_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_type_exception.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/signal_handler.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/signal_handler_listener_if.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/signal_handler.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/signal_handler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/type_string.h
+    )
 
 # List header directories in project
 set(MY_INCLUDE_DIRECTORIES

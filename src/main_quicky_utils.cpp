@@ -15,6 +15,7 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 #ifdef QUICKY_UTILS_SELF_TEST
+#include "type_string.h"
 #include "quicky_exception.h"
 #include "quicky_bitfield.h"
 #include "safe_uint.h"
@@ -26,6 +27,11 @@
 #define GCC_VERSION (__GNUC__ * 10000 \
                      + __GNUC_MINOR__ * 100 \
                      + __GNUC_PATCHLEVEL__)
+
+/**
+ * Method regrouping tests of type_string class
+ */
+void test_type_string();
 
 template <typename FRACT_INTERNAL_TYPE>
 void test_fract(void);
@@ -45,6 +51,7 @@ int main(int argc,char ** argv)
 {
     try
     {
+        test_type_string();
         test_fract<uint32_t>();
         test_fract<quicky_utils::safe_int<int32_t>>();
         test_safe_types();
@@ -62,6 +69,15 @@ int main(int argc,char ** argv)
     return 0;
 }
 
+//-----------------------------------------------------------------------------
+void test_type_string()
+{
+    std::cout << quicky_utils::type_string<uint32_t>::name() << std::endl;
+    std::cout << quicky_utils::type_string<uint8_t>::name() << std::endl;
+    std::cout << quicky_utils::type_string<char>::name() << std::endl;
+}
+
+//------------------------------------------------------------------------------
 template <typename TYPE>
 void check_safe_equal(const TYPE & p_op1,
                       const TYPE & p_op2,
