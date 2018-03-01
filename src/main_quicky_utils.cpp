@@ -19,6 +19,7 @@
 #include "quicky_exception.h"
 #include "quicky_bitfield.h"
 #include "safe_types.h"
+#include "ext_uint.h"
 #include "fract.h"
 #include <iostream>
 #include <functional>
@@ -46,11 +47,17 @@ void test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
                           bool p_exception_expected
                          );
 
+/**
+ * Method regrouping tests of ext_uint class
+ */
+void test_ext_uint();
+
 //------------------------------------------------------------------------------
 int main(int argc,char ** argv)
 {
     try
     {
+        test_ext_uint();
         test_type_string();
         test_fract<uint32_t>();
         test_fract<quicky_utils::safe_int<int32_t>>();
@@ -119,6 +126,37 @@ void test_type_string()
     check_name(quicky_utils::safe_int16_t,"safe_int<int16_t>");
     check_name(quicky_utils::safe_int32_t,"safe_int<int32_t>");
     check_name(quicky_utils::safe_int64_t,"safe_int<int64_t>");
+}
+
+//------------------------------------------------------------------------------
+void
+test_ext_uint()
+{
+    quicky_utils::ext_uint<uint8_t> l_zero;
+    quicky_utils::ext_uint<uint8_t> l_zero_list_init({0});
+    quicky_utils::ext_uint<uint8_t> l_un({1});
+    quicky_utils::ext_uint<uint8_t> l_256({0,1});
+
+    std::cout << "Test conversion to integer type" << std::endl;
+
+    std::cout << "Test ext_uint output stream operator" << std::endl;
+    std::cout << l_zero << std::endl;
+    std::cout << l_un << std::endl;
+    std::cout << l_256 << std::endl;
+
+    assert(l_zero == l_zero);
+    assert(l_zero_list_init == l_zero_list_init);
+    assert(l_zero == l_zero_list_init);
+
+    assert(l_un == l_un);
+    assert(!(l_zero == l_un));
+    assert(!(l_zero_list_init == l_un));
+
+    assert(l_zero < l_un);
+    assert(!(l_zero < l_zero));
+    assert(!(l_un < l_zero));
+    assert(l_zero < l_256);
+    assert(!(l_256 < l_zero));
 }
 
 //------------------------------------------------------------------------------
