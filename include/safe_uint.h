@@ -364,28 +364,8 @@ namespace quicky_utils
         return safe_uint<T>(p_op1) == p_safe_uint;
     }
 
-    template <>
-    template <typename T>
-    class type_string<safe_uint<T>>
-    {
-      public:
-        type_string() = delete;
-        type_string(const type_string & ) = delete;
-        type_string(const type_string && ) = delete;
 
-        inline static constexpr const std::string & name();
-      private:
-        static const std::string m_name;
-    };
-
-    template <typename T>
-    constexpr const std::string & type_string<safe_uint<T>>::name()
-    {
-        return m_name;
-    }
-
-    template <typename T>
-    const std::string type_string<safe_uint<T>>::m_name = "safe_uint<" + type_string<T>::name() + ">";
+    template_specialise_type_string(typename T,safe_uint<T>,"safe_uint<" + type_string<T>::name() + ">");
 }
 
 namespace std

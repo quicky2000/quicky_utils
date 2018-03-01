@@ -50,6 +50,30 @@ namespace quicky_utils
     template <typename T>
     const std::string type_string<T>::m_name = "Unknown type";
 
+#define template_specialise_type_string(template_arg,type,type_name)      \
+    template <>                                                           \
+    template <template_arg>                                               \
+    class type_string<type>                                               \
+    {                                                                     \
+      public:                                                             \
+        type_string() = delete;                                           \
+        type_string(const type_string & ) = delete;                       \
+        type_string(const type_string && ) = delete;                      \
+                                                                          \
+        inline static constexpr const std::string & name();               \
+      private:                                                            \
+        static const std::string m_name;                                  \
+    };                                                                    \
+                                                                          \
+    template <template_arg>                                               \
+    constexpr const std::string & type_string<type>::name()               \
+    {                                                                     \
+       return m_name;                                                     \
+    }                                                                     \
+                                                                          \
+    template <template_arg>                                               \
+    const std::string type_string<type>::m_name = type_name
+
 #define specialise_type_string(type,type_name)                    \
     template <>                                                   \
     class type_string<type>                                       \
