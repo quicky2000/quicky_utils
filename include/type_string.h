@@ -69,25 +69,25 @@ namespace quicky_utils
         return m_name;                                            \
     }                                                             \
                                                                   \
-    const std::string type_string<type>::m_name = type_name;
+    const std::string type_string<type>::m_name = type_name
 
 #define simple_type_string(type) specialise_type_string(type,#type)
 #define prefix_type_string(prefix,type) specialise_type_string(prefix::type,#type)
 
-    simple_type_string(uint8_t)
-    simple_type_string(uint16_t)
-    simple_type_string(uint32_t)
-    simple_type_string(uint64_t)
+    simple_type_string(uint8_t);
+    simple_type_string(uint16_t);
+    simple_type_string(uint32_t);
+    simple_type_string(uint64_t);
 
-    simple_type_string(int8_t)
-    simple_type_string(int16_t)
-    simple_type_string(int32_t)
-    simple_type_string(int64_t)
+    simple_type_string(int8_t);
+    simple_type_string(int16_t);
+    simple_type_string(int32_t);
+    simple_type_string(int64_t);
 
-    simple_type_string(char)
-    simple_type_string(float)
-    simple_type_string(double)
-    simple_type_string(std::string)
+    simple_type_string(char);
+    simple_type_string(float);
+    simple_type_string(double);
+    simple_type_string(std::string);
 
 }
 #endif //TYPE_STRING_H
