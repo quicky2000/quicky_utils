@@ -36,5 +36,12 @@ namespace quicky_utils
 
     specialise_type_string(quicky_utils::safe_uint32_t,"safe_uint32_t");
     prefix_type_string(quicky_utils,safe_uint64_t);
+    prefix_type_string(quicky_utils,safe_uint8_t);
+    prefix_type_string(quicky_utils,safe_uint16_t);
+
+    prefix_type_string(quicky_utils,safe_int8_t);
+    prefix_type_string(quicky_utils,safe_int16_t);
+    prefix_type_string(quicky_utils,safe_int32_t);
+    prefix_type_string(quicky_utils,safe_int64_t);
 }
 #endif //QUICKY_UTILS_SAFE_TYPES_H
