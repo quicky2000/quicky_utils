@@ -107,10 +107,18 @@ void test_type_string()
     check(float);
     check(std::string);
 
-    check_prefix(quicky_utils,safe_uint32_t);
-    check_name(quicky_utils::safe_uint32_t,"safe_uint32_t");
-    check_prefix(quicky_utils,safe_uint64_t);
-    check_name(quicky_utils::safe_uint64_t,"safe_uint64_t");
+    check_name(quicky_utils::safe_uint32_t,"safe_uint<uint32_t>");
+    check_name(quicky_utils::safe_uint64_t,"safe_uint<uint64_t>");
+
+    check_prefix(quicky_utils,safe_uint<uint8_t>);
+    check_name(quicky_utils::safe_uint<uint8_t>,"safe_uint<uint8_t>");
+    check_prefix(quicky_utils,safe_uint<uint16_t>);
+    check_name(quicky_utils::safe_uint<uint16_t>,"safe_uint<uint16_t>");
+
+    check_name(quicky_utils::safe_int8_t,"safe_int<int8_t>");
+    check_name(quicky_utils::safe_int16_t,"safe_int<int16_t>");
+    check_name(quicky_utils::safe_int32_t,"safe_int<int32_t>");
+    check_name(quicky_utils::safe_int64_t,"safe_int<int64_t>");
 }
 
 //------------------------------------------------------------------------------

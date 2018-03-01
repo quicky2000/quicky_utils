@@ -19,6 +19,7 @@
 #define QUICKY_UTILS_SAFE_INT_H
 
 #include "safe_type_exception.h"
+#include "type_string.h"
 #include <limits>
 #include <iostream>
 #include <type_traits>
@@ -477,6 +478,28 @@ namespace  quicky_utils
         return safe_int<T>(p_op1) == p_safe_int;
     }
 
+    template <>
+    template <typename T>
+    class type_string<safe_int<T>>
+    {
+      public:
+        type_string() = delete;
+        type_string(const type_string & ) = delete;
+        type_string(const type_string && ) = delete;
+
+        inline static constexpr const std::string & name();
+      private:
+        static const std::string m_name;
+    };
+
+    template <typename T>
+    constexpr const std::string & type_string<safe_int<T>>::name()
+    {
+        return m_name;
+    }
+
+    template <typename T>
+    const std::string type_string<safe_int<T>>::m_name = "safe_int<" + type_string<T>::name() + ">";
 }
 
 namespace std
