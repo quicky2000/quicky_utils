@@ -71,13 +71,20 @@ namespace quicky_utils
          * Accessor returning number of words composing type
          * @return number of word composing type
          */
-        size_t get_nb_word()const;
+        size_t get_nb_words()const;
 
         /**
          * Accessor returning number of bytes composing type
          * @return number of bytes composing type
          */
         size_t get_nb_bytes() const;
+
+        /**
+         * Return word located at p_index
+         * @param p_index location of word to return
+         * @return word located at place defined by paramter
+         */
+        const T & get_word(const unsigned int & p_index) const;
 
         /**
          * Display content of infinite_uint in hexadecimal
@@ -176,7 +183,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     size_t
-    ext_uint<T>::get_nb_word() const
+    ext_uint<T>::get_nb_words() const
     {
         return m_ext.size();
     }
@@ -189,6 +196,14 @@ namespace quicky_utils
         return m_ext.size() * sizeof(T);
     }
 
+    //-------------------------------------------------------------------------
+    template <typename T>
+    const T &
+    ext_uint<T>::get_word(const unsigned int & p_index) const
+    {
+        assert(p_index < m_ext.size());
+        return m_ext[p_index];
+    }
 
     //-----------------------------------------------------------------------------
     template <typename T>
