@@ -128,6 +128,56 @@ void test_type_string()
     check_name(quicky_utils::safe_int64_t,"safe_int<int64_t>");
 }
 
+/**
+ * Methods converting infinite type to integer type if possible
+ * in contrary case an exception is raised
+ * @tparam EXT_INT_TYPE infinite type like infinite_uint
+ * @tparam INT_TYPE integer type like uint32_t
+ * @param p_ext_int_type extensible integer type variable to convert to integer type
+ * @return integer type representing extensible integer type if possible
+ */
+template <typename INT_TYPE,
+          typename EXT_INT_TYPE
+          >
+INT_TYPE convert(const EXT_INT_TYPE & p_ext_int_type)
+{
+    if(p_ext_int_type.get_nb_bytes() <= sizeof(INT_TYPE))
+    {
+        INT_TYPE l_result = 0;
+        for(unsigned int l_index = 0;
+            l_index < p_ext_int_type.get_nb_words();
+            ++l_index
+           )
+        {
+            l_result |= ((INT_TYPE) p_ext_int_type.get_word(l_index)) << (l_index * 8 * sizeof(typename EXT_INT_TYPE::base_type));
+        }
+        return l_result;
+    }
+    throw quicky_exception::quicky_logic_exception("Infinite type size is greater than integer type size", __LINE__, __FILE__);
+}
+
+/**
+ * Check if conversion from extensible integer type to integer type provide the expected result
+ * @tparam INT_TYPE integer type
+ * @tparam EXT_INT_TYPE extensible integer type
+ * @param p_ext_type extensible integer variable
+ * @param p_expected expected integer value
+ */
+template <typename INT_TYPE,
+          typename EXT_INT_TYPE
+         >
+void check_convert(const EXT_INT_TYPE & p_ext_type,
+                   const INT_TYPE & p_expected
+                  )
+{
+    INT_TYPE l_result = convert<INT_TYPE,EXT_INT_TYPE>(p_ext_type);
+    std::cout << "Reference " << p_expected << "\tResult " << l_result << std::endl;
+    if(p_expected != l_result)
+    {
+        throw quicky_exception::quicky_logic_exception("type_string to integer result don't match with refence", __LINE__, __FILE__);
+    }
+}
+
 //------------------------------------------------------------------------------
 void
 test_ext_uint()
@@ -137,12 +187,15 @@ test_ext_uint()
     quicky_utils::ext_uint<uint8_t> l_un({1});
     quicky_utils::ext_uint<uint8_t> l_256({0,1});
 
-    std::cout << "Test conversion to integer type" << std::endl;
-
     std::cout << "Test ext_uint output stream operator" << std::endl;
     std::cout << l_zero << std::endl;
     std::cout << l_un << std::endl;
     std::cout << l_256 << std::endl;
+
+    std::cout << "Test conversion to integer type" << std::endl;
+    check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_256, 256);
+    check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_zero, 0);
+    check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_un, 1);
 
     assert(l_zero == l_zero);
     assert(l_zero_list_init == l_zero_list_init);
