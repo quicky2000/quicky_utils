@@ -96,6 +96,13 @@ namespace quicky_utils
                    const ext_uint<T> & p_infinite_uint
                   );
 
+        /**
+         * Move assignment operator
+         * @param p_op value to move
+         * @return assigned object
+         */
+        ext_uint<T> & operator=(ext_uint<T> && p_op);
+
         bool
         operator==(const ext_uint & p_op) const;
 
@@ -228,6 +235,15 @@ namespace quicky_utils
 
         p_stream << std::setfill(l_fill) << std::setw(l_width) << std::setiosflags(l_flags);
         return p_stream;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T> &
+    ext_uint<T>::operator=(ext_uint<T> && p_op)
+    {
+        m_ext = std::move(p_op.m_ext);
+        return *this;
     }
 
     //-----------------------------------------------------------------------------
