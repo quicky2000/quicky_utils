@@ -128,6 +128,23 @@ void test_type_string()
     check_name(quicky_utils::safe_int64_t,"safe_int<int64_t>");
 }
 
+#if __cplusplus==201402L
+auto g_lambda = [] (auto x, auto y, char op)
+        {
+            switch(op)
+            {
+                case '+':return x + y;
+                case '-':return x - y;
+                case '/':return x / y;
+                case '*':return x * y;
+                case '%':return x % y;
+                default: throw quicky_exception::quicky_logic_exception("Unsupported operator '" + std::string(1,op) +"'",__LINE__,__FILE__);
+            }
+        };
+#else
+#define g_lambda(x,y,op) (op == '+' ? x + y :(op == '-' ? x - y :(op == '*' ? x * y : (op == '/' ? x / y : (op == '%' ? x % y : (decltype(x))0)))))
+#endif // __cplusplus
+
 /**
  * Methods converting infinite type to integer type if possible
  * in contrary case an exception is raised
@@ -987,35 +1004,18 @@ void test_safe_operator(const REFERENCE_TYPE l_op1,
                         char p_operator
                        )
 {
-#if __cplusplus==201402L
-    auto l_lambda = [] (auto x, auto y, char op)
-        {
-            switch(op)
-            {
-                case '+':return x + y;
-                case '-':return x - y;
-                case '/':return x / y;
-                case '*':return x * y;
-                case '%':return x % y;
-                default: throw quicky_exception::quicky_logic_exception("Unsupported operator '" + std::string(1,op) +"'",__LINE__,__FILE__);
-            }
-        };
-#else
-#define l_lambda(x,y,op) (op == '+' ? x + y :(op == '-' ? x - y :(op == '*' ? x * y : (op == '/' ? x / y : (op == '%' ? x % y : (decltype(x))0)))))
-#endif // __cplusplus
-
     typename SAFE_TYPE::base_type l_base_x = (typename SAFE_TYPE::base_type) l_op1;
     typename SAFE_TYPE::base_type l_base_y = (typename SAFE_TYPE::base_type) l_op2;
     SAFE_TYPE l_safe_x(l_base_x);
     SAFE_TYPE l_safe_y(l_base_y);
 
-    REFERENCE_TYPE l_ref_result = l_lambda(l_base_x, l_base_y,p_operator);
-    typename SAFE_TYPE::base_type l_result = l_lambda(l_base_x, l_base_y, p_operator);
+    REFERENCE_TYPE l_ref_result = g_lambda(l_base_x, l_base_y,p_operator);
+    typename SAFE_TYPE::base_type l_result = g_lambda(l_base_x, l_base_y, p_operator);
     SAFE_TYPE l_safe_result;
     bool l_compute_ok = true;
     try
     {
-       l_safe_result = l_lambda(l_safe_x,l_safe_y, p_operator);
+       l_safe_result = g_lambda(l_safe_x,l_safe_y, p_operator);
     }
     catch(quicky_utils::safe_type_exception & e)
     {
