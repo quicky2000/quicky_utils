@@ -121,11 +121,26 @@ namespace quicky_utils
         bool
         operator>=(const ext_uint & p_op) const;
 
+        ext_uint<T>
+        operator+(const ext_uint & p_op) const;
+
+        ext_uint<T>
+        operator-(const ext_uint & p_op) const;
+
+        ext_uint<T>
+        operator*(const ext_uint & p_op) const;
+
         typedef T base_type;
 
       private:
 
         ext_uint(const std::vector<T> & p_vec);
+
+        static void partial_mult(const T & p_op1,
+                                 const T & p_op2,
+                                 T & p_result_low,
+                                 T & p_result_high
+                                );
 
         static_assert(std::is_unsigned<T>::value,"Ckeck base type is unsigned");
 
@@ -376,6 +391,239 @@ namespace quicky_utils
             --l_index;
         }
         return true;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator+(const ext_uint & p_op) const
+    {
+        size_t l_max_size = m_ext.size() > p_op.m_ext.size() ? m_ext.size() : p_op.m_ext.size();
+        size_t l_min_size = m_ext.size() < p_op.m_ext.size() ? m_ext.size() : p_op.m_ext.size();
+        bool l_previous_overflow = false;
+        std::vector<T> l_new_ext;
+        T l_sum;
+        for(size_t l_index = 0;
+            l_index < l_min_size;
+            ++l_index
+           )
+        {
+            bool l_overflow;
+            l_sum = safe_uint<T>::check_add(m_ext[l_index],p_op.m_ext[l_index],l_overflow);
+            if(l_previous_overflow)
+            {
+                if (!l_overflow)
+                {
+                    l_sum = safe_uint<T>::check_add(l_sum,
+                                                    l_previous_overflow,
+                                                    l_overflow
+                                                   );
+                } else
+                {
+                    l_sum += l_previous_overflow;
+                }
+            }
+            l_previous_overflow = l_overflow;
+            l_new_ext.push_back(l_sum);
+        }
+        const std::vector<T> & l_longer = m_ext.size() > p_op.m_ext.size() ? m_ext : p_op.m_ext;
+        for(size_t l_index = l_min_size;
+            l_index < l_max_size;
+            ++l_index
+           )
+        {
+            if(!l_previous_overflow)
+            {
+                l_sum = l_longer[l_index];
+            }
+            else
+            {
+                l_sum = safe_uint<T>::check_add(l_longer[l_index],
+                                                l_previous_overflow,
+                                                l_previous_overflow
+                                               );
+            }
+            l_new_ext.push_back(l_sum);
+        }
+        if(l_previous_overflow)
+        {
+            l_new_ext.push_back(1);
+        }
+        return ext_uint(l_new_ext);
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator-(const ext_uint & p_op) const
+    {
+        if(m_ext.size() < p_op.m_ext.size())
+        {
+            throw quicky_exception::quicky_logic_exception("ext_uint substraction underflow", __LINE__, __FILE__);
+        }
+        std::vector<T> l_new_ext;
+        bool l_previous_underflow = false;
+        T l_result;
+        for(size_t l_index = 0;
+            l_index < p_op.m_ext.size();
+            ++l_index
+                )
+        {
+            bool l_underflow;
+            l_result = safe_uint<T>::check_substr(m_ext[l_index], p_op.m_ext[l_index], l_underflow);
+            if(l_underflow && 1 == m_ext.size())
+            {
+                throw quicky_exception::quicky_logic_exception("ext_uint substraction underflow", __LINE__, __FILE__);
+            }
+            if(l_previous_underflow)
+            {
+                if(!l_underflow)
+                {
+                    l_result = safe_uint<T>::check_substr(l_result, l_previous_underflow, l_underflow);
+                }
+                else
+                {
+                    l_result -= l_previous_underflow;
+                }
+            }
+            l_previous_underflow = l_underflow;
+            if(l_result || l_index != m_ext.size() - 1 || !l_index)
+            {
+                l_new_ext.push_back(l_result);
+            }
+        }
+        for(size_t l_index = p_op.m_ext.size();
+            l_index < m_ext.size();
+            ++l_index
+           )
+        {
+            if(l_previous_underflow)
+            {
+                l_result = safe_uint<T>::check_substr(m_ext[l_index], l_previous_underflow, l_previous_underflow);
+            }
+            else
+            {
+                l_result = m_ext[l_index];
+            }
+            if(l_result || l_index != m_ext.size() - 1)
+            {
+                l_new_ext.push_back(l_result);
+            }
+        }
+        return ext_uint(l_new_ext);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator*(const ext_uint & p_op) const
+    {
+        if((1 == m_ext.size() && !m_ext[0]) || (1 == p_op.m_ext.size() && !p_op.m_ext[0]))
+        {
+            return ext_uint();
+        }
+        size_t l_new_size = m_ext.size() + p_op.m_ext.size();
+        std::vector<T> l_new_ext(l_new_size,0);
+
+        // 12345
+        // ABCDE
+        // E1 E2 E3 E5
+        for(size_t l_index = 0;
+            l_index < l_new_size - 1;
+            ++l_index
+            )
+        {
+            size_t l_start_index = l_index >= p_op.m_ext.size() ? l_index - p_op.m_ext.size() + 1 : 0;
+            for(size_t l_index_op1 = l_start_index;
+                l_index_op1 <= l_index && l_index_op1 < m_ext.size();
+                ++l_index_op1
+               )
+            {
+                size_t l_index_op2 = l_index - l_index_op1;
+                T l_result_low;
+                T l_result_high;
+                partial_mult(m_ext[l_index_op1],
+                             p_op.m_ext[l_index_op2],
+                             l_result_low,
+                             l_result_high
+                            );
+                bool l_overflow;
+                l_new_ext[l_index] = safe_uint<T>::check_add(l_new_ext[l_index],
+                                                             l_result_low,
+                                                             l_overflow
+                                                            );
+                bool l_previous_overflow = l_overflow;
+                l_new_ext[l_index + 1] = safe_uint<T>::check_add(l_new_ext[l_index + 1],
+                                                                 l_result_high,
+                                                                 l_overflow
+                                                                );
+                if (l_previous_overflow)
+                {
+                    if (!l_overflow)
+                    {
+                        l_new_ext[l_index + 1] = safe_uint<T>::check_add(l_new_ext[l_index + 1],
+                                                                         l_overflow,
+                                                                         l_overflow
+                                                                        );
+                    } else
+                    {
+                        l_new_ext[l_index + 1] += l_overflow;
+                    }
+                }
+                if(l_overflow)
+                {
+                    l_new_ext[l_index + 2]++;
+                }
+            }
+        }
+        if(!l_new_ext.back())
+        {
+            l_new_ext.pop_back();
+        }
+        return ext_uint(l_new_ext);
+    }
+
+    template <typename T>
+    void
+    ext_uint<T>::partial_mult(const T & p_op1,
+                              const T & p_op2,
+                              T & p_result_low,
+                              T & p_result_high
+                             )
+    {
+        if(!p_op1 || !p_op2)
+        {
+            p_result_low = 0;
+            p_result_high = 0;
+            return;
+        }
+        // AB * CD = (10 * A + B) ( 10 * C + D)
+        // AB * CD = 100 * AC + 10 * A * D + B * 10 * C + BD
+        // AB * CD = 100 * AC + 10 * (A *D + B  *C) + BD
+        constexpr size_t l_shift = sizeof(T) * 4;
+        constexpr T l_carry_mask = ((T)1) << l_shift;
+        constexpr T l_half_low_mask = l_carry_mask - 1;
+        constexpr T l_half_high_mask = l_half_low_mask << l_shift;
+
+        T l_low_part1 = l_half_low_mask & p_op1;
+        T l_high_part1 = (l_half_high_mask & p_op1) >> l_shift;
+        T l_low_part2 = l_half_low_mask & p_op2;
+        T l_high_part2 = (l_half_high_mask & p_op2) >> l_shift;
+
+        T l_result_lower_part = l_low_part1 * l_low_part2;
+        bool l_overflow;
+        T l_result_l_midlle_part = safe_uint<T>::check_add(l_low_part1 * l_high_part2,l_low_part2 * l_high_part1, l_overflow);
+        T l_result_upper_part = l_high_part1 * l_high_part2;
+
+        T l_compl1 = (l_result_l_midlle_part & l_half_low_mask) << l_shift ;
+        T l_compl2 = (l_result_l_midlle_part >> l_shift) | (l_carry_mask * l_overflow);
+
+        p_result_low = safe_uint<T>::check_add(l_result_lower_part, l_compl1, l_overflow);
+        if(l_overflow)
+        {
+            l_result_upper_part  = safe_uint<T>::check_add(l_result_upper_part, l_overflow, l_overflow);
+        }
+        p_result_high = l_compl2 + l_result_upper_part;
     }
 
 }

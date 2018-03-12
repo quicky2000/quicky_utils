@@ -203,6 +203,7 @@ test_ext_uint()
     quicky_utils::ext_uint<uint8_t> l_zero_list_init({0});
     quicky_utils::ext_uint<uint8_t> l_un({1});
     quicky_utils::ext_uint<uint8_t> l_256({0,1});
+    quicky_utils::ext_uint<uint8_t> l_max({0xFF, 0xFF, 0xFF, 0xFF});
 
     std::cout << "Test ext_uint output stream operator" << std::endl;
     std::cout << l_zero << std::endl;
@@ -213,6 +214,7 @@ test_ext_uint()
     check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_256, 256);
     check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_zero, 0);
     check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_un, 1);
+    check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_max, std::numeric_limits<uint32_t>::max());
 
     assert(l_zero == l_zero);
     assert(l_zero_list_init == l_zero_list_init);
@@ -227,6 +229,49 @@ test_ext_uint()
     assert(!(l_un < l_zero));
     assert(l_zero < l_256);
     assert(!(l_256 < l_zero));
+
+    std::cout << "Test + operator" << std::endl;
+    quicky_utils::ext_uint<uint8_t> l_result;
+    l_result = l_zero + l_zero;
+    std::cout << l_result << std::endl;
+    l_result = l_zero + l_un;
+    std::cout << l_result << std::endl;
+    l_result = quicky_utils::ext_uint<uint8_t>({255}) + l_un;
+    std::cout << l_result << std::endl;
+    l_result = quicky_utils::ext_uint<uint8_t>({255, 255}) + l_un;
+    std::cout << l_result << std::endl;
+    l_result = quicky_utils::ext_uint<uint8_t>({255, 255}) + quicky_utils::ext_uint<uint8_t>({0,1});
+    std::cout << l_result << std::endl;
+    l_result = quicky_utils::ext_uint<uint8_t>({255}) + quicky_utils::ext_uint<uint8_t>({255});
+    std::cout << l_result << std::endl;
+
+    std::cout << "Test - operator" << std::endl;
+    l_result = l_zero - l_zero;
+    std::cout << l_result << std::endl;
+    l_result = l_un - l_un;
+    std::cout << l_result << std::endl;
+    l_result = l_256 - l_256;
+    std::cout << l_result << std::endl;
+    l_result = l_256 - l_un;
+    std::cout << l_result << std::endl;
+    l_result =quicky_utils::ext_uint<uint8_t>({255, 255}) - quicky_utils::ext_uint<uint8_t>({0,1});
+    std::cout << l_result << std::endl;
+    l_result =quicky_utils::ext_uint<uint8_t>({255, 255}) - quicky_utils::ext_uint<uint8_t>({1});
+    std::cout << l_result << std::endl;
+    l_result =quicky_utils::ext_uint<uint8_t>({0, 0, 1}) - quicky_utils::ext_uint<uint8_t>({1});
+    std::cout << l_result << std::endl;
+    l_result =quicky_utils::ext_uint<uint8_t>({0, 0, 2}) - quicky_utils::ext_uint<uint8_t>({1, 1, 1});
+    std::cout << l_result << std::endl;
+
+    std::cout << "Test * operator" << std::endl;
+    l_result = l_zero * l_zero;
+    l_result = l_zero * l_un;
+    l_result = l_un * l_zero;
+    l_result = l_un * l_un;
+    l_result = quicky_utils::ext_uint<uint8_t>({128}) * quicky_utils::ext_uint<uint8_t>({42});
+    l_result = quicky_utils::ext_uint<uint8_t>({255, 255}) * quicky_utils::ext_uint<uint8_t>({255});
+    l_result = quicky_utils::ext_uint<uint8_t>({255, 255}) * quicky_utils::ext_uint<uint8_t>({255, 255});
+    l_result = quicky_utils::ext_uint<uint8_t>({255, 255, 255, 255}) * quicky_utils::ext_uint<uint8_t>({255, 255, 255, 255});
 }
 
 //------------------------------------------------------------------------------
