@@ -116,6 +116,37 @@ namespace quicky_utils
                   );
 
         typedef T base_type;
+
+        /**
+         * Method performing addition, returning the result and setting a
+         * boolean to true in case of overflow
+         * @param p_op1 first operand
+         * @param p_op2 second operand
+         * @param p_overflow true in case of overflow
+         * @return result of traditionnal addition
+         */
+        static
+        T
+        check_add(const T & p_op1,
+                  const T & p_op2,
+                  bool & p_overflow
+                 );
+
+        /**
+         * Method performing substraction, returning the result and setting a
+         * boolean to true in case of underflow
+         * @param p_op1 first operand
+         * @param p_op2 second operand
+         * @param p_overflow true in case of underflow
+         * @return  result of traditionnal substraction
+         */
+        static
+        T
+        check_substr(const T & p_op1,
+                     const T & p_op2,
+                     bool & p_overflow
+                    );
+
       private:
         static_assert(std::is_unsigned<T>::value,"Check that type is unsigned");
         T m_value;
@@ -221,8 +252,9 @@ namespace quicky_utils
     safe_uint<T>
     safe_uint<T>::operator+(const safe_uint & p_op) const
     {
-        T l_sum = m_value + p_op.m_value;
-        if (l_sum < m_value || l_sum < p_op.m_value)
+        bool l_overflow;
+        T l_sum = check_add(m_value, p_op.m_value,l_overflow);
+        if (l_overflow)
         {
             throw safe_type_exception("Addition overflow",
                                       __LINE__,
@@ -237,8 +269,9 @@ namespace quicky_utils
     safe_uint<T>
     safe_uint<T>::operator-(const safe_uint & p_op) const
     {
-        T l_result = m_value - p_op.m_value;
-        if (l_result > m_value)
+        bool l_underflow;
+        T l_result = check_substr(m_value, p_op.m_value, l_underflow);
+        if (l_underflow)
         {
             throw safe_type_exception("Substraction underflow",
                                       __LINE__,
@@ -357,13 +390,38 @@ namespace quicky_utils
 
     //-----------------------------------------------------------------------------
     template <typename T>
+    T
+    safe_uint<T>::check_add(const T & p_op1,
+                            const T & p_op2,
+                            bool & p_overflow
+                           )
+    {
+        T l_sum = p_op1 + p_op2;
+        p_overflow = l_sum < p_op1 || l_sum < p_op2;
+        return l_sum;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    T
+    safe_uint<T>::check_substr(const T & p_op1,
+                               const T & p_op2,
+                               bool & p_overflow
+                              )
+    {
+        T l_result = p_op1 - p_op2;
+        p_overflow = l_result > p_op1;
+        return l_result;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
     bool operator==(const T & p_op1,
                     const safe_uint<T> & p_safe_uint
                    )
     {
         return safe_uint<T>(p_op1) == p_safe_uint;
     }
-
 
     template_specialise_type_string(typename T,safe_uint<T>,"safe_uint<" + type_string<T>::name() + ">");
 }
