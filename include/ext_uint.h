@@ -33,7 +33,7 @@ namespace quicky_utils
     template <typename T>
     std::ostream &
     operator<<(std::ostream & p_stream,
-               const ext_uint<T> & p_infinite_uint
+               const ext_uint<T> & p_ext_uint
               );
 
     /**
@@ -87,13 +87,13 @@ namespace quicky_utils
         const T & get_word(const unsigned int & p_index) const;
 
         /**
-         * Display content of infinite_uint in hexadecimal
+         * Display content of ext_uint in hexadecimal
          * @param os output stream
-         * @param p_infinite_uint infinite_uint to display
+         * @param p_ext_uint ext_uint to display
          */
         friend std::ostream &
         operator<< <>(std::ostream & os,
-                   const ext_uint<T> & p_infinite_uint
+                   const ext_uint<T> & p_ext_uint
                   );
 
         /**
@@ -182,7 +182,7 @@ namespace quicky_utils
         assert(p_init_list.size());
         if(!m_ext.back() && m_ext.size() > 1)
         {
-            throw quicky_exception::quicky_logic_exception("Upper word of infinite int should be non-zero", __LINE__, __FILE__);
+            throw quicky_exception::quicky_logic_exception("Upper word of ext_uint should be non-zero", __LINE__, __FILE__);
         }
     }
 
@@ -231,17 +231,17 @@ namespace quicky_utils
     template <typename T>
     std::ostream &
     operator<<(std::ostream & p_stream,
-               const ext_uint<T> & p_infinite_uint
+               const ext_uint<T> & p_ext_uint
               )
     {
         p_stream << "0x";
-        assert(p_infinite_uint.m_ext.size());
+        assert(p_ext_uint.m_ext.size());
         char l_fill = p_stream.fill();
         std::streamsize l_width = p_stream.width();
         std::ios::fmtflags l_flags = p_stream.flags();
 
-        for(typename std::vector<T>::const_reverse_iterator l_iter = p_infinite_uint.m_ext.rbegin();
-            l_iter != p_infinite_uint.m_ext.rend();
+        for(typename std::vector<T>::const_reverse_iterator l_iter = p_ext_uint.m_ext.rbegin();
+            l_iter != p_ext_uint.m_ext.rend();
             ++l_iter
             )
         {
