@@ -220,7 +220,7 @@ namespace quicky_utils
               )
     {
         p_stream << "0x";
-
+        assert(p_infinite_uint.m_ext.size());
         char l_fill = p_stream.fill();
         std::streamsize l_width = p_stream.width();
         std::ios::fmtflags l_flags = p_stream.flags();
