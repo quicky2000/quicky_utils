@@ -122,6 +122,12 @@ namespace quicky_utils
         operator>=(const ext_uint & p_op) const;
 
         ext_uint<T>
+        operator<<(const ext_uint & p_op) const;
+
+        ext_uint<T>
+        operator>>(const ext_uint & p_op) const;
+
+        ext_uint<T>
         operator+(const ext_uint & p_op) const;
 
         ext_uint<T>
@@ -583,6 +589,7 @@ namespace quicky_utils
         return ext_uint(l_new_ext);
     }
 
+    //-------------------------------------------------------------------------
     template <typename T>
     void
     ext_uint<T>::partial_mult(const T & p_op1,
@@ -624,6 +631,99 @@ namespace quicky_utils
             l_result_upper_part  = safe_uint<T>::check_add(l_result_upper_part, l_overflow, l_overflow);
         }
         p_result_high = l_compl2 + l_result_upper_part;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator<<(const ext_uint & p_op) const
+    {
+        if(p_op.m_ext.size() == 1)
+        {
+            size_t l_additional_ext = p_op.m_ext[0] / (8 * sizeof(T));
+            size_t l_real_shift = p_op.m_ext[0] % (8 * sizeof(T));
+            size_t l_new_size = m_ext.size() + l_additional_ext;
+            std::vector<T> l_new_ext(l_new_size);
+            if(l_real_shift)
+            {
+                T l_apply_shift = 8 * sizeof(T) - l_real_shift;
+                T l_select_mask = (((T)1) << l_real_shift) - 1;
+                T l_reminder = 0;
+                for (size_t l_index = 0;
+                     l_index < m_ext.size();
+                     ++l_index
+                    )
+                {
+                    l_new_ext[l_index + l_additional_ext] = (m_ext[l_index] << l_real_shift) | l_reminder;
+                    l_reminder = (m_ext[l_index] >> l_apply_shift) & l_select_mask;
+                }
+                if(l_reminder)
+                {
+                    l_new_ext.push_back(l_reminder);
+                }
+            }
+            else
+            {
+                for (size_t l_index = 0;
+                     l_index < m_ext.size();
+                     ++l_index
+                    )
+                {
+                    l_new_ext[l_index + l_additional_ext] = m_ext[l_index];
+                }
+            }
+        return ext_uint<T>(l_new_ext);
+        }
+        throw quicky_exception::quicky_logic_exception("ext_uint shift operator works only for single extesion", __LINE__, __FILE__);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator>>(const ext_uint & p_op) const
+    {
+        if(p_op.m_ext.size() == 1)
+        {
+            size_t l_remove_ext = p_op.m_ext[0] / (8 * sizeof(T));
+            size_t l_real_shift = p_op.m_ext[0] % (8 * sizeof(T));
+            if(l_remove_ext >= m_ext.size())
+            {
+                return ext_uint();
+            }
+            size_t l_new_size = m_ext.size() - l_remove_ext;
+            std::vector<T> l_new_ext(l_new_size);
+            if(l_real_shift)
+            {
+                T l_apply_shift = 8 * sizeof(T) - l_real_shift;
+                T l_select_mask = (((T)1) << l_real_shift) - 1;
+                T l_reminder = 0;
+                for (size_t l_index = l_new_size - 1;
+                     l_index < l_new_size;
+                     --l_index
+                        )
+                {
+                    l_new_ext[l_index] =
+                            (m_ext[l_index + l_remove_ext] >> l_real_shift) | (l_reminder << l_apply_shift);
+                    l_reminder = m_ext[l_index + l_remove_ext] & l_select_mask;
+                }
+            }
+            else
+            {
+                for (size_t l_index = 0;
+                     l_index < l_new_size;
+                     ++l_index
+                        )
+                {
+                    l_new_ext[l_index] = m_ext[l_index + l_remove_ext];
+                }
+            }
+            if(!l_new_ext[l_new_ext.size() -1])
+            {
+                l_new_ext.pop_back();
+            }
+            return ext_uint<T>(l_new_ext);
+        }
+        throw quicky_exception::quicky_logic_exception("ext_uint shift operator works only for single extesion", __LINE__, __FILE__);
     }
 
 }
