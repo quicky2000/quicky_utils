@@ -284,6 +284,12 @@ test_ext_uint()
     l_result = l_un << quicky_utils::ext_uint<uint8_t>({16});
     std::cout << l_result << std::endl;
 
+    l_result = quicky_utils::ext_uint<uint8_t >({12}) / quicky_utils::ext_uint<uint8_t>({6});
+    std::cout << l_result << std::endl;
+    l_result = quicky_utils::ext_uint<uint8_t >({13}) / quicky_utils::ext_uint<uint8_t>({6});
+    std::cout << l_result << std::endl;
+    l_result = quicky_utils::ext_uint<uint8_t >({0xFF,0x1}) / quicky_utils::ext_uint<uint8_t>({0x12});
+    std::cout << l_result << std::endl;
 }
 
 //------------------------------------------------------------------------------

@@ -143,6 +143,9 @@ namespace quicky_utils
         ext_uint<T>
         operator*(const ext_uint & p_op) const;
 
+        ext_uint<T>
+        operator/(const ext_uint & p_op) const;
+
         typedef T base_type;
 
       private:
@@ -647,6 +650,57 @@ namespace quicky_utils
             l_result_upper_part  = safe_uint<T>::check_add(l_result_upper_part, l_overflow, l_overflow);
         }
         p_result_high = l_compl2 + l_result_upper_part;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator/(const ext_uint & p_op) const
+    {
+        if(m_ext.size() == 1 && m_ext[0] == 0)
+        {
+            return ext_uint();
+        }
+        if(1 == p_op.m_ext.size())
+        {
+            if (1 == p_op.m_ext[0])
+            {
+                return *this;
+            }
+            else if (p_op.m_ext[0] == 0)
+            {
+                throw quicky_exception::quicky_logic_exception("Illegal division by 0 ext_uint",
+                                                               __LINE__,
+                                                               __FILE__
+                                                              );
+            }
+            if(1 == m_ext.size())
+            {
+                return ext_uint<T>({(T)(m_ext[0] / p_op.m_ext[0])});
+            }
+        }
+        if(*this < p_op)
+        {
+            return ext_uint();
+        }
+        ext_uint<T> l_min({1});
+        ext_uint<T> l_max(m_ext);
+        ext_uint<T> l_mult;
+        do
+        {
+            ext_uint<T> l_result = (l_min + l_max) >> ext_uint<T>({1});
+            l_mult = p_op * l_result;
+            if(l_mult > *this)
+            {
+                l_max = l_result;
+            }
+            else if(l_mult <= *this)
+            {
+                l_min = l_result;
+                if(l_mult == *this) break;
+            }
+        } while(l_mult != * this && l_max - l_min > ext_uint<T>({1}));
+        return l_min;
     }
 
     //-------------------------------------------------------------------------
