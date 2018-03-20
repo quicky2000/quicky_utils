@@ -103,6 +103,13 @@ namespace quicky_utils
          */
         ext_uint<T> & operator=(ext_uint<T> && p_op);
 
+        /**
+         * Assignment operator
+         * @param p_op value to move
+         * @return assigned object
+         */
+        ext_uint<T> & operator=(const ext_uint<T> & p_op);
+
         bool
         operator==(const ext_uint & p_op) const;
 
@@ -264,6 +271,15 @@ namespace quicky_utils
     ext_uint<T>::operator=(ext_uint<T> && p_op)
     {
         m_ext = std::move(p_op.m_ext);
+        return *this;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T> &
+    ext_uint<T>::operator=(const ext_uint<T> & p_op)
+    {
+        m_ext = p_op.m_ext;
         return *this;
     }
 
