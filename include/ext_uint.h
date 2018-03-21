@@ -146,9 +146,25 @@ namespace quicky_utils
         ext_uint<T>
         operator/(const ext_uint & p_op) const;
 
+        ext_uint<T>
+        operator%(const ext_uint & p_op) const;
+
         typedef T base_type;
 
       private:
+
+        /**
+         * Helper method used in / and % operator
+         * @param p_op operand for division
+         * @param p_compute_mult indicate if mult should be computed
+         * @param p_mult value or returned result * p_op
+         * @return value of this / div
+         */
+        ext_uint <T>
+        div(const ext_uint & p_op,
+                    bool p_compute_mult,
+                    ext_uint <T> & p_mult
+                   ) const;
 
         ext_uint(const std::vector<T> & p_vec);
 
@@ -683,24 +699,50 @@ namespace quicky_utils
         {
             return ext_uint();
         }
-        ext_uint<T> l_min({1});
-        ext_uint<T> l_max(m_ext);
         ext_uint<T> l_mult;
-        do
+        return div(p_op,
+                   false,
+                   l_mult
+                  );
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator%(const ext_uint & p_op) const
+    {
+        if(m_ext.size() == 1 && m_ext[0] == 0)
         {
-            ext_uint<T> l_result = (l_min + l_max) >> ext_uint<T>({1});
-            l_mult = p_op * l_result;
-            if(l_mult > *this)
+            return ext_uint();
+        }
+        if(1 == p_op.m_ext.size())
+        {
+            if (1 == p_op.m_ext[0])
             {
-                l_max = l_result;
+                return ext_uint();
             }
-            else if(l_mult <= *this)
+            else if (p_op.m_ext[0] == 0)
             {
-                l_min = l_result;
-                if(l_mult == *this) break;
+                throw quicky_exception::quicky_logic_exception("Illegal division by 0 ext_uint",
+                                                               __LINE__,
+                                                               __FILE__
+                                                              );
             }
-        } while(l_mult != * this && l_max - l_min > ext_uint<T>({1}));
-        return l_min;
+            if(1 == m_ext.size())
+            {
+                return ext_uint<T>({(T)(m_ext[0] % p_op.m_ext[0])});
+            }
+        }
+        if(*this < p_op)
+        {
+            return ext_uint();
+        }
+        ext_uint<T> l_mult;
+        div(p_op,
+            true,
+            l_mult
+           );
+        return *this - l_mult;
     }
 
     //-------------------------------------------------------------------------
@@ -794,6 +836,37 @@ namespace quicky_utils
             return ext_uint<T>(l_new_ext);
         }
         throw quicky_exception::quicky_logic_exception("ext_uint shift operator works only for single extesion", __LINE__, __FILE__);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint <T>
+    ext_uint<T>::div(const ext_uint & p_op,
+                         bool p_compute_mult,
+                         ext_uint <T> & p_mult
+                        ) const
+    {
+        ext_uint<T> l_min({1});
+        ext_uint<T> l_max(m_ext);
+        do
+        {
+            ext_uint<T> l_result = (l_min + l_max) >> ext_uint<T>({1});
+            p_mult = p_op * l_result;
+            if(p_mult > *this)
+            {
+                l_max = l_result;
+            }
+            else if(p_mult <= *this)
+            {
+                l_min = l_result;
+                if(p_mult == *this) return l_min;
+            }
+        } while(p_mult != * this && l_max - l_min > ext_uint<T>({1}));
+        if(p_compute_mult)
+        {
+            p_mult = l_min * p_op;
+        }
+        return l_min;
     }
 
 }
