@@ -149,6 +149,24 @@ namespace quicky_utils
         ext_uint<T>
         operator%(const ext_uint & p_op) const;
 
+        ext_uint<T>
+        operator-(void)const;
+
+        ext_uint<T>
+        operator+(void)const;
+
+        ext_uint<T>
+        operator+=(const ext_uint & p_op);
+
+        ext_uint<T>
+        operator-=(const ext_uint & p_op);
+
+        ext_uint<T>
+        operator*=(const ext_uint & p_op);
+
+        ext_uint<T>
+        operator/=(const ext_uint & p_op);
+
         typedef T base_type;
 
       private:
@@ -867,6 +885,61 @@ namespace quicky_utils
             p_mult = l_min * p_op;
         }
         return l_min;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator-(void) const
+    {
+        throw safe_type_exception("Illegal ext_uint operator-",
+                                  __LINE__,
+                                  __FILE__
+                                 );
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator+(void) const
+    {
+        return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator+=(const ext_uint & p_op)
+    {
+        *this = *this + p_op;
+        return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator-=(const ext_uint & p_op)
+    {
+        *this = *this - p_op;
+        return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator*=(const ext_uint & p_op)
+    {
+        *this = *this * p_op;
+        return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>
+    ext_uint<T>::operator/=(const ext_uint & p_op)
+    {
+        *this = *this / p_op;
+        return *this;
     }
 
 }
