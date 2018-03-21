@@ -19,6 +19,7 @@
 #define QUICKY_UTILS_QUICKY_TEST_H
 
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <functional>
 
@@ -69,6 +70,25 @@ namespace quicky_utils
                         std::ostream & p_ostream = std::cout,
                         bool p_quiet = false
                        );
+
+        /**
+         * Check result of ostream operator
+         * @tparam T Type of object applied to ostream operator
+         * @param p_object object applied to ostream operator
+         * @param p_expected expected displayed string
+         * @param p_message optionnal message to display
+         * @param p_ostream output stream where diagnostic message is sent
+         * @param p_quiet if false a message is send to output stream
+         * @return true if displayed string is the expected one
+         */
+        template<typename T>
+        static bool
+        check_ostream_operator(const T & p_object,
+                               const std::string & p_expected,
+                               const std::string & p_message = "",
+                               std::ostream & p_ostream = std::cout,
+                               bool p_quiet = false
+                              );
     };
 
     //-------------------------------------------------------------------------
@@ -122,6 +142,22 @@ namespace quicky_utils
             std::cout << "Exception expected : " << (p_exception_expected ? "YES" : "NO") << "\tException raised : " << (l_exception_raised ? "YES" : "NO") << " => " << (l_result ? "PASSED" : "FAILED") << std::endl;
         }
         return l_result;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    bool
+    quicky_test::check_ostream_operator(const T & p_object,
+                                        const std::string & p_expected,
+                                        const std::string & p_message,
+                                        std::ostream & p_ostream,
+                                        bool p_quiet
+                                       )
+    {
+        std::stringstream l_stream;
+        l_stream << p_object;
+        std::string l_string = l_stream.str();
+        return check_expected(l_string, p_expected, p_message, p_ostream, p_quiet);
     }
 
 }

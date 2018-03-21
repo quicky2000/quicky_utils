@@ -116,6 +116,8 @@ void check_test_utilities(void)
                                 true,
                                 "No exception detection verification"
                                );
+    quicky_test::check_expected(quicky_test::check_ostream_operator<uint32_t>(12,"23","",std::cout,true),false,"Failed ostream operator verification");
+    quicky_test::check_expected(quicky_test::check_ostream_operator<uint32_t>(12,"12","",std::cout,true),true,"Passed ostream operator verification");
 }
 
 /**
