@@ -21,6 +21,7 @@
 #include "safe_types.h"
 #include "ext_uint.h"
 #include "fract.h"
+#include "quicky_test.h"
 #include <iostream>
 #include <functional>
 #include <sstream>
@@ -28,6 +29,13 @@
 #define GCC_VERSION (__GNUC__ * 10000 \
                      + __GNUC_MINOR__ * 100 \
                      + __GNUC_PATCHLEVEL__)
+
+using namespace quicky_utils;
+
+/**
+ * Method regrouping test of test utilites
+ */
+void check_test_utilities(void);
 
 /**
  * Method regrouping tests of type_string class
@@ -57,6 +65,7 @@ int main(int argc,char ** argv)
 {
     try
     {
+        check_test_utilities();
         test_ext_uint();
         test_type_string();
         test_fract<uint32_t>();
@@ -74,6 +83,39 @@ int main(int argc,char ** argv)
         return (-1);
     }
     return 0;
+}
+
+//-----------------------------------------------------------------------------
+void check_test_utilities(void)
+{
+    std::cout << "----------------------------------------------" << std::endl;
+    std::cout << "| CHECK test_utilities" << std::endl;
+    std::cout << "----------------------------------------------" << std::endl;
+    quicky_test::check_expected(quicky_test::check_expected(false,true,"",std::cout,true),false, "Failed expected verification");
+    quicky_test::check_expected(quicky_test::check_expected(true,true,"",std::cout,true),true,"Passed expected verification");
+    quicky_test::check_expected(quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{
+                                                                                                           throw quicky_exception::quicky_logic_exception("Volontary exception",
+                                                                                                                                                          __LINE__,
+                                                                                                                                                          __FILE__
+                                                                                                                                                         );
+                                                                                                       },
+                                                                                                       true, // Exception expected
+                                                                                                       "", // No message to print
+                                                                                                       std::cout,
+                                                                                                       true // Quiet mode
+                                                                                                      ),
+                                true,
+                                "Exception detection verification"
+                               );
+    quicky_test::check_expected(quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{},
+                                                                                                       false, // No exception expected
+                                                                                                       "", // No message to print
+                                                                                                       std::cout,
+                                                                                                       true // Quiet mode
+                                                                                                      ),
+                                true,
+                                "No exception detection verification"
+                               );
 }
 
 /**
