@@ -127,14 +127,7 @@ void check_test_utilities(void)
 template <typename T>
 void check_a_type_string(const std::string & p_reference)
 {
-    std::stringstream l_result;
-    l_result <<  quicky_utils::type_string<T>::name();
-    std::cout << "Reference \"" + p_reference + "\"\t Result \"" << l_result.str() << "\"" << std::endl;
-    if(p_reference != l_result.str())
-    {
-        throw quicky_exception::quicky_logic_exception("type_string result don't match with refence", __LINE__, __FILE__);
-    }
-
+    quicky_test::check_expected(quicky_utils::type_string<T>::name(), p_reference, "Check name of " + quicky_utils::type_string<T>::name());
 }
 #define check(type) check_a_type_string<type>(#type)
 #define check_name(type,type_name) check_a_type_string<type>(type_name)
@@ -232,11 +225,9 @@ void check_convert(const EXT_INT_TYPE & p_ext_type,
                   )
 {
     INT_TYPE l_result = convert<INT_TYPE,EXT_INT_TYPE>(p_ext_type);
-    std::cout << "Reference " << p_expected << "\tResult " << l_result << std::endl;
-    if(p_expected != l_result)
-    {
-        throw quicky_exception::quicky_logic_exception("type_string to integer result don't match with refence", __LINE__, __FILE__);
-    }
+    std::stringstream l_stream;
+    l_stream << p_ext_type;
+    quicky_test::check_expected<INT_TYPE>(l_result, p_expected, "Check conversion of " + l_stream.str() + " to " + quicky_utils::type_string<INT_TYPE>::name());
 }
 
 //------------------------------------------------------------------------------
@@ -249,12 +240,12 @@ test_ext_uint()
     quicky_utils::ext_uint<uint8_t> l_256({0,1});
     quicky_utils::ext_uint<uint8_t> l_max({0xFF, 0xFF, 0xFF, 0xFF});
 
-    std::cout << "Test ext_uint output stream operator" << std::endl;
-    std::cout << l_zero << std::endl;
-    std::cout << l_un << std::endl;
-    std::cout << l_256 << std::endl;
+    std::cout << std::endl << "Test ext_uint output stream operator:" << std::endl;
+    quicky_test::check_ostream_operator(l_zero,"0x00");
+    quicky_test::check_ostream_operator(l_un,"0x01");
+    quicky_test::check_ostream_operator(l_256,"0x0100");
 
-    std::cout << "Test conversion to integer type" << std::endl;
+    std::cout << std::endl << "Test conversion to integer type" << std::endl;
     check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_256, 256);
     check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_zero, 0);
     check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_un, 1);
