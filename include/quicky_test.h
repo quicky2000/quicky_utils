@@ -101,7 +101,7 @@ namespace quicky_utils
                                 bool p_quiet
                                )
     {
-        if("" != p_message)
+        if(!p_message.empty())
         {
             std::cout << p_message << ": ";
         }
@@ -123,7 +123,7 @@ namespace quicky_utils
                                 bool p_quiet
                                )
     {
-        if("" != p_message)
+        if(!p_message.empty())
         {
             std::cout << p_message << ": ";
         }
@@ -155,7 +155,7 @@ namespace quicky_utils
             l_exception_raised = true;
         }
         bool l_result = p_exception_expected == l_exception_raised;
-        if("" != p_message)
+        if(!p_message.empty())
         {
             std::cout << p_message << ": ";
         }
