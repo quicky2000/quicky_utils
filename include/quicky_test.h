@@ -95,11 +95,11 @@ namespace quicky_utils
     template<typename T>
     bool
     quicky_test::check_expected(const T & p_value,
-                                    const T & p_expected,
-                                    const std::string & p_message,
-                                    std::ostream & p_stream,
-                                    bool p_quiet
-                                   )
+                                const T & p_expected,
+                                const std::string & p_message,
+                                std::ostream & p_stream,
+                                bool p_quiet
+                               )
     {
         if("" != p_message)
         {
@@ -109,6 +109,28 @@ namespace quicky_utils
         if(!p_quiet)
         {
             std::cout << "Expected value : " << p_expected << "\tValue : " << p_value << " => " << (l_result ? "PASSED" : "FAILED") << std::endl;
+        }
+        return l_result;
+    }
+
+    //-------------------------------------------------------------------------
+    template<>
+    bool
+    quicky_test::check_expected(const std::string & p_value,
+                                const std::string & p_expected,
+                                const std::string & p_message,
+                                std::ostream & p_stream,
+                                bool p_quiet
+                               )
+    {
+        if("" != p_message)
+        {
+            std::cout << p_message << ": ";
+        }
+        bool l_result = p_value == p_expected;
+        if(!p_quiet)
+        {
+            std::cout << "Expected value : \"" << p_expected << "\"\tValue : \"" << p_value << "\" => " << (l_result ? "PASSED" : "FAILED") << std::endl;
         }
         return l_result;
     }
