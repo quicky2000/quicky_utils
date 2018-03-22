@@ -35,17 +35,21 @@ using namespace quicky_utils;
 /**
  * Method regrouping test of test utilites
  */
-void check_test_utilities(void);
+bool
+check_test_utilities(void);
 
 /**
  * Method regrouping tests of type_string class
  */
-void test_type_string();
+bool
+test_type_string();
 
 template <typename FRACT_INTERNAL_TYPE>
-void test_fract(void);
+bool
+test_fract(void);
 
-void test_safe_types(void);
+bool
+test_safe_types(void);
 
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
 void test_safe_type(void);
@@ -58,19 +62,21 @@ void test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
 /**
  * Method regrouping tests of ext_uint class
  */
-void test_ext_uint();
+bool
+test_ext_uint();
 
 //------------------------------------------------------------------------------
 int main(int argc,char ** argv)
 {
+    bool l_ok = true;
     try
     {
-        check_test_utilities();
-        test_ext_uint();
-        test_type_string();
-        test_fract<uint32_t>();
-        test_fract<quicky_utils::safe_int<int32_t>>();
-        test_safe_types();
+        l_ok &= check_test_utilities();
+        l_ok &= test_ext_uint();
+        l_ok &= test_type_string();
+        l_ok &= test_fract<uint32_t>();
+        l_ok &= test_fract<quicky_utils::safe_int<int32_t>>();
+        l_ok &= test_safe_types();
     }
     catch (quicky_exception::quicky_runtime_exception & e)
     {
@@ -82,42 +88,48 @@ int main(int argc,char ** argv)
         std::cout << "ERROR : " << e.what() << " " << e.get_file() << ":" << e.get_line() << std::endl;
         return (-1);
     }
-    return 0;
+    std::cout << "--------------------------------------------" << std::endl;
+    std::cout << "- TEST " << (l_ok ? "PASSED" : "FAILED") << std::endl;
+    std::cout << "--------------------------------------------" << std::endl;
+    return !l_ok;
 }
 
 //-----------------------------------------------------------------------------
-void check_test_utilities(void)
+bool
+check_test_utilities(void)
 {
     std::cout << "----------------------------------------------" << std::endl;
     std::cout << "| CHECK test_utilities" << std::endl;
     std::cout << "----------------------------------------------" << std::endl;
-    quicky_test::check_expected(quicky_test::check_expected(false,true,"",std::cout,true),false, "Failed expected verification");
-    quicky_test::check_expected(quicky_test::check_expected(true,true,"",std::cout,true),true,"Passed expected verification");
-    quicky_test::check_expected(quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{
-                                                                                                           throw quicky_exception::quicky_logic_exception("Volontary exception",
-                                                                                                                                                          __LINE__,
-                                                                                                                                                          __FILE__
-                                                                                                                                                         );
-                                                                                                       },
-                                                                                                       true, // Exception expected
-                                                                                                       "", // No message to print
-                                                                                                       std::cout,
-                                                                                                       true // Quiet mode
-                                                                                                      ),
-                                true,
-                                "Exception detection verification"
+    bool l_ok = true;
+    l_ok &= quicky_test::check_expected(quicky_test::check_expected(false,true,"",std::cout,true),false, "Failed expected verification");
+    l_ok &= quicky_test::check_expected(quicky_test::check_expected(true,true,"",std::cout,true),true,"Passed expected verification");
+    l_ok &= quicky_test::check_expected(quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{
+                                                                                                                   throw quicky_exception::quicky_logic_exception("Volontary exception",
+                                                                                                                                                                  __LINE__,
+                                                                                                                                                                  __FILE__
+                                                                                                                                                                 );
+                                                                                                                 },
+                                                                                                               true, // Exception expected
+                                                                                                               "", // No message to print
+                                                                                                               std::cout,
+                                                                                                               true // Quiet mode
+                                                                                                              ),
+                                        true,
+                                        "Exception detection verification"
+                                       );
+    l_ok &= quicky_test::check_expected(quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{},
+                                                                                                               false, // No exception expected
+                                                                                                               "", // No message to print
+                                                                                                               std::cout,
+                                                                                                               true // Quiet mode
+                                                                                                              ),
+                                        true,
+                                        "No exception detection verification"
                                );
-    quicky_test::check_expected(quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{},
-                                                                                                       false, // No exception expected
-                                                                                                       "", // No message to print
-                                                                                                       std::cout,
-                                                                                                       true // Quiet mode
-                                                                                                      ),
-                                true,
-                                "No exception detection verification"
-                               );
-    quicky_test::check_expected(quicky_test::check_ostream_operator<uint32_t>(12,"23","",std::cout,true),false,"Failed ostream operator verification");
-    quicky_test::check_expected(quicky_test::check_ostream_operator<uint32_t>(12,"12","",std::cout,true),true,"Passed ostream operator verification");
+    l_ok &= quicky_test::check_expected(quicky_test::check_ostream_operator<uint32_t>(12,"23","",std::cout,true),false,"Failed ostream operator verification");
+    l_ok &= quicky_test::check_expected(quicky_test::check_ostream_operator<uint32_t>(12,"12","",std::cout,true),true,"Passed ostream operator verification");
+    return l_ok;
 }
 
 /**
@@ -134,8 +146,10 @@ void check_a_type_string(const std::string & p_reference)
 #define check_prefix(prefix,type) check_a_type_string<prefix::type>(#type)
 
 //-----------------------------------------------------------------------------
-void test_type_string()
+bool
+test_type_string()
 {
+    bool l_ok = true;
     check(uint8_t);
     check(uint16_t);
     check(uint32_t);
@@ -163,6 +177,8 @@ void test_type_string()
     check_name(quicky_utils::safe_int16_t,"safe_int<int16_t>");
     check_name(quicky_utils::safe_int32_t,"safe_int<int32_t>");
     check_name(quicky_utils::safe_int64_t,"safe_int<int64_t>");
+
+    return l_ok;
 }
 
 #if __cplusplus==201402L
@@ -231,9 +247,10 @@ void check_convert(const EXT_INT_TYPE & p_ext_type,
 }
 
 //------------------------------------------------------------------------------
-void
+bool
 test_ext_uint()
 {
+    bool l_ok = true;
     quicky_utils::ext_uint<uint8_t> l_zero;
     quicky_utils::ext_uint<uint8_t> l_zero_list_init({0});
     quicky_utils::ext_uint<uint8_t> l_un({1});
@@ -333,6 +350,7 @@ test_ext_uint()
     l_result = quicky_utils::ext_uint<uint8_t >({0xFF,0x1}) % quicky_utils::ext_uint<uint8_t>({0x12});
     std::cout << l_result << std::endl;
 
+    return l_ok;
 }
 
 //------------------------------------------------------------------------------
@@ -354,8 +372,10 @@ void check_safe_not_equal(const TYPE & p_op1,
     assert((p_op1 != p_op2) == p_expected);
 }
 
-void test_safe_types(void)
+bool
+test_safe_types(void)
 {
+    bool l_ok = true;
     test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
     test_safe_type<typename quicky_utils::safe_int<int8_t>, int32_t>();
 
@@ -403,6 +423,8 @@ void test_safe_types(void)
     check_safe_equal<quicky_utils::safe_uint<uint8_t>>(1,2,false);
     check_safe_not_equal<quicky_utils::safe_uint<uint8_t>>(1,1,false);
     check_safe_not_equal<quicky_utils::safe_uint<uint8_t>>(1,2,true);
+
+    return l_ok;
 }
 
 template<unsigned int NB>
@@ -412,8 +434,10 @@ void display_NB(void)
 }
 
 template <typename FRACT_INTERNAL_TYPE>
-void test_fract(void)
+bool
+test_fract(void)
 {
+    bool l_ok = true;
     std::cout << "---------------------------------------" << std::endl;
     std::cout << "- PGCD" << std::endl;
     std::cout << "---------------------------------------" << std::endl;
@@ -1084,6 +1108,8 @@ void test_fract(void)
     std::cout << l_b << " == " << l_b.to_float() << std::endl;
     std::cout << l_a << " == " << l_a.to_double() << std::endl;
     std::cout << l_b << " == " << l_b.to_double() << std::endl;
+
+    return l_ok;
 }
 
 template <typename SOURCE_TYPE, typename TARGET_TYPE>
