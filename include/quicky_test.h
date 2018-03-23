@@ -89,6 +89,16 @@ namespace quicky_utils
                                std::ostream & p_ostream = std::cout,
                                bool p_quiet = false
                               );
+
+        /**
+         * Generate automatic message with file info
+         * @param p_file_name file name
+         * @param p_line line index
+         * @return generated message
+         */
+        static inline std::string auto_message(const std::string & p_file_name,
+                                               const unsigned int & p_line
+                                              );
     };
 
     //-------------------------------------------------------------------------
@@ -180,6 +190,15 @@ namespace quicky_utils
         l_stream << p_object;
         std::string l_string = l_stream.str();
         return check_expected(l_string, p_expected, p_message, p_ostream, p_quiet);
+    }
+
+    //-------------------------------------------------------------------------
+    std::string
+    quicky_test::auto_message(const std::string & p_file_name,
+                              const unsigned int & p_line
+                             )
+    {
+        return p_file_name + ":" + std::to_string(p_line);
     }
 
 }
