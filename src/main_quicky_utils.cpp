@@ -52,10 +52,10 @@ bool
 test_safe_types(void);
 
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
-void test_safe_type(void);
+bool test_safe_type(void);
 
 template <typename SOURCE_TYPE, typename TARGET_TYPE>
-void test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
+bool test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
                           bool p_exception_expected
                          );
 
@@ -135,11 +135,12 @@ check_test_utilities(void)
 /**
  * Method checking type string representation against expected
  * @tparam T
+ * @return true if test is successfull
  */
 template <typename T>
-void check_a_type_string(const std::string & p_reference)
+bool check_a_type_string(const std::string & p_reference)
 {
-    quicky_test::check_expected(quicky_utils::type_string<T>::name(), p_reference, "Check name of " + quicky_utils::type_string<T>::name());
+    return quicky_test::check_expected(quicky_utils::type_string<T>::name(), p_reference, "Check name of " + quicky_utils::type_string<T>::name());
 }
 #define check(type) check_a_type_string<type>(#type)
 #define check_name(type,type_name) check_a_type_string<type>(type_name)
@@ -150,33 +151,33 @@ bool
 test_type_string()
 {
     bool l_ok = true;
-    check(uint8_t);
-    check(uint16_t);
-    check(uint32_t);
-    check(uint64_t);
+    l_ok &= check(uint8_t);
+    l_ok &= check(uint16_t);
+    l_ok &= check(uint32_t);
+    l_ok &= check(uint64_t);
 
-    check(int8_t);
-    check(int16_t);
-    check(int32_t);
-    check(int64_t);
+    l_ok &= check(int8_t);
+    l_ok &= check(int16_t);
+    l_ok &= check(int32_t);
+    l_ok &= check(int64_t);
 
-    check(char);
-    check(double);
-    check(float);
-    check(std::string);
+    l_ok &= check(char);
+    l_ok &= check(double);
+    l_ok &= check(float);
+    l_ok &= check(std::string);
 
-    check_name(quicky_utils::safe_uint32_t,"safe_uint<uint32_t>");
-    check_name(quicky_utils::safe_uint64_t,"safe_uint<uint64_t>");
+    l_ok &= check_name(quicky_utils::safe_uint32_t,"safe_uint<uint32_t>");
+    l_ok &= check_name(quicky_utils::safe_uint64_t,"safe_uint<uint64_t>");
 
-    check_prefix(quicky_utils,safe_uint<uint8_t>);
-    check_name(quicky_utils::safe_uint<uint8_t>,"safe_uint<uint8_t>");
-    check_prefix(quicky_utils,safe_uint<uint16_t>);
-    check_name(quicky_utils::safe_uint<uint16_t>,"safe_uint<uint16_t>");
+    l_ok &= check_prefix(quicky_utils,safe_uint<uint8_t>);
+    l_ok &= check_name(quicky_utils::safe_uint<uint8_t>,"safe_uint<uint8_t>");
+    l_ok &= check_prefix(quicky_utils,safe_uint<uint16_t>);
+    l_ok &= check_name(quicky_utils::safe_uint<uint16_t>,"safe_uint<uint16_t>");
 
-    check_name(quicky_utils::safe_int8_t,"safe_int<int8_t>");
-    check_name(quicky_utils::safe_int16_t,"safe_int<int16_t>");
-    check_name(quicky_utils::safe_int32_t,"safe_int<int32_t>");
-    check_name(quicky_utils::safe_int64_t,"safe_int<int64_t>");
+    l_ok &= check_name(quicky_utils::safe_int8_t,"safe_int<int8_t>");
+    l_ok &= check_name(quicky_utils::safe_int16_t,"safe_int<int16_t>");
+    l_ok &= check_name(quicky_utils::safe_int32_t,"safe_int<int32_t>");
+    l_ok &= check_name(quicky_utils::safe_int64_t,"safe_int<int64_t>");
 
     return l_ok;
 }
@@ -236,14 +237,14 @@ INT_TYPE convert(const EXT_INT_TYPE & p_ext_int_type)
 template <typename INT_TYPE,
           typename EXT_INT_TYPE
          >
-void check_convert(const EXT_INT_TYPE & p_ext_type,
+bool check_convert(const EXT_INT_TYPE & p_ext_type,
                    const INT_TYPE & p_expected
                   )
 {
     INT_TYPE l_result = convert<INT_TYPE,EXT_INT_TYPE>(p_ext_type);
     std::stringstream l_stream;
     l_stream << p_ext_type;
-    quicky_test::check_expected<INT_TYPE>(l_result, p_expected, "Check conversion of " + l_stream.str() + " to " + quicky_utils::type_string<INT_TYPE>::name());
+    return quicky_test::check_expected<INT_TYPE>(l_result, p_expected, "Check conversion of " + l_stream.str() + " to " + quicky_utils::type_string<INT_TYPE>::name());
 }
 
 //------------------------------------------------------------------------------
@@ -258,126 +259,168 @@ test_ext_uint()
     quicky_utils::ext_uint<uint8_t> l_max({0xFF, 0xFF, 0xFF, 0xFF});
 
     std::cout << std::endl << "Test ext_uint output stream operator:" << std::endl;
-    quicky_test::check_ostream_operator(l_zero,"0x00");
-    quicky_test::check_ostream_operator(l_un,"0x01");
-    quicky_test::check_ostream_operator(l_256,"0x0100");
+    l_ok &= quicky_test::check_ostream_operator(l_zero,"0x00");
+    l_ok &= quicky_test::check_ostream_operator(l_un,"0x01");
+    l_ok &= quicky_test::check_ostream_operator(l_256,"0x0100");
 
     std::cout << std::endl << "Test conversion to integer type" << std::endl;
-    check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_256, 256);
-    check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_zero, 0);
-    check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_un, 1);
-    check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_max, std::numeric_limits<uint32_t>::max());
+    l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_256, 256);
+    l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_zero, 0);
+    l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_un, 1);
+    l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_max, std::numeric_limits<uint32_t>::max());
 
-    assert(l_zero == l_zero);
-    assert(l_zero_list_init == l_zero_list_init);
-    assert(l_zero == l_zero_list_init);
+    std::cout << std::endl << "Test == operator" << std::endl;
+    l_ok &= quicky_test::check_expected(l_zero == l_zero, true, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero_list_init == l_zero_list_init, true, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero == l_zero_list_init, true, quicky_test::auto_message(__FILE__, __LINE__));
 
-    assert(l_un == l_un);
-    assert(!(l_zero == l_un));
-    assert(!(l_zero_list_init == l_un));
+    l_ok &= quicky_test::check_expected(l_un == l_un, true, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero == l_un, false, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero_list_init == l_un, false, quicky_test::auto_message(__FILE__, __LINE__));
 
-    assert(l_zero < l_un);
-    assert(!(l_zero < l_zero));
-    assert(!(l_un < l_zero));
-    assert(l_zero < l_256);
-    assert(!(l_256 < l_zero));
+    l_ok &= quicky_test::check_expected(l_zero < l_un, true, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero < l_zero, false, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_un < l_zero, false, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero < l_256, true, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_256 < l_zero, false, quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << "Test + operator" << std::endl;
+    std::cout << std::endl << "Test + operator" << std::endl;
     quicky_utils::ext_uint<uint8_t> l_result;
     l_result = l_zero + l_zero;
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_zero + l_un;
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, l_un, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t>({255}) + l_un;
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0, 1}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t>({255, 255}) + l_un;
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0, 0, 1}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t>({255, 255}) + quicky_utils::ext_uint<uint8_t>({0,1});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({255, 0, 1}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t>({255}) + quicky_utils::ext_uint<uint8_t>({255});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({254, 1}), quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << "Test - operator" << std::endl;
+    std::cout << std::endl << "Test - operator" << std::endl;
     l_result = l_zero - l_zero;
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_un - l_un;
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_256 - l_256;
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_256 - l_un;
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({255}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result =quicky_utils::ext_uint<uint8_t>({255, 255}) - quicky_utils::ext_uint<uint8_t>({0,1});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({255, 254}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result =quicky_utils::ext_uint<uint8_t>({255, 255}) - quicky_utils::ext_uint<uint8_t>({1});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({254, 255}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result =quicky_utils::ext_uint<uint8_t>({0, 0, 1}) - quicky_utils::ext_uint<uint8_t>({1});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({255, 255}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result =quicky_utils::ext_uint<uint8_t>({0, 0, 2}) - quicky_utils::ext_uint<uint8_t>({1, 1, 1});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({255, 254}), quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << "Test * operator" << std::endl;
+    std::cout << std::endl << "Test * operator" << std::endl;
     l_result = l_zero * l_zero;
+    l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_zero * l_un;
+    l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_un * l_zero;
+    l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_un * l_un;
+    l_ok &= quicky_test::check_expected(l_result, l_un, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t>({128}) * quicky_utils::ext_uint<uint8_t>({42});
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0x0, 0x15}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t>({255, 255}) * quicky_utils::ext_uint<uint8_t>({255});
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0x1, 0xFF, 0xFE}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t>({255, 255}) * quicky_utils::ext_uint<uint8_t>({255, 255});
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0x1, 0x0, 0xFE, 0xFF}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t>({255, 255, 255, 255}) * quicky_utils::ext_uint<uint8_t>({255, 255, 255, 255});
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0x1, 0x0, 0x0, 0x0, 0xFE, 0xFF, 0xFF, 0xFF}), quicky_test::auto_message(__FILE__, __LINE__));
 
+    std::cout << std::endl << "Test >> operator" << std::endl;
     l_result = l_256 >> quicky_utils::ext_uint<uint8_t>({1});
-     std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({128}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_256 >> quicky_utils::ext_uint<uint8_t>({20});
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>(), quicky_test::auto_message(__FILE__, __LINE__));
 
+    std::cout << std::endl << "Test << operator" << std::endl;
     l_result = l_un << quicky_utils::ext_uint<uint8_t>({1});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({2}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_un << quicky_utils::ext_uint<uint8_t>({8});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0, 1}), quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = l_un << quicky_utils::ext_uint<uint8_t>({16});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0, 0, 1}), quicky_test::auto_message(__FILE__, __LINE__));
 
+    std::cout << std::endl << "Test / operator" << std::endl;
     l_result = quicky_utils::ext_uint<uint8_t >({12}) / quicky_utils::ext_uint<uint8_t>({6});
-    std::cout << l_result << std::endl;
-    l_result = quicky_utils::ext_uint<uint8_t >({13}) / quicky_utils::ext_uint<uint8_t>({6});
-    std::cout << l_result << std::endl;
-    l_result = quicky_utils::ext_uint<uint8_t >({0xFF,0x1}) / quicky_utils::ext_uint<uint8_t>({0x12});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({2}), quicky_test::auto_message(__FILE__, __LINE__));
 
+    l_result = quicky_utils::ext_uint<uint8_t >({13}) / quicky_utils::ext_uint<uint8_t>({6});
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({2}), quicky_test::auto_message(__FILE__, __LINE__));
+
+    l_result = quicky_utils::ext_uint<uint8_t >({0xFF,0x1}) / quicky_utils::ext_uint<uint8_t>({0x12});
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0x1C}), quicky_test::auto_message(__FILE__, __LINE__));
+
+    std::cout << std::endl << "Test % operator" << std::endl;
     l_result = quicky_utils::ext_uint<uint8_t >({12}) % quicky_utils::ext_uint<uint8_t>({6});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t >({13}) % quicky_utils::ext_uint<uint8_t>({6});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, l_un, quicky_test::auto_message(__FILE__, __LINE__));
+
     l_result = quicky_utils::ext_uint<uint8_t >({0xFF,0x1}) % quicky_utils::ext_uint<uint8_t>({0x12});
-    std::cout << l_result << std::endl;
+    l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({7}), quicky_test::auto_message(__FILE__, __LINE__));
 
     return l_ok;
 }
 
 //------------------------------------------------------------------------------
 template <typename TYPE>
-void check_safe_equal(const TYPE & p_op1,
+bool check_safe_equal(const TYPE & p_op1,
                       const TYPE & p_op2,
                       bool p_expected
                      )
 {
-    assert((p_op1 == p_op2) == p_expected);
+    return quicky_test::check_expected(p_op1 == p_op2, p_expected);
 }
 
+//------------------------------------------------------------------------------
 template <typename TYPE>
-void check_safe_not_equal(const TYPE & p_op1,
+bool check_safe_not_equal(const TYPE & p_op1,
                           const TYPE & p_op2,
                           bool p_expected
                          )
 {
-    assert((p_op1 != p_op2) == p_expected);
+    return quicky_test::check_expected(p_op1 != p_op2, p_expected);
 }
 
+//------------------------------------------------------------------------------
 bool
 test_safe_types(void)
 {
     bool l_ok = true;
-    test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
-    test_safe_type<typename quicky_utils::safe_int<int8_t>, int32_t>();
+    l_ok &= test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
+    l_ok &= test_safe_type<typename quicky_utils::safe_int<int8_t>, int32_t>();
 
     quicky_utils::safe_int<int16_t> l_safe_int(-128);
     std::cout << l_safe_int << std::endl;
@@ -398,31 +441,31 @@ test_safe_types(void)
     std::cout << (l_fract + l_fract2) << std::endl;
 
     // Try to change a safe_int in a safe_uint
-    test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(-128,
-                                                                                            true
-                                                                                           );
-    test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(-1,
-                                                                                            true
-                                                                                           );
-    test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(0,
-                                                                                            false
-                                                                                           );
+    l_ok &= test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(-128,
+                                                                                                    true
+                                                                                                   );
+    l_ok &= test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(-1,
+                                                                                                    true
+                                                                                                   );
+    l_ok &= test_type_conversion<quicky_utils::safe_int<int8_t>, quicky_utils::safe_uint<uint8_t> >(0,
+                                                                                                    false
+                                                                                                   );
 
     // Try to change a safe_uint in a safe_int
-    test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(0,
-                                                                                            false
-                                                                                           );
-    test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(127,
-                                                                                            false
-                                                                                           );
-    test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(128,
-                                                                                            true
-                                                                                           );
+    l_ok &= test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(0,
+                                                                                                    false
+                                                                                                   );
+    l_ok &= test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(127,
+                                                                                                    false
+                                                                                                   );
+    l_ok &= test_type_conversion<quicky_utils::safe_uint<uint8_t>, quicky_utils::safe_int<int8_t> >(128,
+                                                                                                    true
+                                                                                                   );
     // Test equality operator
-    check_safe_equal<quicky_utils::safe_uint<uint8_t>>(1,1,true);
-    check_safe_equal<quicky_utils::safe_uint<uint8_t>>(1,2,false);
-    check_safe_not_equal<quicky_utils::safe_uint<uint8_t>>(1,1,false);
-    check_safe_not_equal<quicky_utils::safe_uint<uint8_t>>(1,2,true);
+    l_ok &= check_safe_equal<quicky_utils::safe_uint<uint8_t>>(1,1,true);
+    l_ok &= check_safe_equal<quicky_utils::safe_uint<uint8_t>>(1,2,false);
+    l_ok &= check_safe_not_equal<quicky_utils::safe_uint<uint8_t>>(1,1,false);
+    l_ok &= check_safe_not_equal<quicky_utils::safe_uint<uint8_t>>(1,2,true);
 
     return l_ok;
 }
@@ -1113,29 +1156,23 @@ test_fract(void)
 }
 
 template <typename SOURCE_TYPE, typename TARGET_TYPE>
-void test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
+bool test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
                           bool p_exception_expected
                          )
 {
+    std::string l_message("test type conversion ");
+    l_message += type_string<SOURCE_TYPE>::name() + " -> " + type_string<TARGET_TYPE>::name();
     SOURCE_TYPE l_source(p_value);
-    bool l_ok = !p_exception_expected;
-    try
-    {
-        TARGET_TYPE l_target(l_source);
-    }
-    catch(quicky_exception::quicky_logic_exception & e)
-    {
-        l_ok = p_exception_expected;
-    }
-    assert(l_ok);
+    return quicky_test::check_exception<quicky_exception::quicky_logic_exception>([&]{TARGET_TYPE l_target(l_source);},p_exception_expected, l_message);
 }
 
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
-void test_safe_operator(const REFERENCE_TYPE l_op1,
+bool test_safe_operator(const REFERENCE_TYPE l_op1,
                         const REFERENCE_TYPE l_op2,
                         char p_operator
                        )
 {
+    bool l_ok = true;
     typename SAFE_TYPE::base_type l_base_x = (typename SAFE_TYPE::base_type) l_op1;
     typename SAFE_TYPE::base_type l_base_y = (typename SAFE_TYPE::base_type) l_op2;
     SAFE_TYPE l_safe_x(l_base_x);
@@ -1156,14 +1193,16 @@ void test_safe_operator(const REFERENCE_TYPE l_op1,
     bool l_coherent_result = l_ref_result == (REFERENCE_TYPE)l_result;
     if(l_coherent_result)
     {
-        assert(l_safe_result.get_value() == l_result);
+        l_ok &= quicky_test::check_expected(l_safe_result.get_value() == l_result, true);
     }
-    assert(l_coherent_result == l_compute_ok);
+    l_ok &= quicky_test::check_expected(l_coherent_result == l_compute_ok, true);
+    return l_ok;
 }
 
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
-void test_safe_type(void)
+bool test_safe_type(void)
 {
+    bool l_ok = true;
     static_assert(std::is_signed<SAFE_TYPE>::value == std::is_signed<REFERENCE_TYPE>::value,"Check sign coherency between safe_type and reference type");
     std::array<char,5> l_operators = {'+', '-', '*', '/','%'};
     for(auto l_operator: l_operators)
@@ -1182,13 +1221,14 @@ void test_safe_type(void)
                 )
             {
                 if(('/' == l_operator  || '%' == l_operator) && !l_y) break;
-                test_safe_operator<SAFE_TYPE, REFERENCE_TYPE >(l_x,
-                                            l_y,
-                                            l_operator
-                                           );
+                l_ok &= test_safe_operator<SAFE_TYPE, REFERENCE_TYPE >(l_x,
+                                                                       l_y,
+                                                                       l_operator
+                                                                      );
             }
         }
     }
+    return l_ok;
 }
 
 #endif // QUICKY_UTILS_SELF_TEST
