@@ -22,6 +22,7 @@
 #include "ext_uint.h"
 #include "fract.h"
 #include "quicky_test.h"
+#include <fstream>
 #include <iostream>
 #include <functional>
 #include <sstream>
@@ -71,12 +72,22 @@ int main(int argc,char ** argv)
     bool l_ok = true;
     try
     {
+        std::ofstream l_report_file;
+        l_report_file.open("report.log");
+        if(!l_report_file.is_open())
+        {
+            throw quicky_exception::quicky_runtime_exception("Unable to create file report.log", __LINE__, __FILE__);
+        }
+        quicky_test::set_ostream(l_report_file);
+
         l_ok &= check_test_utilities();
         l_ok &= test_ext_uint();
         l_ok &= test_type_string();
         l_ok &= test_fract<uint32_t>();
         l_ok &= test_fract<quicky_utils::safe_int<int32_t>>();
         l_ok &= test_safe_types();
+        l_report_file.close();
+
     }
     catch (quicky_exception::quicky_runtime_exception & e)
     {
@@ -98,37 +109,30 @@ int main(int argc,char ** argv)
 bool
 check_test_utilities(void)
 {
-    std::cout << "----------------------------------------------" << std::endl;
-    std::cout << "| CHECK test_utilities" << std::endl;
-    std::cout << "----------------------------------------------" << std::endl;
+    quicky_test::get_ostream() << "----------------------------------------------" << std::endl;
+    quicky_test::get_ostream() << "| CHECK test_utilities" << std::endl;
+    quicky_test::get_ostream() << "----------------------------------------------" << std::endl;
     bool l_ok = true;
-    l_ok &= quicky_test::check_expected(quicky_test::check_expected(false,true,"",std::cout,true),false, "Failed expected verification");
-    l_ok &= quicky_test::check_expected(quicky_test::check_expected(true,true,"",std::cout,true),true,"Passed expected verification");
-    l_ok &= quicky_test::check_expected(quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{
-                                                                                                                   throw quicky_exception::quicky_logic_exception("Volontary exception",
-                                                                                                                                                                  __LINE__,
-                                                                                                                                                                  __FILE__
-                                                                                                                                                                 );
-                                                                                                                 },
-                                                                                                               true, // Exception expected
-                                                                                                               "", // No message to print
-                                                                                                               std::cout,
-                                                                                                               true // Quiet mode
-                                                                                                              ),
+    l_ok &= quicky_test::check_expected(quicky_test::check_expected_quiet(false,true),false, "Failed expected verification");
+    l_ok &= quicky_test::check_expected(quicky_test::check_expected_quiet(true,true),true,"Passed expected verification");
+    l_ok &= quicky_test::check_expected(quicky_test::check_exception_quiet<quicky_exception::quicky_logic_exception>([]{
+                                                                                                                         throw quicky_exception::quicky_logic_exception("Volontary exception",
+                                                                                                                                                                        __LINE__,
+                                                                                                                                                                        __FILE__
+                                                                                                                                                                       );
+                                                                                                                       }
+                                                                                                               ),
                                         true,
                                         "Exception detection verification"
                                        );
-    l_ok &= quicky_test::check_expected(quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{},
-                                                                                                               false, // No exception expected
-                                                                                                               "", // No message to print
-                                                                                                               std::cout,
-                                                                                                               true // Quiet mode
-                                                                                                              ),
+    l_ok &= quicky_test::check_expected(quicky_test::check_exception_quiet<quicky_exception::quicky_logic_exception>([]{},
+                                                                                                                     false // No exception expected
+                                                                                                                    ),
                                         true,
                                         "No exception detection verification"
-                               );
-    l_ok &= quicky_test::check_expected(quicky_test::check_ostream_operator<uint32_t>(12,"23","",std::cout,true),false,"Failed ostream operator verification");
-    l_ok &= quicky_test::check_expected(quicky_test::check_ostream_operator<uint32_t>(12,"12","",std::cout,true),true,"Passed ostream operator verification");
+                                       );
+    l_ok &= quicky_test::check_expected(quicky_test::check_ostream_operator_quiet<uint32_t>(12,"23"),false,"Failed ostream operator verification");
+    l_ok &= quicky_test::check_expected(quicky_test::check_ostream_operator_quiet<uint32_t>(12,"12"),true,"Passed ostream operator verification");
     return l_ok;
 }
 
@@ -258,18 +262,18 @@ test_ext_uint()
     quicky_utils::ext_uint<uint8_t> l_256({0,1});
     quicky_utils::ext_uint<uint8_t> l_max({0xFF, 0xFF, 0xFF, 0xFF});
 
-    std::cout << std::endl << "Test ext_uint output stream operator:" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test ext_uint output stream operator:" << std::endl;
     l_ok &= quicky_test::check_ostream_operator(l_zero,"0x00");
     l_ok &= quicky_test::check_ostream_operator(l_un,"0x01");
     l_ok &= quicky_test::check_ostream_operator(l_256,"0x0100");
 
-    std::cout << std::endl << "Test conversion to integer type" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test conversion to integer type" << std::endl;
     l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_256, 256);
     l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_zero, 0);
     l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_un, 1);
     l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_max, std::numeric_limits<uint32_t>::max());
 
-    std::cout << std::endl << "Test == operator" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test == operator" << std::endl;
     l_ok &= quicky_test::check_expected(l_zero == l_zero, true, quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_expected(l_zero_list_init == l_zero_list_init, true, quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_expected(l_zero == l_zero_list_init, true, quicky_test::auto_message(__FILE__, __LINE__));
@@ -284,7 +288,7 @@ test_ext_uint()
     l_ok &= quicky_test::check_expected(l_zero < l_256, true, quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_expected(l_256 < l_zero, false, quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << std::endl << "Test + operator" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test + operator" << std::endl;
     quicky_utils::ext_uint<uint8_t> l_result;
     l_result = l_zero + l_zero;
     l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
@@ -304,7 +308,7 @@ test_ext_uint()
     l_result = quicky_utils::ext_uint<uint8_t>({255}) + quicky_utils::ext_uint<uint8_t>({255});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({254, 1}), quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << std::endl << "Test - operator" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test - operator" << std::endl;
     l_result = l_zero - l_zero;
     l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
 
@@ -329,7 +333,7 @@ test_ext_uint()
     l_result =quicky_utils::ext_uint<uint8_t>({0, 0, 2}) - quicky_utils::ext_uint<uint8_t>({1, 1, 1});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({255, 254}), quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << std::endl << "Test * operator" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test * operator" << std::endl;
     l_result = l_zero * l_zero;
     l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
 
@@ -354,14 +358,14 @@ test_ext_uint()
     l_result = quicky_utils::ext_uint<uint8_t>({255, 255, 255, 255}) * quicky_utils::ext_uint<uint8_t>({255, 255, 255, 255});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0x1, 0x0, 0x0, 0x0, 0xFE, 0xFF, 0xFF, 0xFF}), quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << std::endl << "Test >> operator" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test >> operator" << std::endl;
     l_result = l_256 >> quicky_utils::ext_uint<uint8_t>({1});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({128}), quicky_test::auto_message(__FILE__, __LINE__));
 
     l_result = l_256 >> quicky_utils::ext_uint<uint8_t>({20});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>(), quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << std::endl << "Test << operator" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test << operator" << std::endl;
     l_result = l_un << quicky_utils::ext_uint<uint8_t>({1});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({2}), quicky_test::auto_message(__FILE__, __LINE__));
 
@@ -371,7 +375,7 @@ test_ext_uint()
     l_result = l_un << quicky_utils::ext_uint<uint8_t>({16});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0, 0, 1}), quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << std::endl << "Test / operator" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test / operator" << std::endl;
     l_result = quicky_utils::ext_uint<uint8_t >({12}) / quicky_utils::ext_uint<uint8_t>({6});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({2}), quicky_test::auto_message(__FILE__, __LINE__));
 
@@ -381,7 +385,7 @@ test_ext_uint()
     l_result = quicky_utils::ext_uint<uint8_t >({0xFF,0x1}) / quicky_utils::ext_uint<uint8_t>({0x12});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({0x1C}), quicky_test::auto_message(__FILE__, __LINE__));
 
-    std::cout << std::endl << "Test % operator" << std::endl;
+    quicky_test::get_ostream() << std::endl << "Test % operator" << std::endl;
     l_result = quicky_utils::ext_uint<uint8_t >({12}) % quicky_utils::ext_uint<uint8_t>({6});
     l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
 

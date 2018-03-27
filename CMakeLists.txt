@@ -12,6 +12,7 @@ set(MY_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/quicky_C_io.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/quicky_files.h
     include/quicky_test.h
+    src/quicky_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/quicky_utils.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_uint.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/safe_int.h

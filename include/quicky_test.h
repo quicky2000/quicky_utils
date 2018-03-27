@@ -32,6 +32,112 @@ namespace quicky_utils
     {
       public:
         /**
+         * Generate automatic message with file info
+         * @param p_file_name file name
+         * @param p_line line index
+         * @return generated message
+         */
+        static inline std::string auto_message(const std::string & p_file_name,
+                                               const unsigned int & p_line
+                                              );
+
+        /**
+         * Define stream to use by default
+         * @param p_stream default output stream
+         */
+        static inline void set_ostream(std::ostream & p_stream);
+
+        /**
+         * Return stream used by default
+         * @return default output stream
+         */
+        static inline std::ostream & get_ostream();
+
+        /**
+         * Check expected value without displaying message
+         * @tparam T type of value to check
+         * @param p_value value to check
+         * @param p_expected expected value
+         * @return true in case of success
+         */
+        template<typename T>
+        static inline bool
+        check_expected_quiet(const T & p_value,
+                             const T & p_expected
+                            );
+
+        /**
+         * Check expected value and display message
+         * @tparam T type of value to check
+         * @param p_value value t check
+         * @param p_expected expected value
+         * @param p_message message to display
+         * @return true in case of success
+         */
+        template<typename T>
+        static inline bool
+        check_expected(const T & p_value,
+                       const T & p_expected,
+                       const std::string & p_message = ""
+                      );
+
+        /**
+         * Check if code raised an exception without displaying message
+         * @tparam EXCEPTION type of exception to be raised or not
+         * @param p_function code to execute
+         * @param p_exception_expected true if exception is expected
+         * @return true in case of success
+         */
+        template<class EXCEPTION>
+        static inline bool
+        check_exception_quiet(const std::function<void(void)> & p_function,
+                              bool p_exception_expected = true
+                             );
+
+        /**
+         *
+         * @tparam EXCEPTION type of exception to be raised or not
+         * @param p_function code to execute
+         * @param p_exception_expected true if exception is expected
+         * @param p_message message to display
+         * @return true in case of success
+         */
+        template<class EXCEPTION>
+        static inline bool
+        check_exception(const std::function<void(void)> & p_function,
+                        bool p_exception_expected,
+                        const std::string & p_message = ""
+                       );
+
+        /**
+         * Check result of ostream operator
+         * @tparam T Type of object applied to ostream operator
+         * @param p_object object applied to ostream operator
+         * @param p_expected expected displayed string
+         * @return true if displayed string is the expected one
+         */
+        template<typename T>
+        static inline bool
+        check_ostream_operator_quiet(const T & p_object,
+                                     const std::string & p_expected
+                                    );
+
+        /**
+         * Check result of ostream operator
+         * @tparam T Type of object applied to ostream operator
+         * @param p_object object applied to ostream operator
+         * @param p_expected expected displayed string
+         * @param p_message optionnal message to display
+         * @return true if displayed string is the expected one
+         */
+        template<typename T>
+        static inline bool
+        check_ostream_operator(const T & p_object,
+                               const std::string & p_expected,
+                               const std::string & p_message = ""
+                              );
+      private:
+        /**
          * Check provided value vs expected value and return a boolean
          * indicating if comparison was OK or not
          * @tparam T Type of values to compare
@@ -43,12 +149,12 @@ namespace quicky_utils
          * @return true in case of equality false in contrary case
          */
         template<typename T>
-        static bool
+        static inline bool
         check_expected(const T & p_value,
                        const T & p_expected,
-                       const std::string & p_message = "",
-                       std::ostream & p_stream = std::cout,
-                       bool p_quiet = false
+                       const std::string & p_message,
+                       std::ostream & p_stream,
+                       bool p_quiet
                       );
 
         /**
@@ -63,12 +169,12 @@ namespace quicky_utils
          * @return true if expected exception was raised
          */
         template<class EXCEPTION>
-        static bool
+        static inline bool
         check_exception(const std::function<void(void)> & p_function,
-                        bool p_exception_expected = true,
-                        const std::string & p_message = "",
-                        std::ostream & p_ostream = std::cout,
-                        bool p_quiet = false
+                        bool p_exception_expected,
+                        const std::string & p_message,
+                        std::ostream & p_ostream,
+                        bool p_quiet
                        );
 
         /**
@@ -82,23 +188,18 @@ namespace quicky_utils
          * @return true if displayed string is the expected one
          */
         template<typename T>
-        static bool
+        static inline bool
         check_ostream_operator(const T & p_object,
                                const std::string & p_expected,
-                               const std::string & p_message = "",
-                               std::ostream & p_ostream = std::cout,
-                               bool p_quiet = false
+                               const std::string & p_message,
+                               std::ostream & p_ostream,
+                               bool p_quiet
                               );
 
-        /**
-         * Generate automatic message with file info
-         * @param p_file_name file name
-         * @param p_line line index
-         * @return generated message
-         */
-        static inline std::string auto_message(const std::string & p_file_name,
-                                               const unsigned int & p_line
-                                              );
+        inline quicky_test(std::ostream & p_ostream);
+
+        std::ostream * m_default_ostream;
+        static quicky_test m_unique_instance;
     };
 
     //-------------------------------------------------------------------------
@@ -113,19 +214,19 @@ namespace quicky_utils
     {
         if(!p_message.empty())
         {
-            std::cout << p_message << ": ";
+            p_stream << p_message << ": ";
         }
         bool l_result = p_value == p_expected;
         if(!p_quiet)
         {
-            std::cout << "Expected value : " << p_expected << "\tValue : " << p_value << " => " << (l_result ? "PASSED" : "FAILED") << std::endl;
+            p_stream << "Expected value : " << p_expected << "\tValue : " << p_value << " => " << (l_result ? "PASSED" : "FAILED") << std::endl;
         }
         return l_result;
     }
 
     //-------------------------------------------------------------------------
     template<>
-    bool
+    inline bool
     quicky_test::check_expected(const std::string & p_value,
                                 const std::string & p_expected,
                                 const std::string & p_message,
@@ -135,12 +236,12 @@ namespace quicky_utils
     {
         if(!p_message.empty())
         {
-            std::cout << p_message << ": ";
+            p_stream << p_message << ": ";
         }
         bool l_result = p_value == p_expected;
         if(!p_quiet)
         {
-            std::cout << "Expected value : \"" << p_expected << "\"\tValue : \"" << p_value << "\" => " << (l_result ? "PASSED" : "FAILED") << std::endl;
+            p_stream << "Expected value : \"" << p_expected << "\"\tValue : \"" << p_value << "\" => " << (l_result ? "PASSED" : "FAILED") << std::endl;
         }
         return l_result;
     }
@@ -167,11 +268,11 @@ namespace quicky_utils
         bool l_result = p_exception_expected == l_exception_raised;
         if(!p_message.empty())
         {
-            std::cout << p_message << ": ";
+            p_ostream << p_message << ": ";
         }
         if(!p_quiet)
         {
-            std::cout << "Exception expected : " << (p_exception_expected ? "YES" : "NO") << "\tException raised : " << (l_exception_raised ? "YES" : "NO") << " => " << (l_result ? "PASSED" : "FAILED") << std::endl;
+            p_ostream << "Exception expected : " << (p_exception_expected ? "YES" : "NO") << "\tException raised : " << (l_exception_raised ? "YES" : "NO") << " => " << (l_result ? "PASSED" : "FAILED") << std::endl;
         }
         return l_result;
     }
@@ -201,6 +302,89 @@ namespace quicky_utils
         return p_file_name + ":" + std::to_string(p_line);
     }
 
+    //-------------------------------------------------------------------------
+    quicky_test::quicky_test(std::ostream & p_ostream):
+    m_default_ostream(&p_ostream)
+    {
+
+    }
+
+    //-------------------------------------------------------------------------
+    void
+    quicky_test::set_ostream(std::ostream & p_stream)
+    {
+        m_unique_instance.m_default_ostream = &p_stream;
+    }
+
+    //-------------------------------------------------------------------------
+    std::ostream &
+    quicky_test::get_ostream()
+    {
+        return *m_unique_instance.m_default_ostream;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    bool
+    quicky_test::check_expected_quiet(const T & p_value,
+                                      const T & p_expected
+                                     )
+    {
+        return check_expected<T>(p_value,p_expected,"",*m_unique_instance.m_default_ostream,true);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    bool
+    quicky_test::check_expected(const T & p_value,
+                                const T & p_expected,
+                                const std::string & p_message
+                               )
+    {
+        return check_expected<T>(p_value,p_expected,p_message,*m_unique_instance.m_default_ostream,false);
+    }
+
+    //-------------------------------------------------------------------------
+    template <class EXCEPTION>
+    bool
+    quicky_test::check_exception_quiet(const std::function<void(void)> & p_function,
+                                       bool p_exception_expected
+                                      )
+    {
+        return check_exception<EXCEPTION>(p_function, p_exception_expected, "", *m_unique_instance.m_default_ostream, true);
+    }
+
+    //-------------------------------------------------------------------------
+    template <class EXCEPTION>
+    bool
+    quicky_test::check_exception(const std::function<void(void)> & p_function,
+                                 bool p_exception_expected,
+                                 const std::string & p_message
+                                )
+    {
+        return check_exception<EXCEPTION>(p_function, p_exception_expected, p_message, *m_unique_instance.m_default_ostream, false);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    bool
+    quicky_test::check_ostream_operator_quiet(const T & p_object,
+                                              const std::string & p_expected
+                                             )
+    {
+        return check_ostream_operator(p_object, p_expected, "", *m_unique_instance.m_default_ostream, true);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    bool
+    quicky_test::check_ostream_operator(const T & p_object,
+                                        const std::string & p_expected,
+                                        const std::string & p_message
+                                       )
+    {
+        return check_ostream_operator(p_object, p_expected, p_message, *m_unique_instance.m_default_ostream, false);
+    }
 }
 #endif //QUICKY_UTILS_QUICKY_TEST_H
 // EOF
