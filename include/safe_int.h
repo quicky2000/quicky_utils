@@ -120,6 +120,21 @@ namespace  quicky_utils
                   );
 
 
+        /**
+         * Method performing addition, returning the result and setting a
+         * boolean to true in case of overflow
+         * @param p_op1 first operand
+         * @param p_op2 second operand
+         * @param p_overflow true in case of overflow
+         * @return result of traditionnal addition
+         */
+        static
+        T
+        check_add(const T & p_op1,
+                  const T & p_op2,
+                  bool & p_overflow
+                 );
+
         typedef T base_type;
       private:
         static_assert(std::is_signed<T>::value,"Ckeck base type is signed");
@@ -226,45 +241,14 @@ namespace  quicky_utils
     safe_int<T>
     safe_int<T>::operator+(const safe_int & p_op) const
     {
-        T l_sum = m_value + p_op.m_value;
-        if(m_value && p_op.m_value)
+        bool l_overflow = false;
+        T l_sum = check_add(m_value, p_op.m_value, l_overflow);
+        if (l_overflow)
         {
-            unsigned int l_pos1 = m_value >= 0;
-            unsigned int l_pos2 = p_op.m_value >= 0;
-            unsigned int l_pos_result = l_sum >= 0;
-            unsigned int l_status = (l_pos1 << 2) | (l_pos2 << 1) | l_pos_result;
-            bool l_exception = false;
-            switch (l_status)
-            {
-                case 0: // (-) + (-) => (-) OK
-                case 7: // (+) + (+) => (+) OK
-                    break;
-                case 2: // (-) + (+) => (-) It depends
-                    l_exception = m_value > -p_op.m_value;
-                    break;
-                case 4: // (+) + (-) => (-) It depends
-                    l_exception = -m_value < p_op.m_value;
-                    break;
-                    // Abs(min) > Abs(max)
-                case 3: // (-) + (+) => (+) It depends
-                    l_exception = m_value < -p_op.m_value;
-                    break;
-                case 5: // (+) + (-) => (+) It depends
-                    l_exception = -m_value > p_op.m_value;
-                    break;
-
-                case 1: // (-) + (-) => (+) NOK
-                case 6: // (+) + (+) => (-) NOK
-                    l_exception = true;
-                    break;
-            }
-            if (l_exception)
-            {
-                throw safe_type_exception("Addition overflow",
-                                          __LINE__,
-                                          __FILE__
-                                         );
-            }
+            throw safe_type_exception("Addition overflow",
+                                      __LINE__,
+                                      __FILE__
+                                     );
         }
         return safe_int(l_sum);
     }
@@ -467,6 +451,51 @@ namespace  quicky_utils
     {
         p_stream << p_safe_int.m_value;
         return p_stream;
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    T
+    safe_int<T>::check_add(const T & p_op1,
+                           const T & p_op2,
+                           bool & p_overflow
+                          )
+    {
+        T l_sum = p_op1 + p_op2;
+        p_overflow = false;
+        if(p_op1 && p_op2)
+        {
+            unsigned int l_pos1 = p_op1 >= 0;
+            unsigned int l_pos2 = p_op2 >= 0;
+            unsigned int l_pos_result = l_sum >= 0;
+            unsigned int l_status = (l_pos1 << 2) | (l_pos2 << 1) | l_pos_result;
+            switch (l_status)
+            {
+                case 0: // (-) + (-) => (-) OK
+                case 7: // (+) + (+) => (+) OK
+                    break;
+                case 2: // (-) + (+) => (-) It depends
+                    p_overflow = p_op1 > -p_op2;
+                    break;
+                case 4: // (+) + (-) => (-) It depends
+                    p_overflow = -p_op1 < p_op2;
+                    break;
+                    // Abs(min) > Abs(max)
+                case 3: // (-) + (+) => (+) It depends
+                    p_overflow = p_op1 < -p_op2;
+                    break;
+                case 5: // (+) + (-) => (+) It depends
+                    p_overflow = -p_op1 > p_op2;
+                    break;
+
+                case 1: // (-) + (-) => (+) NOK
+                case 6: // (+) + (+) => (-) NOK
+                    p_overflow = true;
+                    break;
+            }
+        }
+        return l_sum;
+
     }
 
     //-----------------------------------------------------------------------------
