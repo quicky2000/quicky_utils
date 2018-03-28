@@ -411,7 +411,7 @@ namespace  quicky_utils
     safe_int<T>
     safe_int<T>::operator+(void)const
     {
-
+        return *this;
     }
 
     //-----------------------------------------------------------------------------
