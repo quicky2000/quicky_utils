@@ -262,30 +262,9 @@ namespace  quicky_utils
         unsigned int l_pos1 = m_value >= 0;
         unsigned int l_pos2 = p_op.m_value >= 0;
         unsigned int l_pos_result = l_result >= 0;
-        unsigned int l_status = (l_pos1 << 2) | (l_pos2 << 1) | l_pos_result;
-        bool l_exception = false;
-        switch (l_status)
+        if(l_pos1 != l_pos2 && l_pos1 != l_pos_result)
         {
-            case 2: // (-) - (+) => (-) OK
-            case 5: // (+) - (-) => (+) OK
-                break;
-
-            case 0: // (-) - (-) => (-) It depends
-            case 6: // (+) - (+) => (-) It depends
-                l_exception = m_value > p_op.m_value;
-                break;
-            case 1: // (-) - (-) => (+) It depends
-            case 7: // (+) - (+) => (+) It depends
-                l_exception = m_value < p_op.m_value;
-                break;
-            case 4: // (+) - (-) => (-) NOK
-            case 3: // (-) - (+) => (+) NOK
-                l_exception = true;
-            break;
-        }
-        if (l_exception)
-        {
-            throw safe_type_exception("Substraction underflow",
+             throw safe_type_exception("Substraction underflow",
                                       __LINE__,
                                       __FILE__
                                      );
@@ -468,30 +447,9 @@ namespace  quicky_utils
             unsigned int l_pos1 = p_op1 >= 0;
             unsigned int l_pos2 = p_op2 >= 0;
             unsigned int l_pos_result = l_sum >= 0;
-            unsigned int l_status = (l_pos1 << 2) | (l_pos2 << 1) | l_pos_result;
-            switch (l_status)
+            if(l_pos1 == l_pos2 && l_pos1 != l_pos_result)
             {
-                case 0: // (-) + (-) => (-) OK
-                case 7: // (+) + (+) => (+) OK
-                    break;
-                case 2: // (-) + (+) => (-) It depends
-                    p_overflow = p_op1 > -p_op2;
-                    break;
-                case 4: // (+) + (-) => (-) It depends
-                    p_overflow = -p_op1 < p_op2;
-                    break;
-                    // Abs(min) > Abs(max)
-                case 3: // (-) + (+) => (+) It depends
-                    p_overflow = p_op1 < -p_op2;
-                    break;
-                case 5: // (+) + (-) => (+) It depends
-                    p_overflow = -p_op1 > p_op2;
-                    break;
-
-                case 1: // (-) + (-) => (+) NOK
-                case 6: // (+) + (+) => (-) NOK
-                    p_overflow = true;
-                    break;
+                p_overflow = true;
             }
         }
         return l_sum;
