@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 # List source files of project
 set(MY_SOURCE_FILES
+    include/password_input.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/ext_uint.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/fract.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/quicky_bitfield.h
