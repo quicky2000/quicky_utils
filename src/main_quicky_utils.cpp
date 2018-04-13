@@ -38,7 +38,7 @@ using namespace quicky_utils;
  * Method regrouping test of test utilites
  */
 bool
-check_test_utilities(void);
+check_test_utilities();
 
 /**
  * Method regrouping tests of type_string class
@@ -48,13 +48,13 @@ test_type_string();
 
 template <typename FRACT_INTERNAL_TYPE>
 bool
-test_fract(void);
+test_fract();
 
 bool
-test_safe_types(void);
+test_safe_types();
 
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
-bool test_safe_type(void);
+bool test_safe_type();
 
 template <typename SOURCE_TYPE, typename TARGET_TYPE>
 bool test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
@@ -115,7 +115,7 @@ int main(int argc,char ** argv)
 
 //-----------------------------------------------------------------------------
 bool
-check_test_utilities(void)
+check_test_utilities()
 {
     quicky_test::get_ostream() << "----------------------------------------------" << std::endl;
     quicky_test::get_ostream() << "| CHECK test_utilities" << std::endl;
@@ -484,7 +484,7 @@ bool check_safe_not_equal(const TYPE & p_op1,
 
 //------------------------------------------------------------------------------
 bool
-test_safe_types(void)
+test_safe_types()
 {
     bool l_ok = true;
     l_ok &= test_safe_type<typename quicky_utils::safe_uint<uint8_t>, uint32_t>();
@@ -539,14 +539,14 @@ test_safe_types(void)
 }
 
 template<unsigned int NB>
-void display_NB(void)
+void display_NB()
 {
     std::cout << NB << std::endl;
 }
 
 template <typename FRACT_INTERNAL_TYPE>
 bool
-test_fract(void)
+test_fract()
 {
     bool l_ok = true;
     std::cout << "---------------------------------------" << std::endl;
@@ -1268,7 +1268,7 @@ bool test_safe_operator(const REFERENCE_TYPE l_op1,
 }
 
 template <typename SAFE_TYPE, typename REFERENCE_TYPE>
-bool test_safe_type(void)
+bool test_safe_type()
 {
     bool l_ok = true;
     static_assert(std::is_signed<SAFE_TYPE>::value == std::is_signed<REFERENCE_TYPE>::value,"Check sign coherency between safe_type and reference type");
