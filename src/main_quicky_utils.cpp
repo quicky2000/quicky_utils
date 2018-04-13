@@ -20,6 +20,7 @@
 #include "quicky_bitfield.h"
 #include "safe_types.h"
 #include "ext_uint.h"
+#include "ext_int.h"
 #include "fract.h"
 #include "quicky_test.h"
 #include <fstream>
@@ -66,6 +67,12 @@ bool test_type_conversion(const typename SOURCE_TYPE::base_type & p_value,
 bool
 test_ext_uint();
 
+/**
+ * Method regrouping tests of ext_int class
+ */
+bool
+test_ext_int();
+
 //------------------------------------------------------------------------------
 int main(int argc,char ** argv)
 {
@@ -82,6 +89,7 @@ int main(int argc,char ** argv)
 
         l_ok &= check_test_utilities();
         l_ok &= test_ext_uint();
+        l_ok &= test_ext_int();
         l_ok &= test_type_string();
         l_ok &= test_fract<uint32_t>();
         l_ok &= test_fract<quicky_utils::safe_int<int32_t>>();
@@ -394,6 +402,62 @@ test_ext_uint()
 
     l_result = quicky_utils::ext_uint<uint8_t >({0xFF,0x1}) % quicky_utils::ext_uint<uint8_t>({0x12});
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({7}), quicky_test::auto_message(__FILE__, __LINE__));
+
+    return l_ok;
+}
+
+//------------------------------------------------------------------------------
+bool
+test_ext_int()
+{
+    bool l_ok = true;
+
+    // Experiments around int type
+    int16_t l_int = -1;
+    for(unsigned int l_index = 0; l_index < 16; ++ l_index)
+    {
+        std::cout << "SHIFT=" << l_index << std::endl;
+        std::cout << std::dec << l_int << std::endl;
+        std::cout << std::hex << l_int << std::dec << std::endl;
+        l_int = l_int << 1;
+    }
+
+    int16_t l_int16 = -1;
+    uint16_t l_uint16 = l_int16;
+    std::cout << l_int16 << "\t" << l_uint16 << std::endl;
+
+    // -512 | 256 | 128 |  64 |  32 |  16 |   8 |   4 |   2 |   1 |
+    //------------------------------------------------------------|
+    //    0 |   0 |   1 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | =>  128
+    //    1 |   1 |   1 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | => -128
+    //    1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | => -  1
+    //    1 |   1 |   0 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | => -129
+
+    l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(0, {0x0});},true,"Check zero bad construct");
+    l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(0, {});},false,"Check zero good construct");
+    l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(-1, {});},false,"Check -1 good construct");
+    l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(-1, {0x80});},true,"Check -1 bad construct");
+
+    ext_int<int8_t> l_0(0,{});
+    ext_int<int8_t> l_1(1,{});
+    ext_int<int8_t> l_m1(-1,{});
+    ext_int<int8_t> l_127(127,{});
+    ext_int<int8_t> l_m128(-128,{});
+    ext_int<int8_t> l_128(0,{128});
+    ext_int<int8_t> l_m256(-1,{0});
+    ext_int<int8_t> l_256(1,{0});
+
+    l_ok &= quicky_test::check_ostream_operator(l_0,"0x00",quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_ostream_operator(l_1,"0x01",quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_ostream_operator(l_m1,"-0x01",quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_ostream_operator(l_127,"0x7F",quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_ostream_operator(l_m128,"-0x80",quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_ostream_operator(l_128,"0x80",quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_ostream_operator(l_256,"0x0100",quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_ostream_operator(l_m256,"-0x0100",quicky_test::auto_message(__FILE__, __LINE__));
+    //ext_int<int16_t> l_int16_t(0, {0xFF});
+    //std::cout << l_int16_t << std::endl;
+    //std::cout << -l_int16_t << std::endl;
 
     return l_ok;
 }

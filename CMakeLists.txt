@@ -23,6 +23,7 @@ set(MY_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/signal_handler_listener_if.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/signal_handler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/type_string.h
+    include/ext_int.h
     )
 
 # List header directories in project
