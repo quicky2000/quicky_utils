@@ -137,7 +137,27 @@ void test_ansi_colors()
     std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::cyan) << "CYAN" << std::endl;
     std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::white) << "WHITE" << std::endl;
     std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::def) << "DEF" << std::endl;
-    //  std::cout << quicky_utils::ansi_escape_code("\x1b[39;49m") << "EEEE" << std::endl;
+    std::cout << quicky_utils::set_bold() << "BOLD" << quicky_utils::set_normal() << " BOLD" << std::endl;
+    std::cout << quicky_utils::set_reverse() << "REVERSE" << quicky_utils::set_normal() << " REVERSE" << std::endl;
+    std::cout << quicky_utils::set_underline() << "UNDERLINE" << quicky_utils::set_normal() << " UNDERLINE" << std::endl;
+    std::cout << quicky_utils::set_bright_fcolor(quicky_utils::ansi_color::black) << "BLACK" << std::endl;
+    std::cout << quicky_utils::set_bright_fcolor(quicky_utils::ansi_color::red) << "RED" << std::endl;
+    std::cout << quicky_utils::set_bright_fcolor(quicky_utils::ansi_color::green) << "GREEN" << std::endl;
+    std::cout << quicky_utils::set_bright_fcolor(quicky_utils::ansi_color::yellow) << "YELLOW" << std::endl;
+    std::cout << quicky_utils::set_bright_fcolor(quicky_utils::ansi_color::blue) << "BLUE" << std::endl;
+    std::cout << quicky_utils::set_bright_fcolor(quicky_utils::ansi_color::magenta) << "MAGENTA" << std::endl;
+    std::cout << quicky_utils::set_bright_fcolor(quicky_utils::ansi_color::cyan) << "CYAN" << std::endl;
+    std::cout << quicky_utils::set_bright_fcolor(quicky_utils::ansi_color::white) << "WHITE" << std::endl;
+    std::cout << quicky_utils::set_bright_fcolor(quicky_utils::ansi_color::def) << "DEF" << std::endl;
+    std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::black) << "BLACK" << std::endl;
+    std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::red) << "RED" << std::endl;
+    std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::green) << "GREEN" << std::endl;
+    std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::yellow) << "YELLOW" << std::endl;
+    std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::blue) << "BLUE" << std::endl;
+    std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::magenta) << "MAGENTA" << std::endl;
+    std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::cyan) << "CYAN" << std::endl;
+    std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::white) << "WHITE" << std::endl;
+    std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::def) << "DEF" << std::endl;
 }
 
 //-----------------------------------------------------------------------------

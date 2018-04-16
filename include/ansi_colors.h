@@ -37,6 +37,9 @@ namespace quicky_utils
         def = 9
     } ansi_color;
 
+    /**
+     * More information can be found on https://en.wikipedia.org/wiki/ANSI_escape_code
+     */
     class ansi_escape_code
     {
         inline friend
@@ -88,6 +91,27 @@ namespace quicky_utils
     }
 
     /**
+     * I/O manipulator to set characters color
+     */
+    class set_bright_fcolor: public ansi_escape_code
+    {
+      public:
+        /**
+         * Constructor for 3 bits colors
+         * @param p_code code of 8 bit color
+         */
+        inline set_bright_fcolor(const ansi_color & p_code);
+
+    };
+
+    //-------------------------------------------------------------------------
+    set_bright_fcolor::set_bright_fcolor(const ansi_color & p_code):
+            ansi_escape_code(std::to_string(90 + (unsigned int)p_code))
+    {
+
+    }
+
+    /**
      * I/O manipulator to set background color
      */
     class set_bcolor: public ansi_escape_code
@@ -108,6 +132,89 @@ namespace quicky_utils
 
     }
 
+    /**
+     * I/O manipulator to set background color
+     */
+    class set_bright_bcolor: public ansi_escape_code
+    {
+      public:
+        /**
+         * Constructor for 3 bits colors
+         * @param p_code code of 8 bit color
+         */
+        inline set_bright_bcolor(const ansi_color & p_code);
+
+    };
+
+    //-------------------------------------------------------------------------
+    set_bright_bcolor::set_bright_bcolor(const ansi_color & p_code):
+            ansi_escape_code(std::to_string(100 + (unsigned int)p_code))
+    {
+    }
+
+    /**
+     * I/O manipulator to set bold mode
+     */
+    class set_bold: public ansi_escape_code
+    {
+      public:
+        inline set_bold();
+    };
+
+    //-------------------------------------------------------------------------
+    set_bold::set_bold():
+            ansi_escape_code("1")
+    {
+
+    }
+
+    /**
+     * I/O manipulator to set underline mode
+     */
+    class set_underline: public ansi_escape_code
+    {
+      public:
+        inline set_underline();
+    };
+
+    //-------------------------------------------------------------------------
+    set_underline::set_underline():
+            ansi_escape_code("4")
+    {
+
+    }
+
+    /**
+     * I/O manipulator to set reverse mode
+     */
+    class set_reverse: public ansi_escape_code
+    {
+      public:
+        inline set_reverse();
+    };
+
+    //-------------------------------------------------------------------------
+    set_reverse::set_reverse():
+            ansi_escape_code("7")
+    {
+
+    }
+
+    /**
+     * I/O manipulator to set normal mode
+     */
+    class set_normal: public ansi_escape_code
+    {
+      public:
+        inline set_normal();
+    };
+
+    //-------------------------------------------------------------------------
+    set_normal::set_normal():
+            ansi_escape_code("0")
+    {
+
+    }
 }
 #endif //QUICKY_UTILS_ANSI_COLORS_H
 //EOF
