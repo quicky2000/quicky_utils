@@ -23,6 +23,7 @@
 #include "ext_int.h"
 #include "fract.h"
 #include "quicky_test.h"
+#include "ansi_colors.h"
 #include <fstream>
 #include <iostream>
 #include <functional>
@@ -73,6 +74,8 @@ test_ext_uint();
 bool
 test_ext_int();
 
+void test_ansi_colors();
+
 //------------------------------------------------------------------------------
 int main(int argc,char ** argv)
 {
@@ -94,6 +97,7 @@ int main(int argc,char ** argv)
         l_ok &= test_fract<uint32_t>();
         l_ok &= test_fract<quicky_utils::safe_int<int32_t>>();
         l_ok &= test_safe_types();
+        test_ansi_colors();
         l_report_file.close();
 
     }
@@ -111,6 +115,29 @@ int main(int argc,char ** argv)
     std::cout << "- TEST " << (l_ok ? "PASSED" : "FAILED") << std::endl;
     std::cout << "--------------------------------------------" << std::endl;
     return !l_ok;
+}
+
+void test_ansi_colors()
+{
+    std::cout << quicky_utils::set_fcolor(quicky_utils::ansi_color::black) << "BLACK" << std::endl;
+    std::cout << quicky_utils::set_fcolor(quicky_utils::ansi_color::red) << "RED" << std::endl;
+    std::cout << quicky_utils::set_fcolor(quicky_utils::ansi_color::green) << "GREEN" << std::endl;
+    std::cout << quicky_utils::set_fcolor(quicky_utils::ansi_color::yellow) << "YELLOW" << std::endl;
+    std::cout << quicky_utils::set_fcolor(quicky_utils::ansi_color::blue) << "BLUE" << std::endl;
+    std::cout << quicky_utils::set_fcolor(quicky_utils::ansi_color::magenta) << "MAGENTA" << std::endl;
+    std::cout << quicky_utils::set_fcolor(quicky_utils::ansi_color::cyan) << "CYAN" << std::endl;
+    std::cout << quicky_utils::set_fcolor(quicky_utils::ansi_color::white) << "WHITE" << std::endl;
+    std::cout << quicky_utils::set_fcolor(quicky_utils::ansi_color::def) << "DEF" << std::endl;
+    std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::black) << "BLACK" << std::endl;
+    std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::red) << "RED" << std::endl;
+    std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::green) << "GREEN" << std::endl;
+    std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::yellow) << "YELLOW" << std::endl;
+    std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::blue) << "BLUE" << std::endl;
+    std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::magenta) << "MAGENTA" << std::endl;
+    std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::cyan) << "CYAN" << std::endl;
+    std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::white) << "WHITE" << std::endl;
+    std::cout << quicky_utils::set_bcolor(quicky_utils::ansi_color::def) << "DEF" << std::endl;
+    //  std::cout << quicky_utils::ansi_escape_code("\x1b[39;49m") << "EEEE" << std::endl;
 }
 
 //-----------------------------------------------------------------------------
