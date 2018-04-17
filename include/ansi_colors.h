@@ -53,6 +53,79 @@ namespace quicky_utils
         std::string m_code;
     };
 
+    class esc_8bits
+    {
+      public:
+        inline const std::string & get_code()const;
+      protected:
+        inline esc_8bits(unsigned int p_code);
+      private:
+        const std::string m_code;
+    };
+
+    //-------------------------------------------------------------------------
+    esc_8bits::esc_8bits(unsigned int p_code):
+    m_code("5;" + std::to_string(p_code))
+    {
+        if(p_code > 255)
+        {
+            throw quicky_exception::quicky_logic_exception("8 bits escape code should be in range [0,255] : " + std::to_string(p_code), __LINE__, __FILE__);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    const std::string & esc_8bits::get_code()const
+    {
+        return m_code;
+    }
+
+    /**
+     * 8 bits color
+     */
+    class color_8b: public esc_8bits
+    {
+      public:
+        color_8b(unsigned int p_r,
+                 unsigned int p_g,
+                 unsigned int p_b
+                );
+      private:
+    };
+
+    //-------------------------------------------------------------------------
+    color_8b::color_8b(unsigned int p_r,
+                       unsigned int p_g,
+                       unsigned int p_b
+                      ):
+            esc_8bits(16 + 36 * p_r + 6 * p_g + p_b)
+    {
+        if(p_r > 5 ||  p_g > 5 || p_b > 5)
+        {
+            std::stringstream l_stream;
+            l_stream << "(" << p_r << "," << p_g << "," << p_b << ")";
+            throw quicky_exception::quicky_logic_exception("RGB components should be in range [0,5] : " + l_stream.str(), __LINE__, __FILE__);
+        }
+    }
+
+    /**
+     * 8 bits gray
+     */
+    class gray_8b: public esc_8bits
+    {
+      public:
+        gray_8b(unsigned int p_gray);
+    };
+
+    //-------------------------------------------------------------------------
+    gray_8b::gray_8b(unsigned int p_gray):
+            esc_8bits(232 + p_gray)
+    {
+        if(p_gray > 23)
+        {
+            throw quicky_exception::quicky_logic_exception("Gray index should be in range [0,23] : " + std::to_string(p_gray), __LINE__, __FILE__);
+        }
+    }
+
     //-------------------------------------------------------------------------
     std::ostream &
     operator<<(std::ostream & p_stream,
@@ -77,15 +150,41 @@ namespace quicky_utils
       public:
         /**
          * Constructor for 3 bits colors
-         * @param p_code code of 8 bit color
+         * @param p_code code of 3 bits color
          */
         inline set_fcolor(const ansi_color & p_code);
+
+        /**
+         * Constructor for 8 bits colors
+         * @param p_color code of 8 bits color
+         */
+        inline set_fcolor(const color_8b & p_color);
+
+        /**
+         * Constructor for 8 bits gray
+         * @param p_gray code of 8 bits color
+         */
+        inline set_fcolor(const gray_8b & p_gray);
 
     };
 
     //-------------------------------------------------------------------------
     set_fcolor::set_fcolor(const ansi_color & p_code):
             ansi_escape_code(std::to_string(30 + (unsigned int)p_code))
+    {
+
+    }
+
+    //-------------------------------------------------------------------------
+    set_fcolor::set_fcolor(const color_8b & p_color):
+            ansi_escape_code("38;" + p_color.get_code())
+    {
+
+    }
+
+    //-------------------------------------------------------------------------
+    set_fcolor::set_fcolor(const gray_8b & p_gray):
+            ansi_escape_code("38;" + p_gray.get_code())
     {
 
     }
@@ -123,11 +222,37 @@ namespace quicky_utils
          */
         inline set_bcolor(const ansi_color & p_code);
 
+        /**
+         * Constructor for 8 bits colors
+         * @param p_color code of 8 bits color
+         */
+        inline set_bcolor(const color_8b & p_color);
+
+        /**
+         * Constructor for 8 bits gray
+         * @param p_gray code of 8 bits color
+         */
+        inline set_bcolor(const gray_8b & p_gray);
+
     };
 
     //-------------------------------------------------------------------------
     set_bcolor::set_bcolor(const ansi_color & p_code):
             ansi_escape_code(std::to_string(40 + (unsigned int)p_code))
+    {
+
+    }
+
+    //-------------------------------------------------------------------------
+    set_bcolor::set_bcolor(const color_8b & p_color):
+            ansi_escape_code("48;" + p_color.get_code())
+    {
+
+    }
+
+    //-------------------------------------------------------------------------
+    set_bcolor::set_bcolor(const gray_8b & p_gray):
+            ansi_escape_code("48;" + p_gray.get_code())
     {
 
     }

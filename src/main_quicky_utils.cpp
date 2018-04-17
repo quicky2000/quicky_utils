@@ -158,6 +158,40 @@ void test_ansi_colors()
     std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::cyan) << "CYAN" << std::endl;
     std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::white) << "WHITE" << std::endl;
     std::cout << quicky_utils::set_bright_bcolor(quicky_utils::ansi_color::def) << "DEF" << std::endl;
+    for(unsigned int l_index = 0; l_index < 24; ++l_index)
+    {
+        std::cout << quicky_utils::set_fcolor(quicky_utils::gray_8b(l_index)) << "GREY[" << l_index << "]" << std::endl;
+    }
+    std::cout << set_fcolor(quicky_utils::_ansi_color::black);
+    for(unsigned int l_index = 0; l_index < 24; ++l_index)
+    {
+        std::cout << quicky_utils::set_bcolor(quicky_utils::gray_8b(l_index)) << "GREY[" << l_index << "]" << std::endl;
+    }
+    std::cout << quicky_utils::set_normal() << std::endl;
+    for(unsigned int l_r = 0; l_r < 6; ++l_r)
+    {
+        for(unsigned int l_g = 0; l_g < 6; ++l_g)
+        {
+            for(unsigned int l_b = 0; l_b < 6; ++l_b)
+            {
+                std::cout << quicky_utils::set_fcolor(quicky_utils::color_8b(l_r, l_g, l_b)) << "A";
+            }
+        }
+        std::cout << std::endl;
+    }
+    std::cout << quicky_utils::set_normal() << std::endl;
+    for(unsigned int l_r = 0; l_r < 6; ++l_r)
+    {
+        for(unsigned int l_g = 0; l_g < 6; ++l_g)
+        {
+            for(unsigned int l_b = 0; l_b < 6; ++l_b)
+            {
+                std::cout << quicky_utils::set_bcolor(quicky_utils::color_8b(l_r, l_g, l_b)) << "A";
+            }
+        }
+        std::cout << std::endl;
+    }
+    std::cout << quicky_utils::set_normal() << std::endl;
 }
 
 //-----------------------------------------------------------------------------
