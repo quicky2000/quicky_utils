@@ -192,6 +192,32 @@ void test_ansi_colors()
         std::cout << std::endl;
     }
     std::cout << quicky_utils::set_normal() << std::endl;
+#ifdef TEST_24BITS_COLORS
+    for(unsigned int l_r = 0; l_r < 255; ++l_r)
+    {
+        for(unsigned int l_g = 0; l_g < 255; ++l_g)
+        {
+            for(unsigned int l_b = 0; l_b < 255; ++l_b)
+            {
+                std::cout << quicky_utils::set_fcolor(quicky_utils::color_24b(l_r, l_g, l_b)) << "A";
+                if(!(l_b % 80)) std::cout << std::endl;
+            }
+        }
+    }
+    std::cout << quicky_utils::set_normal() << std::endl;
+    for(unsigned int l_r = 0; l_r < 255; ++l_r)
+    {
+        for(unsigned int l_g = 0; l_g < 255; ++l_g)
+        {
+            for(unsigned int l_b = 0; l_b < 255; ++l_b)
+            {
+                std::cout << quicky_utils::set_bcolor(quicky_utils::color_24b(l_r, l_g, l_b)) << "A";
+            }
+            std::cout << std::endl;
+        }
+    }
+    std::cout << quicky_utils::set_normal() << std::endl;
+#endif // TEST_24BITS_COLORS
 }
 
 //-----------------------------------------------------------------------------

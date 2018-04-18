@@ -126,6 +126,43 @@ namespace quicky_utils
         }
     }
 
+    /**
+     * 24 bits color
+     */
+    class color_24b
+    {
+      public:
+        color_24b(unsigned int p_r,
+                  unsigned int p_g,
+                  unsigned int p_b
+                 );
+        const std::string & get_code()const;
+      private:
+        std::string m_code;
+    };
+
+    //-------------------------------------------------------------------------
+    color_24b::color_24b(unsigned int p_r,
+                         unsigned int p_g,
+                         unsigned int p_b
+                        ):
+            m_code("2;" + std::to_string(p_r) + ";" + std::to_string(p_g) + ":" + std::to_string(p_b))
+    {
+        if(p_r > 255 ||  p_g > 255 || p_b > 255)
+        {
+            std::stringstream l_stream;
+            l_stream << "(" << p_r << "," << p_g << "," << p_b << ")";
+            throw quicky_exception::quicky_logic_exception("RGB components should be in range [0,255] : " + l_stream.str(), __LINE__, __FILE__);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    const std::string &
+    color_24b::get_code() const
+    {
+        return m_code;
+    }
+
     //-------------------------------------------------------------------------
     std::ostream &
     operator<<(std::ostream & p_stream,
@@ -166,6 +203,12 @@ namespace quicky_utils
          */
         inline set_fcolor(const gray_8b & p_gray);
 
+        /**
+         * Constructor for 24 bits colors
+         * @param p_color code of 24 bits color
+         */
+        inline set_fcolor(const color_24b & p_color);
+
     };
 
     //-------------------------------------------------------------------------
@@ -185,6 +228,12 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     set_fcolor::set_fcolor(const gray_8b & p_gray):
             ansi_escape_code("38;" + p_gray.get_code())
+    {
+
+    }
+
+    set_fcolor::set_fcolor(const color_24b & p_color):
+            ansi_escape_code("38;" + p_color.get_code())
     {
 
     }
@@ -234,6 +283,12 @@ namespace quicky_utils
          */
         inline set_bcolor(const gray_8b & p_gray);
 
+        /**
+         * Constructor for 24 bits colors
+         * @param p_color code of 24 bits color
+         */
+        inline set_bcolor(const color_24b & p_color);
+
     };
 
     //-------------------------------------------------------------------------
@@ -253,6 +308,13 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     set_bcolor::set_bcolor(const gray_8b & p_gray):
             ansi_escape_code("48;" + p_gray.get_code())
+    {
+
+    }
+
+    //-------------------------------------------------------------------------
+    set_bcolor::set_bcolor(const color_24b & p_color):
+            ansi_escape_code("48;" + p_color.get_code())
     {
 
     }
