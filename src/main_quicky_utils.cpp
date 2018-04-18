@@ -553,6 +553,8 @@ test_ext_int()
     ext_int<int8_t> l_128(0,{128});
     ext_int<int8_t> l_m256(-1,{0});
     ext_int<int8_t> l_256(1,{0});
+    ext_int<int8_t> l_257(1,{1});
+    ext_int<int8_t> l_257_bis(1,{1});
 
     l_ok &= quicky_test::check_ostream_operator(l_0,"0x00",quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_ostream_operator(l_1,"0x01",quicky_test::auto_message(__FILE__, __LINE__));
@@ -561,7 +563,21 @@ test_ext_int()
     l_ok &= quicky_test::check_ostream_operator(l_m128,"-0x80",quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_ostream_operator(l_128,"0x80",quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_ostream_operator(l_256,"0x0100",quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_ostream_operator(l_257,"0x0101",quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_ostream_operator(l_m256,"-0x0100",quicky_test::auto_message(__FILE__, __LINE__));
+
+    l_ok &= quicky_test::check_expected(l_0 == l_0, true, "ext_int::== self comparison");
+    l_ok &= quicky_test::check_expected(l_1 == l_0, false, "ext_int::== root comparison");
+    l_ok &= quicky_test::check_expected(l_1 == l_256, false, "ext_int::== ext size comparison");
+    l_ok &= quicky_test::check_expected(l_257 == l_256, false, "ext_int::== ext content comparison");
+    l_ok &= quicky_test::check_expected(l_257 == l_257_bis, true, "ext_int::== ext content comparison");
+
+    l_ok &= quicky_test::check_expected(l_0 != l_0, false, "ext_int::!= self comparison");
+    l_ok &= quicky_test::check_expected(l_1 != l_0, true, "ext_int::!= root comparison");
+    l_ok &= quicky_test::check_expected(l_1 != l_256, true, "ext_int::!= ext size comparison");
+    l_ok &= quicky_test::check_expected(l_257 != l_256, true, "ext_int::!= ext content comparison");
+    l_ok &= quicky_test::check_expected(l_257 != l_257_bis, false, "ext_int::!= ext content comparison");
+
     //ext_int<int16_t> l_int16_t(0, {0xFF});
     //std::cout << l_int16_t << std::endl;
     //std::cout << -l_int16_t << std::endl;
