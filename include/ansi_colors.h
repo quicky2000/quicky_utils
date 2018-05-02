@@ -21,6 +21,7 @@
 #include "quicky_exception.h"
 #include <iostream>
 #include <string>
+#include <sstream>
 
 namespace quicky_utils
 {
