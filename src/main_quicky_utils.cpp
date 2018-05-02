@@ -469,6 +469,15 @@ test_ext_int()
     l_ok &= quicky_test::check_expected(l_257 != l_256, true, "ext_int::!= ext content comparison");
     l_ok &= quicky_test::check_expected(l_257 != l_257_bis, false, "ext_int::!= ext content comparison");
 
+    l_ok &= quicky_test::check_expected(l_0 < l_1, true, "0 < 1");
+    l_ok &= quicky_test::check_expected(l_0 < l_m1, false, "0 < -1");
+    l_ok &= quicky_test::check_expected(l_0 < l_127, true, "0 < 127");
+    l_ok &= quicky_test::check_expected(l_0 < l_128, true, "0 < 128");
+    l_ok &= quicky_test::check_expected(l_0 < l_m128, false, "0 < -128");
+    l_ok &= quicky_test::check_expected(l_0 < l_256, true, "0 < 256");
+    l_ok &= quicky_test::check_expected(l_0 < l_m256, false, "0 < -256");
+    l_ok &= quicky_test::check_expected(l_0 < l_257, true, "0 < 257");
+
     //ext_int<int16_t> l_int16_t(0, {0xFF});
     //std::cout << l_int16_t << std::endl;
     //std::cout << -l_int16_t << std::endl;
