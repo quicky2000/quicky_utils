@@ -403,6 +403,11 @@ namespace quicky_utils
     {
 
     }
+
+#ifdef QUICKY_UTILS_SELF_TEST
+    void test_ansi_colors();
+#endif // QUICKY_UTILS_SELF_TEST
+
 }
 #endif //QUICKY_UTILS_ANSI_COLORS_H
 //EOF
