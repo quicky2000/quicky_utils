@@ -49,7 +49,7 @@ namespace quicky_utils
                    const ansi_escape_code & p_color
                   );
       protected:
-        inline ansi_escape_code(const std::string & p_code);
+        inline explicit ansi_escape_code(const std::string & p_code);
 
         std::string m_code;
     };
@@ -59,7 +59,7 @@ namespace quicky_utils
       public:
         inline const std::string & get_code()const;
       protected:
-        inline esc_8bits(unsigned int p_code);
+        inline explicit esc_8bits(unsigned int p_code);
       private:
         const std::string m_code;
     };
@@ -114,7 +114,7 @@ namespace quicky_utils
     class gray_8b: public esc_8bits
     {
       public:
-        inline gray_8b(unsigned int p_gray);
+        inline explicit gray_8b(unsigned int p_gray);
     };
 
     //-------------------------------------------------------------------------
@@ -190,25 +190,25 @@ namespace quicky_utils
          * Constructor for 3 bits colors
          * @param p_code code of 3 bits color
          */
-        inline set_fcolor(const ansi_color & p_code);
+        inline explicit set_fcolor(const ansi_color & p_code);
 
         /**
          * Constructor for 8 bits colors
          * @param p_color code of 8 bits color
          */
-        inline set_fcolor(const color_8b & p_color);
+        inline explicit set_fcolor(const color_8b & p_color);
 
         /**
          * Constructor for 8 bits gray
          * @param p_gray code of 8 bits color
          */
-        inline set_fcolor(const gray_8b & p_gray);
+        inline explicit set_fcolor(const gray_8b & p_gray);
 
         /**
          * Constructor for 24 bits colors
          * @param p_color code of 24 bits color
          */
-        inline set_fcolor(const color_24b & p_color);
+        inline explicit set_fcolor(const color_24b & p_color);
 
     };
 
@@ -249,7 +249,7 @@ namespace quicky_utils
          * Constructor for 3 bits colors
          * @param p_code code of 8 bit color
          */
-        inline set_bright_fcolor(const ansi_color & p_code);
+        inline explicit set_bright_fcolor(const ansi_color & p_code);
 
     };
 
@@ -270,25 +270,25 @@ namespace quicky_utils
          * Constructor for 3 bits colors
          * @param p_code code of 8 bit color
          */
-        inline set_bcolor(const ansi_color & p_code);
+        inline explicit set_bcolor(const ansi_color & p_code);
 
         /**
          * Constructor for 8 bits colors
          * @param p_color code of 8 bits color
          */
-        inline set_bcolor(const color_8b & p_color);
+        inline explicit set_bcolor(const color_8b & p_color);
 
         /**
          * Constructor for 8 bits gray
          * @param p_gray code of 8 bits color
          */
-        inline set_bcolor(const gray_8b & p_gray);
+        inline explicit set_bcolor(const gray_8b & p_gray);
 
         /**
          * Constructor for 24 bits colors
          * @param p_color code of 24 bits color
          */
-        inline set_bcolor(const color_24b & p_color);
+        inline explicit set_bcolor(const color_24b & p_color);
 
     };
 
@@ -330,7 +330,7 @@ namespace quicky_utils
          * Constructor for 3 bits colors
          * @param p_code code of 8 bit color
          */
-        inline set_bright_bcolor(const ansi_color & p_code);
+        inline explicit set_bright_bcolor(const ansi_color & p_code);
 
     };
 
