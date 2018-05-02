@@ -311,7 +311,7 @@ auto g_lambda = [] (auto x, auto y, char op)
             }
         };
 #else
-#define g_lambda(x,y,op) (op == '+' ? x + y :(op == '-' ? x - y :(op == '*' ? x * y : (op == '/' ? x / y : (op == '%' ? x % y : (decltype(x))0)))))
+#define g_lambda(x,y,op) ((op) == '+' ? (x) + (y) :((op) == '-' ? (x) - (y) :((op) == '*' ? (x) * (y) : ((op) == '/' ? (x) / (y) : ((op) == '%' ? (x) % (y) : (decltype(x))0)))))
 #endif // __cplusplus
 
 /**
@@ -356,7 +356,7 @@ bool check_convert(const EXT_INT_TYPE & p_ext_type,
                    const INT_TYPE & p_expected
                   )
 {
-    INT_TYPE l_result = convert<INT_TYPE,EXT_INT_TYPE>(p_ext_type);
+    auto l_result = convert<INT_TYPE,EXT_INT_TYPE>(p_ext_type);
     std::stringstream l_stream;
     l_stream << p_ext_type;
     return quicky_test::check_expected<INT_TYPE>(l_result, p_expected, "Check conversion of " + l_stream.str() + " to " + quicky_utils::type_string<INT_TYPE>::name());
@@ -526,7 +526,7 @@ test_ext_int()
     }
 
     int16_t l_int16 = -1;
-    uint16_t l_uint16 = l_int16;
+    auto l_uint16 = (uint16_t) l_int16;
     std::cout << l_int16 << "\t" << l_uint16 << std::endl;
 
     // -512 | 256 | 128 |  64 |  32 |  16 |   8 |   4 |   2 |   1 |
@@ -675,8 +675,8 @@ bool test_safe_operator(const REFERENCE_TYPE l_op1,
                        )
 {
     bool l_ok = true;
-    typename SAFE_TYPE::base_type l_base_x = (typename SAFE_TYPE::base_type) l_op1;
-    typename SAFE_TYPE::base_type l_base_y = (typename SAFE_TYPE::base_type) l_op2;
+    auto l_base_x = (typename SAFE_TYPE::base_type) l_op1;
+    auto l_base_y = (typename SAFE_TYPE::base_type) l_op2;
     SAFE_TYPE l_safe_x(l_base_x);
     SAFE_TYPE l_safe_y(l_base_y);
 
