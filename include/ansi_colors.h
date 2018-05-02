@@ -86,10 +86,10 @@ namespace quicky_utils
     class color_8b: public esc_8bits
     {
       public:
-        color_8b(unsigned int p_r,
-                 unsigned int p_g,
-                 unsigned int p_b
-                );
+        inline color_8b(unsigned int p_r,
+                        unsigned int p_g,
+                        unsigned int p_b
+                       );
       private:
     };
 
@@ -114,7 +114,7 @@ namespace quicky_utils
     class gray_8b: public esc_8bits
     {
       public:
-        gray_8b(unsigned int p_gray);
+        inline gray_8b(unsigned int p_gray);
     };
 
     //-------------------------------------------------------------------------
@@ -133,11 +133,11 @@ namespace quicky_utils
     class color_24b
     {
       public:
-        color_24b(unsigned int p_r,
-                  unsigned int p_g,
-                  unsigned int p_b
-                 );
-        const std::string & get_code()const;
+        inline color_24b(unsigned int p_r,
+                         unsigned int p_g,
+                         unsigned int p_b
+                        );
+        inline const std::string & get_code()const;
       private:
         std::string m_code;
     };
