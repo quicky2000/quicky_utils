@@ -263,9 +263,13 @@ test_ext_uint()
 {
     bool l_ok = true;
     quicky_utils::ext_uint<uint8_t> l_zero;
+    quicky_utils::ext_uint<uint8_t> l_zero_bis;
     quicky_utils::ext_uint<uint8_t> l_zero_list_init({0});
+    quicky_utils::ext_uint<uint8_t> l_zero_list_init_bis({0});
     quicky_utils::ext_uint<uint8_t> l_un({1});
+    quicky_utils::ext_uint<uint8_t> l_un_bis({1});
     quicky_utils::ext_uint<uint8_t> l_256({0,1});
+    quicky_utils::ext_uint<uint8_t> l_256_bis({0,1});
     quicky_utils::ext_uint<uint8_t> l_max({0xFF, 0xFF, 0xFF, 0xFF});
 
     quicky_test::get_ostream() << std::endl << "Test ext_uint output stream operator:" << std::endl;
@@ -280,16 +284,16 @@ test_ext_uint()
     l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_max, std::numeric_limits<uint32_t>::max());
 
     quicky_test::get_ostream() << std::endl << "Test == operator" << std::endl;
-    l_ok &= quicky_test::check_expected(l_zero == l_zero, true, quicky_test::auto_message(__FILE__, __LINE__));
-    l_ok &= quicky_test::check_expected(l_zero_list_init == l_zero_list_init, true, quicky_test::auto_message(__FILE__, __LINE__));
-    l_ok &= quicky_test::check_expected(l_zero == l_zero_list_init, true, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero == l_zero_bis, true, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero_list_init == l_zero_list_init_bis, true, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero == l_zero_list_init_bis, true, quicky_test::auto_message(__FILE__, __LINE__));
 
-    l_ok &= quicky_test::check_expected(l_un == l_un, true, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_un == l_un_bis, true, quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_expected(l_zero == l_un, false, quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_expected(l_zero_list_init == l_un, false, quicky_test::auto_message(__FILE__, __LINE__));
 
     l_ok &= quicky_test::check_expected(l_zero < l_un, true, quicky_test::auto_message(__FILE__, __LINE__));
-    l_ok &= quicky_test::check_expected(l_zero < l_zero, false, quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_expected(l_zero < l_zero_bis, false, quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_expected(l_un < l_zero, false, quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_expected(l_zero < l_256, true, quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_expected(l_256 < l_zero, false, quicky_test::auto_message(__FILE__, __LINE__));
@@ -315,13 +319,13 @@ test_ext_uint()
     l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({254, 1}), quicky_test::auto_message(__FILE__, __LINE__));
 
     quicky_test::get_ostream() << std::endl << "Test - operator" << std::endl;
-    l_result = l_zero - l_zero;
+    l_result = l_zero - l_zero_bis;
     l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
 
-    l_result = l_un - l_un;
+    l_result = l_un - l_un_bis;
     l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
 
-    l_result = l_256 - l_256;
+    l_result = l_256 - l_256_bis;
     l_ok &= quicky_test::check_expected(l_result, l_zero, quicky_test::auto_message(__FILE__, __LINE__));
 
     l_result = l_256 - l_un;
@@ -437,6 +441,7 @@ test_ext_int()
     l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(-1, {0x80});},true,"Check -1 bad construct");
 
     ext_int<int8_t> l_0(0,{});
+    ext_int<int8_t> l_0_bis(0,{});
     ext_int<int8_t> l_1(1,{});
     ext_int<int8_t> l_m1(-1,{});
     ext_int<int8_t> l_127(127,{});
@@ -457,13 +462,13 @@ test_ext_int()
     l_ok &= quicky_test::check_ostream_operator(l_257,"0x0101",quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_ostream_operator(l_m256,"-0x0100",quicky_test::auto_message(__FILE__, __LINE__));
 
-    l_ok &= quicky_test::check_expected(l_0 == l_0, true, "ext_int::== self comparison");
+    l_ok &= quicky_test::check_expected(l_0 == l_0_bis, true, "ext_int::== self comparison");
     l_ok &= quicky_test::check_expected(l_1 == l_0, false, "ext_int::== root comparison");
     l_ok &= quicky_test::check_expected(l_1 == l_256, false, "ext_int::== ext size comparison");
     l_ok &= quicky_test::check_expected(l_257 == l_256, false, "ext_int::== ext content comparison");
     l_ok &= quicky_test::check_expected(l_257 == l_257_bis, true, "ext_int::== ext content comparison");
 
-    l_ok &= quicky_test::check_expected(l_0 != l_0, false, "ext_int::!= self comparison");
+    l_ok &= quicky_test::check_expected(l_0 != l_0_bis, false, "ext_int::!= self comparison");
     l_ok &= quicky_test::check_expected(l_1 != l_0, true, "ext_int::!= root comparison");
     l_ok &= quicky_test::check_expected(l_1 != l_256, true, "ext_int::!= ext size comparison");
     l_ok &= quicky_test::check_expected(l_257 != l_256, true, "ext_int::!= ext content comparison");
