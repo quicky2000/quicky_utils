@@ -50,7 +50,7 @@ namespace quicky_utils
     template <typename T>
     const std::string type_string<T>::m_name = "Unknown type";
 
-#define template_specialise_type_string(template_arg,type,type_name)      \
+#define declare_template_specialise_type_string(template_arg,type,type_name)      \
     template <>                                                           \
     template <template_arg>                                               \
     class type_string<type>                                               \
@@ -60,13 +60,14 @@ namespace quicky_utils
         type_string(const type_string & ) = delete;                       \
         type_string(const type_string && ) = delete;                      \
                                                                           \
-        inline static constexpr const std::string & name();               \
+        inline static const std::string & name();                         \
       private:                                                            \
         static const std::string m_name;                                  \
-    };                                                                    \
-                                                                          \
+    }
+
+#define template_specialise_type_string(template_arg,type,type_name)      \
     template <template_arg>                                               \
-    constexpr const std::string & type_string<type>::name()               \
+    const std::string & type_string<type>::name()                         \
     {                                                                     \
        return m_name;                                                     \
     }                                                                     \
@@ -74,7 +75,8 @@ namespace quicky_utils
     template <template_arg>                                               \
     const std::string type_string<type>::m_name = type_name
 
-#define specialise_type_string(type,type_name)                    \
+#define declare_specialise_type_string(type,type_name)            \
+    template <> class type_string<type> ;                         \
     template <>                                                   \
     class type_string<type>                                       \
     {                                                             \
@@ -83,12 +85,14 @@ namespace quicky_utils
         type_string(const type_string & ) = delete;               \
         type_string(const type_string && ) = delete;              \
                                                                   \
-        inline static constexpr const std::string & name();       \
+        static const std::string & name();                        \
       private:                                                    \
         static const std::string m_name;                          \
-    };                                                            \
+    }
+
+#define specialise_type_string(type,type_name)                    \
                                                                   \
-    constexpr const std::string & type_string<type>::name()       \
+    const std::string & type_string<type>::name()                 \
     {                                                             \
         return m_name;                                            \
     }                                                             \
@@ -97,22 +101,23 @@ namespace quicky_utils
 
 #define simple_type_string(type) specialise_type_string(type,#type)
 #define prefix_type_string(prefix,type) specialise_type_string(prefix::type,#type)
+#define declare_simple_type_string(type) declare_specialise_type_string(type,#type)
+#define declare_prefix_type_string(prefix,type) declare_specialise_type_string(prefix::type,#type)
 
-    simple_type_string(uint8_t);
-    simple_type_string(uint16_t);
-    simple_type_string(uint32_t);
-    simple_type_string(uint64_t);
+    declare_simple_type_string(uint8_t);
+    declare_simple_type_string(uint16_t);
+    declare_simple_type_string(uint32_t);
+    declare_simple_type_string(uint64_t);
 
-    simple_type_string(int8_t);
-    simple_type_string(int16_t);
-    simple_type_string(int32_t);
-    simple_type_string(int64_t);
+    declare_simple_type_string(int8_t);
+    declare_simple_type_string(int16_t);
+    declare_simple_type_string(int32_t);
+    declare_simple_type_string(int64_t);
 
-    simple_type_string(char);
-    simple_type_string(float);
-    simple_type_string(double);
-    simple_type_string(std::string);
-
+    declare_simple_type_string(char);
+    declare_simple_type_string(float);
+    declare_simple_type_string(double);
+    declare_simple_type_string(std::string);
 }
 #endif //TYPE_STRING_H
 // EOF

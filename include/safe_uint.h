@@ -423,6 +423,7 @@ namespace quicky_utils
         return safe_uint<T>(p_op1) == p_safe_uint;
     }
 
+    declare_template_specialise_type_string(typename T,safe_uint<T>,"safe_uint<" + type_string<T>::name() + ">");
     template_specialise_type_string(typename T,safe_uint<T>,"safe_uint<" + type_string<T>::name() + ">");
 }
 
