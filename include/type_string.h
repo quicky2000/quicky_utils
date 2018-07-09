@@ -127,6 +127,11 @@ namespace quicky_utils
     declare_simple_type_string(float);
     declare_simple_type_string(double);
     declare_simple_type_string(std::string);
+
+#ifdef QUICKY_UTILS_SELF_TEST
+    bool test_type_string();
+#endif // QUICKY_UTILS_SELF_TEST
+
 }
 #endif //TYPE_STRING_H
 // EOF

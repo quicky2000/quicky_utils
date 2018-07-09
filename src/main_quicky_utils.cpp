@@ -41,12 +41,6 @@ using namespace quicky_utils;
 bool
 check_test_utilities();
 
-/**
- * Method regrouping tests of type_string class
- */
-bool
-test_type_string();
-
 bool
 test_safe_types();
 
@@ -139,56 +133,6 @@ check_test_utilities()
                                        );
     l_ok &= quicky_test::check_expected(quicky_test::check_ostream_operator_quiet<uint32_t>(12,"23"),false,"Failed ostream operator verification");
     l_ok &= quicky_test::check_expected(quicky_test::check_ostream_operator_quiet<uint32_t>(12,"12"),true,"Passed ostream operator verification");
-    return l_ok;
-}
-
-/**
- * Method checking type string representation against expected
- * @tparam T
- * @return true if test is successfull
- */
-template <typename T>
-bool check_a_type_string(const std::string & p_reference)
-{
-    return quicky_test::check_expected(quicky_utils::type_string<T>::name(), p_reference, "Check name of " + quicky_utils::type_string<T>::name());
-}
-#define check(type) check_a_type_string<type>(#type)
-#define check_name(type,type_name) check_a_type_string<type>(type_name)
-#define check_prefix(prefix,type) check_a_type_string<prefix::type>(#type)
-
-//-----------------------------------------------------------------------------
-bool
-test_type_string()
-{
-    bool l_ok = true;
-    l_ok &= check(uint8_t);
-    l_ok &= check(uint16_t);
-    l_ok &= check(uint32_t);
-    l_ok &= check(uint64_t);
-
-    l_ok &= check(int8_t);
-    l_ok &= check(int16_t);
-    l_ok &= check(int32_t);
-    l_ok &= check(int64_t);
-
-    l_ok &= check(char);
-    l_ok &= check(double);
-    l_ok &= check(float);
-    l_ok &= check(std::string);
-
-    l_ok &= check_name(quicky_utils::safe_uint32_t,"safe_uint<uint32_t>");
-    l_ok &= check_name(quicky_utils::safe_uint64_t,"safe_uint<uint64_t>");
-
-    l_ok &= check_prefix(quicky_utils,safe_uint<uint8_t>);
-    l_ok &= check_name(quicky_utils::safe_uint<uint8_t>,"safe_uint<uint8_t>");
-    l_ok &= check_prefix(quicky_utils,safe_uint<uint16_t>);
-    l_ok &= check_name(quicky_utils::safe_uint<uint16_t>,"safe_uint<uint16_t>");
-
-    l_ok &= check_name(quicky_utils::safe_int8_t,"safe_int<int8_t>");
-    l_ok &= check_name(quicky_utils::safe_int16_t,"safe_int<int16_t>");
-    l_ok &= check_name(quicky_utils::safe_int32_t,"safe_int<int32_t>");
-    l_ok &= check_name(quicky_utils::safe_int64_t,"safe_int<int64_t>");
-
     return l_ok;
 }
 

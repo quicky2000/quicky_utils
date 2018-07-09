@@ -79,6 +79,7 @@ else()
     set(MY_SOURCE_FILES
         include/test_fract.h
         src/test_ansi_colors.cpp
+        src/test_type_string.cpp
         ${MY_SOURCE_FILES}
        )
     add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main_${PROJECT_NAME}.cpp)
