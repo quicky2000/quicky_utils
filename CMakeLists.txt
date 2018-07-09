@@ -79,6 +79,7 @@ else()
     set(MY_SOURCE_FILES
         include/test_fract.h
         src/test_ansi_colors.cpp
+        src/test_safe_types.cpp
         src/test_type_string.cpp
         ${MY_SOURCE_FILES}
        )
