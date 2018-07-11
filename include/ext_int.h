@@ -324,13 +324,36 @@ namespace quicky_utils
     bool
     ext_int<T>::operator<(const ext_int & p_op) const
     {
-        if(m_root != p_op.m_root)
+        // Basic integer comparison
+        if (!m_ext.size() && !p_op.m_ext.size())
         {
             return m_root < p_op.m_root;
         }
+
+        // Check signs
+        bool l_root_pos = m_root >= 0;
+        bool l_op_root_pos = p_op.m_root >= 0;
+        if(l_root_pos != l_op_root_pos)
+        {
+            return m_root < p_op.m_root;
+        }
+
         if (m_ext.size() != p_op.m_ext.size())
         {
-            return m_ext.size() < p_op.m_ext.size();
+            // For positive numbers absolute value comparison is good but this
+            // is the opposite for negative numbers
+            if(m_root >= 0)
+            {
+                return m_ext.size() < p_op.m_ext.size();
+            }
+            else
+            {
+                return m_ext.size() > p_op.m_ext.size();
+            }
+        }
+        if(m_root != p_op.m_root)
+        {
+            return m_root < p_op.m_root;
         }
         size_t l_index = m_ext.size() - 1;
         while (l_index < m_ext.size())
