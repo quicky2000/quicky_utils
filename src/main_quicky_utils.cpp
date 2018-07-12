@@ -480,6 +480,96 @@ test_ext_int()
     l_ok &= quicky_test::check_expected(l_257 < l_m256, false, "257 < -256");
     l_ok &= quicky_test::check_expected(l_257 < l_257, false, "257 < 257");
 
+    l_ok &= quicky_test::check_expected(l_0 > l_0, false, "0 > 0");
+    l_ok &= quicky_test::check_expected(l_0 > l_1, false, "0 > 1");
+    l_ok &= quicky_test::check_expected(l_0 > l_m1, true, "0 > -1");
+    l_ok &= quicky_test::check_expected(l_0 > l_127, false, "0 > 127");
+    l_ok &= quicky_test::check_expected(l_0 > l_128, false, "0 > 128");
+    l_ok &= quicky_test::check_expected(l_0 > l_m128, true, "0 > -128");
+    l_ok &= quicky_test::check_expected(l_0 > l_256, false, "0 > 256");
+    l_ok &= quicky_test::check_expected(l_0 > l_m256, true, "0 > -256");
+    l_ok &= quicky_test::check_expected(l_0 > l_257, false, "0 > 257");
+
+    l_ok &= quicky_test::check_expected(l_1 > l_0, true, "1 > 0");
+    l_ok &= quicky_test::check_expected(l_1 > l_1, false, "1 > 1");
+    l_ok &= quicky_test::check_expected(l_1 > l_m1, true, "1 > -1");
+    l_ok &= quicky_test::check_expected(l_1 > l_127, false, "1 > 127");
+    l_ok &= quicky_test::check_expected(l_1 > l_128, false, "1 > 128");
+    l_ok &= quicky_test::check_expected(l_1 > l_m128, true, "1 > -128");
+    l_ok &= quicky_test::check_expected(l_1 > l_256, false, "1 > 256");
+    l_ok &= quicky_test::check_expected(l_1 > l_m256, true, "1 > -256");
+    l_ok &= quicky_test::check_expected(l_1 > l_257, false, "1 > 257");
+
+    l_ok &= quicky_test::check_expected(l_m1 > l_0, false, "-1 > 0");
+    l_ok &= quicky_test::check_expected(l_m1 > l_1, false, "-1 > 1");
+    l_ok &= quicky_test::check_expected(l_m1 > l_m1, false, "-1 > -1");
+    l_ok &= quicky_test::check_expected(l_m1 > l_127, false, "-1 > 127");
+    l_ok &= quicky_test::check_expected(l_m1 > l_128, false, "-1 > 128");
+    l_ok &= quicky_test::check_expected(l_m1 > l_m128, true, "-1 > -128");
+    l_ok &= quicky_test::check_expected(l_m1 > l_256, false, "-1 > 256");
+    l_ok &= quicky_test::check_expected(l_m1 > l_m256, true, "-1 > -256");
+    l_ok &= quicky_test::check_expected(l_m1 > l_257, false, "-1 > 257");
+
+    l_ok &= quicky_test::check_expected(l_127 > l_0, true, "127 > 0");
+    l_ok &= quicky_test::check_expected(l_127 > l_1, true, "127 > 1");
+    l_ok &= quicky_test::check_expected(l_127 > l_m1, true, "127 > -1");
+    l_ok &= quicky_test::check_expected(l_127 > l_127, false, "127 > 127");
+    l_ok &= quicky_test::check_expected(l_127 > l_128, false, "127 > 128");
+    l_ok &= quicky_test::check_expected(l_127 > l_m128, true, "127 > -128");
+    l_ok &= quicky_test::check_expected(l_127 > l_256, false, "127 > 256");
+    l_ok &= quicky_test::check_expected(l_127 > l_m256, true, "127 > -256");
+    l_ok &= quicky_test::check_expected(l_127 > l_257, false, "127 > 257");
+
+    l_ok &= quicky_test::check_expected(l_128 > l_0, true, "128 > 0");
+    l_ok &= quicky_test::check_expected(l_128 > l_1, true, "128 > 1");
+    l_ok &= quicky_test::check_expected(l_128 > l_m1, true, "128 > -1");
+    l_ok &= quicky_test::check_expected(l_128 > l_127, true, "128 > 127");
+    l_ok &= quicky_test::check_expected(l_128 > l_128, false, "128 > 128");
+    l_ok &= quicky_test::check_expected(l_128 > l_m128, true, "128 > -128");
+    l_ok &= quicky_test::check_expected(l_128 > l_256, false, "128 > 256");
+    l_ok &= quicky_test::check_expected(l_128 > l_m256, true, "128 > -256");
+    l_ok &= quicky_test::check_expected(l_128 > l_257, false, "128 > 257");
+
+    l_ok &= quicky_test::check_expected(l_m128 > l_0, false, "-128 > 0");
+    l_ok &= quicky_test::check_expected(l_m128 > l_1, false, "-128 > 1");
+    l_ok &= quicky_test::check_expected(l_m128 > l_m1, false, "-128 > -1");
+    l_ok &= quicky_test::check_expected(l_m128 > l_127, false, "-128 > 127");
+    l_ok &= quicky_test::check_expected(l_m128 > l_128, false, "-128 > 128");
+    l_ok &= quicky_test::check_expected(l_m128 > l_m128, false, "-128 > -128");
+    l_ok &= quicky_test::check_expected(l_m128 > l_256, false, "-128 > 256");
+    l_ok &= quicky_test::check_expected(l_m128 > l_m256, true, "-128 > -256");
+    l_ok &= quicky_test::check_expected(l_m128 > l_257, false, "-128 > 257");
+
+    l_ok &= quicky_test::check_expected(l_256 > l_0, true, "256 > 0");
+    l_ok &= quicky_test::check_expected(l_256 > l_1, true, "256 > 1");
+    l_ok &= quicky_test::check_expected(l_256 > l_m1, true, "256 > -1");
+    l_ok &= quicky_test::check_expected(l_256 > l_127, true, "256 > 127");
+    l_ok &= quicky_test::check_expected(l_256 > l_128, true, "256 > 128");
+    l_ok &= quicky_test::check_expected(l_256 > l_m128, true, "256 > -128");
+    l_ok &= quicky_test::check_expected(l_256 > l_256, false, "256 > 256");
+    l_ok &= quicky_test::check_expected(l_256 > l_m256, true, "256 > -256");
+    l_ok &= quicky_test::check_expected(l_256 > l_257, false, "256 > 257");
+
+    l_ok &= quicky_test::check_expected(l_m256 > l_0, false, "-256 > 0");
+    l_ok &= quicky_test::check_expected(l_m256 > l_1, false, "-256 > 1");
+    l_ok &= quicky_test::check_expected(l_m256 > l_m1, false, "-256 > -1");
+    l_ok &= quicky_test::check_expected(l_m256 > l_127, false, "-256 > 127");
+    l_ok &= quicky_test::check_expected(l_m256 > l_128, false, "-256 > 128");
+    l_ok &= quicky_test::check_expected(l_m256 > l_m128, false, "-256 > -128");
+    l_ok &= quicky_test::check_expected(l_m256 > l_256, false, "-256 > 256");
+    l_ok &= quicky_test::check_expected(l_m256 > l_m256, false, "-256 > -256");
+    l_ok &= quicky_test::check_expected(l_m256 > l_257, false, "-256 > 257");
+
+    l_ok &= quicky_test::check_expected(l_257 > l_0, true, "257 > 0");
+    l_ok &= quicky_test::check_expected(l_257 > l_1, true, "257 > 1");
+    l_ok &= quicky_test::check_expected(l_257 > l_m1, true, "257 > -1");
+    l_ok &= quicky_test::check_expected(l_257 > l_127, true, "257 > 127");
+    l_ok &= quicky_test::check_expected(l_257 > l_128, true, "257 > 128");
+    l_ok &= quicky_test::check_expected(l_257 > l_m128, true, "257 > -128");
+    l_ok &= quicky_test::check_expected(l_257 > l_256, true, "257 > 256");
+    l_ok &= quicky_test::check_expected(l_257 > l_m256, true, "257 > -256");
+    l_ok &= quicky_test::check_expected(l_257 > l_257, false, "257 > 257");
+
     //ext_int<int16_t> l_int16_t(0, {0xFF});
     //std::cout << l_int16_t << std::endl;
     //std::cout << -l_int16_t << std::endl;
