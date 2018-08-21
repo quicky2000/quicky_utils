@@ -124,7 +124,31 @@ namespace quicky_utils
         operator+(void)const;
 
       private:
+        /**
+        * Perform addition and manage input output overflow
+        * @param p_op1 first operand
+        * @param p_op2 second operand
+        * @param p_overflow input/output overflow
+        * @return sum of both operands
+        */
+        static
+        ubase_type propagate_add(const ubase_type & p_op1,
+                                 const ubase_type & p_op2,
+                                 bool & p_overflow
+                                );
 
+        /**
+        * Perform addition and manage input output overflow
+        * @param p_op1 first operand
+        * @param p_op2 second operand
+        * @param p_overflow input/output overflow
+        * @return sum of both operands
+        */
+        static
+        T propagate_add(const T & p_op1,
+                        const T & p_op2,
+                        bool & p_overflow
+                       );
         /**
          * Method checking ig object has the shortest possible representation
          * @return true if object don't have shortest possible representation
@@ -139,7 +163,8 @@ namespace quicky_utils
         static_assert(std::is_signed<T>::value,"Ckeck base type is signed");
 
         ext_int(const T & p_root,
-                const std::vector<ubase_type> & p_ext
+                const std::vector<ubase_type> & p_ext,
+                bool p_check_trim=true
                );
         /**
          * Root
@@ -197,12 +222,13 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     ext_int<T>::ext_int(const T & p_root,
-                        const std::vector<ubase_type> & p_ext
+                        const std::vector<ubase_type> & p_ext,
+                        bool p_check_trim
                        ):
             m_root(p_root),
             m_ext(p_ext)
     {
-        if(is_trimmable())
+        if(p_check_trim && is_trimmable())
         {
             throw quicky_exception::quicky_logic_exception("NULL root whereas non full unsigned extension", __LINE__, __FILE__);
         }
@@ -442,12 +468,17 @@ namespace quicky_utils
         bool l_previous_overflow = false;
         std::vector<ubase_type> l_new_ext;
         T l_new_root;
+
         ubase_type l_sum;
+        // Sum common extension part
         for(size_t l_index = 0;
             l_index < l_min_size;
             ++l_index
                 )
         {
+            l_sum = propagate_add(m_ext[l_index],p_op.m_ext[l_index], l_previous_overflow);
+/*
+
             bool l_overflow;
             l_sum = safe_uint<ubase_type >::check_add(m_ext[l_index],p_op.m_ext[l_index],l_overflow);
             if(l_previous_overflow)
@@ -465,6 +496,7 @@ namespace quicky_utils
                 }
             }
             l_previous_overflow = l_overflow;
+*/
             l_new_ext.push_back(l_sum);
         }
         if(m_ext.size() != p_op.m_ext.size())
@@ -474,6 +506,8 @@ namespace quicky_utils
 
             // Add shorter's root to longer.m_ext[l_min_size]
             ubase_type l_unsigned_root = l_shorter.m_root;
+            l_sum = propagate_add(l_longer.m_ext[l_min_size],l_unsigned_root,l_previous_overflow);
+/*
             bool l_overflow;
             l_sum = safe_uint<ubase_type>::check_add(l_longer.m_ext[l_min_size],l_unsigned_root,l_overflow);
             if(l_previous_overflow)
@@ -491,15 +525,18 @@ namespace quicky_utils
                 }
             }
             l_previous_overflow = l_overflow;
+*/
             l_new_ext.push_back(l_sum);
 
-            if(l_shorter.m_root > 0)
+            if(l_shorter.m_root >= 0)
             {
                 for(size_t l_index = l_min_size + 1;
                     l_index < l_max_size;
                     ++l_index
                         )
                 {
+                    l_sum = propagate_add(l_longer.m_ext[l_index],0, l_previous_overflow);
+/*
                     if(!l_previous_overflow)
                     {
                         l_sum = l_longer.m_ext[l_index];
@@ -511,18 +548,21 @@ namespace quicky_utils
                                                         l_previous_overflow
                                                        );
                     }
+*/
                     l_new_ext.push_back(l_sum);
                 }
             }
-            else
+            else // Negative root
             {
                 // Value used to complete number if case this and p_op don't have same size
-                constexpr T l_fill_value = -1;
+                constexpr ubase_type l_fill_value = -1;
                 for(size_t l_index = l_min_size + 1;
                     l_index < l_max_size;
                     ++l_index
                         )
                 {
+                    l_sum = propagate_add(l_longer.m_ext[l_index], l_fill_value,l_previous_overflow);
+/*
                     bool l_overflow;
                     l_sum = safe_uint<ubase_type >::check_add(l_longer.m_ext[l_index], l_fill_value,l_overflow);
                     if(l_previous_overflow)
@@ -540,9 +580,24 @@ namespace quicky_utils
                         }
                     }
                     l_previous_overflow = l_overflow;
+*/
                     l_new_ext.push_back(l_sum);
                 }
             }
+            // Perform root operation
+            const T l_fill_value = l_shorter.m_root >= 0 ? 0 : -1;
+            l_sum = propagate_add(l_longer.m_root, l_fill_value, l_previous_overflow);
+            if(l_previous_overflow)
+            {
+                l_new_ext.push_back(l_sum);
+                l_new_root = l_fill_value;
+            }
+            else
+            {
+                l_new_root = l_sum;
+            }
+/*
+            T l_root_sum = safe_int<T>::check_add(l_longer.m_root, m_root > 0 ? 0 : -1, l_overflow);
             if(l_previous_overflow)
             {
                 bool l_overflow;
@@ -561,10 +616,13 @@ namespace quicky_utils
             {
                 l_new_root = l_longer.m_root;
             }
+*/
 
         }
-        else
+        else // Extension has same size
         {
+            l_sum = propagate_add(m_root, p_op.m_root,l_previous_overflow);
+/*
             bool l_overflow;
             l_sum = safe_int<T>::check_add(m_root, p_op.m_root,l_overflow);
             if(l_previous_overflow)
@@ -581,7 +639,8 @@ namespace quicky_utils
                     l_sum += l_previous_overflow;
                 }
             }
-            if(l_overflow)
+*/
+            if(l_previous_overflow)
             {
                 l_new_ext.push_back(l_sum);
                 l_new_root = m_root < 0 ? -1:0;
@@ -591,7 +650,7 @@ namespace quicky_utils
                 l_new_root = l_sum;
             }
         }
-        return ext_int(l_new_root, l_new_ext).trim();
+        return ext_int(l_new_root, l_new_ext, false).trim();
     }
 
     //-------------------------------------------------------------------------
@@ -622,6 +681,62 @@ namespace quicky_utils
     ext_int<T>::operator+(void) const
     {
         return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    typename ext_int<T>::ubase_type
+    ext_int<T>::propagate_add(const ext_int::ubase_type & p_op1,
+                              const ext_int::ubase_type & p_op2,
+                              bool & p_overflow
+                             )
+    {
+        bool l_overflow;
+        ubase_type l_sum = safe_uint<ubase_type >::check_add(p_op1, p_op2,l_overflow);
+        if(p_overflow)
+        {
+            if (!l_overflow)
+            {
+                l_sum = safe_uint<ubase_type>::check_add(l_sum,
+                                                         p_overflow,
+                                                         l_overflow
+                                                        );
+            }
+            else
+            {
+                l_sum += p_overflow;
+            }
+        }
+        p_overflow = l_overflow;
+        return l_sum;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    T
+    ext_int<T>::propagate_add(const T & p_op1,
+                              const T & p_op2,
+                              bool & p_overflow
+                             )
+    {
+        bool l_overflow;
+        T l_sum = safe_int<T>::check_add(p_op1, p_op2,l_overflow);
+        if(p_overflow)
+        {
+            if (!l_overflow)
+            {
+                l_sum = safe_int<T>::check_add(l_sum,
+                                               p_overflow,
+                                               l_overflow
+                                              );
+            }
+            else
+            {
+                l_sum += p_overflow;
+            }
+        }
+        p_overflow = l_overflow;
+        return l_sum;
     }
 
 }
