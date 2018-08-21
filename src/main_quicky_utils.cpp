@@ -344,12 +344,23 @@ test_ext_int()
     auto l_uint16 = (uint16_t) l_int16;
     std::cout << l_int16 << "\t" << l_uint16 << std::endl;
 
-    // -512 | 256 | 128 |  64 |  32 |  16 |   8 |   4 |   2 |   1 |
-    //------------------------------------------------------------|
-    //    0 |   0 |   1 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | =>  128
-    //    1 |   1 |   1 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | => -128
-    //    1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | => -  1
-    //    1 |   1 |   0 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | => -129
+    // ||-128 |  64 |  32 |  16 |   8 |   4 |   2 |   1 |
+    //-||-----------------------------------------------|
+    // ||   0 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | =>  127
+    // ||   0 |   0 |   0 |   0 |   0 |   0 |   0 |   1 | =>    1
+    // ||   1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | => -  1
+    // ||   0 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | =>    0
+    // ||   1 |   0 |   0 |   0 |   0 |   0 |   0 |   1 | => -127
+    // ||   1 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | => -128
+
+    // -512 | 256 || 128 |  64 |  32 |  16 |   8 |   4 |   2 |   1 |
+    //------------||-----------------------------------------------|
+    //    0 |   0 ||   1 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | =>  128
+    //    1 |   1 ||   1 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | => -128
+    //    1 |   1 ||   1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | => -  1
+    //    1 |   1 ||   0 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | => -129
+    //    0 |   1 ||   0 |   0 |   0 |   0 |   0 |   0 |   0 |   1 | =>  257
+    //    1 |   0 ||   1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | => -257
 
     l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(0, {0x0});},true,"Check zero bad construct");
     l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(0, {});},false,"Check zero good construct");
@@ -377,6 +388,7 @@ test_ext_int()
     l_ok &= quicky_test::check_ostream_operator(l_256,"0x0100",quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_ostream_operator(l_257,"0x0101",quicky_test::auto_message(__FILE__, __LINE__));
     l_ok &= quicky_test::check_ostream_operator(l_m256,"-0x0100",quicky_test::auto_message(__FILE__, __LINE__));
+    l_ok &= quicky_test::check_ostream_operator(ext_int<int8_t>(-2,{255}),"-0x0101",quicky_test::auto_message(__FILE__, __LINE__));
 
     l_ok &= quicky_test::check_expected(l_0 == l_0_bis, true, "ext_int::== self comparison");
     l_ok &= quicky_test::check_expected(l_1 == l_0, false, "ext_int::== root comparison");
@@ -569,6 +581,36 @@ test_ext_int()
     l_ok &= quicky_test::check_expected(l_257 > l_256, true, "257 > 256");
     l_ok &= quicky_test::check_expected(l_257 > l_m256, true, "257 > -256");
     l_ok &= quicky_test::check_expected(l_257 > l_257, false, "257 > 257");
+
+    l_ok &= quicky_test::check_expected(l_0 + l_0, l_0, "0 + 0 == 0");
+    l_ok &= quicky_test::check_expected(l_0 + l_1, l_1, "0 + 1 == 1");
+    l_ok &= quicky_test::check_expected(l_0 + l_m1, l_m1, "0 + -1 == -1");
+    l_ok &= quicky_test::check_expected(l_0 + l_127, l_127, "0 + 127 == 127");
+    l_ok &= quicky_test::check_expected(l_0 + l_128, l_128, "0 + 128 == 128");
+    l_ok &= quicky_test::check_expected(l_0 + l_m128, l_m128, "0 + -128 == -128");
+    l_ok &= quicky_test::check_expected(l_0 + l_256, l_256, "0 + 256 == 256");
+    l_ok &= quicky_test::check_expected(l_0 + l_m256, l_m256, "0 + -256 == -256");
+    l_ok &= quicky_test::check_expected(l_0 + l_257, l_257, "0 + 257 == 257");
+
+    l_ok &= quicky_test::check_expected(l_1 + l_0, l_1, "1 + 0 == 1");
+    l_ok &= quicky_test::check_expected(l_1 + l_1, ext_int<int8_t>(2,{}), "1 + 1 == 2");
+    l_ok &= quicky_test::check_expected(l_1 + l_m1, l_0, "1 + -1 == 0");
+    l_ok &= quicky_test::check_expected(l_1 + l_127, l_128, "1 + 127 == 128");
+    l_ok &= quicky_test::check_expected(l_1 + l_128, ext_int<int8_t>(0,{129}), "1 + 128 == 129");
+    l_ok &= quicky_test::check_expected(l_1 + l_m128, ext_int<int8_t>(-127,{}), "1 + -128 == -127");
+    l_ok &= quicky_test::check_expected(l_1 + l_256, l_257, "1 + 256 == 257");
+    l_ok &= quicky_test::check_expected(l_1 + l_m256, ext_int<int8_t>(-1,{1}), "1 + -256 == -255");
+    l_ok &= quicky_test::check_expected(l_1 + l_257, ext_int<int8_t>(1, {2}), "1 + 257 == 258");
+
+    l_ok &= quicky_test::check_expected(l_m1 + l_0, ext_int<int8_t>(-1,{}), "-1 + 0 == -1");
+    l_ok &= quicky_test::check_expected(l_m1 + l_1, l_0, "-1 + 1 == 0");
+    l_ok &= quicky_test::check_expected(l_m1 + l_m1, ext_int<int8_t>(-2,{}), "-1 + -1 == -2");
+    l_ok &= quicky_test::check_expected(l_m1 + l_127, ext_int<int8_t>(126,{}), "-1 + 127 == 126");
+    l_ok &= quicky_test::check_expected(l_m1 + l_128, l_127, "-1 + 128 == 127");
+    l_ok &= quicky_test::check_expected(l_m1 + l_m128, ext_int<int8_t>(-1,{127}), "-1 + -128 == -129");
+    l_ok &= quicky_test::check_expected(l_m1 + l_256, ext_int<int8_t>(0,{255}), "-1 + 256 == 255");
+    l_ok &= quicky_test::check_expected(l_m1 + l_m256, ext_int<int8_t>(-2,{255}), "-1 + -256 == -257");
+    l_ok &= quicky_test::check_expected(l_m1 + l_257, l_256, "-1 + 257 == 256");
 
     //ext_int<int16_t> l_int16_t(0, {0xFF});
     //std::cout << l_int16_t << std::endl;
