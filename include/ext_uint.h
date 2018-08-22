@@ -942,6 +942,13 @@ namespace quicky_utils
         return *this;
     }
 
+#ifdef QUICKY_UTILS_SELF_TEST
+    /**
+     * Method regrouping tests of ext_uint class
+    */
+    bool
+    test_ext_uint();
+#endif // QUICKY_UTILS_SELF_TEST
 }
 #endif //QUICKY_UTILS_EXT_UINT_H
 // EOF

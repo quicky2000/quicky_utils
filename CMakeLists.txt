@@ -79,10 +79,11 @@ else()
     set(MY_SOURCE_FILES
         include/test_fract.h
         src/test_ansi_colors.cpp
+        src/test_ext_types.cpp
         src/test_safe_types.cpp
         src/test_type_string.cpp
         ${MY_SOURCE_FILES}
-       )
+        )
     add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main_${PROJECT_NAME}.cpp)
     target_compile_definitions(${PROJECT_NAME} PRIVATE -D$<UPPER_CASE:${PROJECT_NAME}>_SELF_TEST)
     target_link_libraries(${PROJECT_NAME} ${LINKED_LIBRARIES})

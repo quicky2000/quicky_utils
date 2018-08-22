@@ -17,6 +17,7 @@
 #ifndef QUICKY_UTILS_EXT_INT_H
 #define QUICKY_UTILS_EXT_INT_H
 
+#include "safe_int.h"
 #include "quicky_exception.h"
 #include <iostream>
 #include <vector>
@@ -738,6 +739,14 @@ namespace quicky_utils
         p_overflow = l_overflow;
         return l_sum;
     }
+
+#ifdef QUICKY_UTILS_SELF_TEST
+    /**
+    * Method regrouping tests of ext_int class
+    */
+    bool
+    test_ext_int();
+#endif // QUICKY_UTILS_SELF_TEST
 
 }
 #endif //QUICKY_UTILS_EXT_INT_H
