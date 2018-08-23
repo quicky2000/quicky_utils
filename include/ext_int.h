@@ -240,7 +240,7 @@ namespace quicky_utils
     bool
     ext_int<T>::is_trimmable() const
     {
-        return m_ext.size() && ((-1 == m_root && (m_ext.front() & m_upper_bit_mask)) || (0 == m_root && !(m_ext.front() & m_upper_bit_mask)));
+        return m_ext.size() && ((-1 == m_root && (m_ext.back() & m_upper_bit_mask)) || (0 == m_root && !(m_ext.back() & m_upper_bit_mask)));
     }
 
     //-------------------------------------------------------------------------
@@ -250,7 +250,7 @@ namespace quicky_utils
     {
         while (is_trimmable())
         {
-            m_root = m_ext.front();
+            m_root = m_ext.back();
             m_ext.pop_back();
         }
         return *this;
