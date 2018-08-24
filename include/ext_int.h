@@ -72,6 +72,12 @@ namespace quicky_utils
                );
 
         /**
+         * Constructor from uint32_t
+         * @param p_value value to convert to ext_int
+         */
+        explicit ext_int(const int32_t & p_value);
+
+        /**
          * Display content of ext_int in hexadecimal
          * @param os output stream
          * @param p_ext_int ext_int to display
@@ -163,10 +169,17 @@ namespace quicky_utils
 
         static_assert(std::is_signed<T>::value,"Ckeck base type is signed");
 
+        /**
+         *
+         * @param p_root  root value
+         * @param p_ext values
+         * @param p_check_trim indicate if we check the trim requirement
+         */
         ext_int(const T & p_root,
                 const std::vector<ubase_type> & p_ext,
                 bool p_check_trim=true
                );
+
         /**
          * Root
          */
@@ -235,6 +248,41 @@ namespace quicky_utils
         }
     }
 
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>::ext_int(const int32_t & p_value):
+    m_root(0)
+    {
+        if(sizeof(int32_t) >= sizeof(T))
+        {
+            uint32_t l_value =p_value;
+            while(l_value)
+            {
+                ubase_type l_chunk = l_value & ((ubase_type) -1);
+                l_value = l_value >> (8 * sizeof(ubase_type));
+                if(l_value)
+                {
+                    m_ext.push_back(l_chunk);
+                }
+                else if(p_value > 0 && ((T)l_chunk) < 0)
+                {
+                    m_ext.push_back(l_chunk);
+                }
+                else
+                {
+                    m_root = l_chunk;
+                }
+            }
+        }
+        else
+        {
+            m_root = p_value;
+        }
+        if(is_trimmable())
+        {
+            trim();
+        }
+    }
     //-------------------------------------------------------------------------
     template <typename T>
     bool
