@@ -23,6 +23,7 @@
 #include <vector>
 #include <iomanip>
 #include <type_traits>
+#include <sstream>
 
 namespace quicky_utils
 {
@@ -129,6 +130,12 @@ namespace quicky_utils
 
         ext_int<T>
         operator+(void)const;
+
+        /**
+         * string cast operator
+         * @return string representation
+         */
+        operator std::string() const;
 
       private:
         /**
@@ -786,6 +793,15 @@ namespace quicky_utils
         }
         p_overflow = l_overflow;
         return l_sum;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>::operator std::string() const
+    {
+        std::stringstream l_stream;
+        l_stream << *this;
+        return l_stream.str();
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST
