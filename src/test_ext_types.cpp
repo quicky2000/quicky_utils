@@ -20,6 +20,7 @@
 #include "ext_int.h"
 #include "quicky_test.h"
 #include <cassert>
+#include <cmath>
 
 namespace quicky_utils
 {
@@ -228,6 +229,61 @@ namespace quicky_utils
     {
         bool l_ok = true;
 
+        std::vector<uint8_t> l_significative_bytes = {0x0, 0x1, 0x7F, 0x80, 0xFE, 0xFF};
+        typedef std::pair<int32_t, quicky_utils::ext_int<int8_t> > test_value_t;
+        std::vector<test_value_t> l_test_values;
+
+        // Compute meaningfull numbers that will be used for test
+        int32_t l_int32 = 0;
+        uint8_t * l_uint32_ptr = (uint8_t*)&l_int32;
+        for(unsigned int l_i = 0;
+            l_i < pow(l_significative_bytes.size(),4);
+            ++l_i
+                )
+        {
+            for(unsigned int l_j = 3;
+                l_j <= 3;
+                --l_j
+               )
+            {
+                size_t l_byte_index = (l_i / ((uint32_t)pow(l_significative_bytes.size(),l_j))) % l_significative_bytes.size();
+                l_uint32_ptr[l_j] = l_significative_bytes[l_byte_index];
+#ifdef DEBUG
+                std::cout << l_byte_index;
+#endif // DEBUG
+            }
+#ifdef DEBUG
+            std::cout << std::endl;
+#endif // DEBUG
+            std::cout << "0x" << std::hex << (uint32_t)l_int32 << std::dec << "\t" << l_int32 << std::endl;
+            l_test_values.push_back(test_value_t(l_int32,
+                                                 quicky_utils::ext_int<int8_t>(l_int32)
+                                                )
+                                   );
+        }
+
+        // Check ostream operator
+        for(auto l_iter: l_test_values)
+        {
+            // Build reference string from integer
+            bool l_neg = l_iter.first < 0;
+            uint32_t l_abs_value = l_neg ? - l_iter.first : l_iter.first;
+            std::stringstream l_stream;
+            l_stream << std::hex << std::uppercase << l_abs_value << std::dec;
+            std::string l_reference = l_stream.str();
+            if(l_reference.size() % 2)
+            {
+                l_reference.insert(l_reference.begin(),'0');
+            }
+            l_reference.insert(0,"0x");
+            if(l_neg)
+            {
+                l_reference.insert(0,"-");
+            }
+            // Compare reference string with ext_int string representation
+            l_ok &= quicky_test::check_ostream_operator(l_iter.second, l_reference, quicky_test::auto_message(__FILE__, __LINE__));
+        }
+
         // Experiments around int type
         int16_t l_int = -1;
         for(unsigned int l_index = 0; l_index < 16; ++ l_index)
@@ -263,7 +319,7 @@ namespace quicky_utils
         l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(0, {0x0});},true,"Check zero bad construct");
         l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(0, {});},false,"Check zero good construct");
         l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(-1, {});},false,"Check -1 good construct");
-        l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(-1, {0x80});},true,"Check -1 bad construct");
+        l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(-1, {0xFF});},true,"Check -1 bad construct");
 
         ext_int<int8_t> l_0(0,{});
         ext_int<int8_t> l_0_bis(0,{});
