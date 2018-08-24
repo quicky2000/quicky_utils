@@ -177,6 +177,19 @@ namespace quicky_utils
         static_assert(std::is_signed<T>::value,"Ckeck base type is signed");
 
         /**
+         * Methods extracting necessary info to build ext_int from an integer
+         * value ( int32_t etc )
+         * @tparam INT_TYPE type of integer value to extract
+         * @param p_value value to extract
+         * @param p_vector vector to fill
+         * @return root value
+         */
+        template <typename INT_TYPE>
+        static
+        T extract(const INT_TYPE & p_value,
+                 std::vector<ubase_type> & p_vector
+                 );
+        /**
          *
          * @param p_root  root value
          * @param p_ext values
@@ -257,34 +270,9 @@ namespace quicky_utils
 
     //-------------------------------------------------------------------------
     template <typename T>
-    ext_int<T>::ext_int(const int32_t & p_value):
-    m_root(0)
+    ext_int<T>::ext_int(const int32_t & p_value)
     {
-        if(sizeof(int32_t) >= sizeof(T))
-        {
-            uint32_t l_value =p_value;
-            while(l_value)
-            {
-                ubase_type l_chunk = l_value & ((ubase_type) -1);
-                l_value = l_value >> (8 * sizeof(ubase_type));
-                if(l_value)
-                {
-                    m_ext.push_back(l_chunk);
-                }
-                else if(p_value > 0 && ((T)l_chunk) < 0)
-                {
-                    m_ext.push_back(l_chunk);
-                }
-                else
-                {
-                    m_root = l_chunk;
-                }
-            }
-        }
-        else
-        {
-            m_root = p_value;
-        }
+        m_root = extract<int32_t>(p_value, m_ext);
         if(is_trimmable())
         {
             trim();
@@ -802,6 +790,43 @@ namespace quicky_utils
         std::stringstream l_stream;
         l_stream << *this;
         return l_stream.str();
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    template <typename INT_TYPE>
+    T
+    ext_int<T>::extract(const INT_TYPE & p_value,
+                        std::vector<ext_int::ubase_type> & p_vector
+                       )
+    {
+        T l_root = 0;
+        if(sizeof(INT_TYPE) >= sizeof(T))
+        {
+            typename std::make_unsigned<INT_TYPE>::type l_value = p_value;
+            while(l_value)
+            {
+                ubase_type l_chunk = l_value & ((ubase_type) -1);
+                l_value = l_value >> (8 * sizeof(ubase_type));
+                if(l_value)
+                {
+                    p_vector.push_back(l_chunk);
+                }
+                else if(p_value > 0 && ((T)l_chunk) < 0)
+                {
+                    p_vector.push_back(l_chunk);
+                }
+                else
+                {
+                    l_root = l_chunk;
+                }
+            }
+        }
+        else
+        {
+            l_root = p_value;
+        }
+        return l_root;
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST
