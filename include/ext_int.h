@@ -76,6 +76,12 @@ namespace quicky_utils
          * Constructor from uint32_t
          * @param p_value value to convert to ext_int
          */
+        explicit ext_int(const uint32_t & p_value);
+
+        /**
+         * Constructor from int32_t
+         * @param p_value value to convert to ext_int
+         */
         explicit ext_int(const int32_t & p_value);
 
         /**
@@ -278,6 +284,18 @@ namespace quicky_utils
             trim();
         }
     }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>::ext_int(const uint32_t & p_value)
+    {
+        m_root = extract<uint32_t>(p_value, m_ext);
+        if(is_trimmable())
+        {
+            trim();
+        }
+    }
+
     //-------------------------------------------------------------------------
     template <typename T>
     bool

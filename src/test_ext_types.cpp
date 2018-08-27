@@ -262,6 +262,9 @@ namespace quicky_utils
                                    );
         }
 
+        quicky_utils::ext_int<int8_t> l_uint32_t_max(std::numeric_limits<uint32_t>::max());
+        l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<uint32_t>::max()), quicky_utils::ext_int<int8_t>(0,{0xFF,0xFF,0xFF,0xFF}), "uint32_t max");
+
         // Check ostream operator
         for(auto l_iter: l_test_values)
         {
