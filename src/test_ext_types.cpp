@@ -365,6 +365,19 @@ namespace quicky_utils
             }
         }
 
+        // Check + operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(auto l_iter2: l_test_values)
+            {
+                int64_t l_result = (int64_t)l_iter1.first + (int64_t)l_iter2.first;
+                l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(l_result),
+                                                    l_iter1.second + l_iter2.second,
+                                                    (std::string)l_iter1.second + " + " + (std::string)l_iter2.second
+                                                   );
+            }
+        }
+
         // Experiments around int type
         int16_t l_int = -1;
         for(unsigned int l_index = 0; l_index < 16; ++ l_index)
