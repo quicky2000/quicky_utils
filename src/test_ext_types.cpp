@@ -262,8 +262,14 @@ namespace quicky_utils
                                    );
         }
 
-        quicky_utils::ext_int<int8_t> l_uint32_t_max(std::numeric_limits<uint32_t>::max());
         l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<uint32_t>::max()), quicky_utils::ext_int<int8_t>(0,{0xFF,0xFF,0xFF,0xFF}), "uint32_t max");
+        l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<uint32_t>::min()), quicky_utils::ext_int<int8_t>(0,{}), "uint32_t min");
+        l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<int32_t>::max()), quicky_utils::ext_int<int8_t>(0x7F,{0xFF,0xFF,0xFF}), "int32_t max");
+        l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<int32_t>::min()), quicky_utils::ext_int<int8_t>(0x80,{0x0,0x0,0x0}), "int32_t min");
+        l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<uint64_t>::max()), quicky_utils::ext_int<int8_t>(0,{0xFF,0xFF,0xFF,0xFF, 0xFF, 0xFF, 0xFF, 0xFF}), "uint64_t max");
+        l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<uint64_t>::min()), quicky_utils::ext_int<int8_t>(0,{}), "uint64_t min");
+        l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<int64_t>::max()), quicky_utils::ext_int<int8_t>(0x7F,{0xFF,0xFF,0xFF, 0xFF, 0xFF, 0xFF, 0xFF}), "int64_t max");
+        l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<int64_t>::min()), quicky_utils::ext_int<int8_t>(0x80,{0x0,0x0,0x0, 0x0, 0x0, 0x0, 0x0}), "int64_t min");
 
         // Check ostream operator
         for(auto l_iter: l_test_values)

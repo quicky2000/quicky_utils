@@ -85,6 +85,18 @@ namespace quicky_utils
         explicit ext_int(const int32_t & p_value);
 
         /**
+         * Constructor from uint64_t
+         * @param p_value value to convert to ext_int
+         */
+        explicit ext_int(const uint64_t & p_value);
+
+        /**
+         * Constructor from int64_t
+         * @param p_value value to convert to ext_int
+         */
+        explicit ext_int(const int64_t & p_value);
+
+        /**
          * Display content of ext_int in hexadecimal
          * @param os output stream
          * @param p_ext_int ext_int to display
@@ -184,7 +196,7 @@ namespace quicky_utils
 
         /**
          * Methods extracting necessary info to build ext_int from an integer
-         * value ( int32_t etc )
+         * value ( int64_t etc )
          * @tparam INT_TYPE type of integer value to extract
          * @param p_value value to extract
          * @param p_vector vector to fill
@@ -290,6 +302,28 @@ namespace quicky_utils
     ext_int<T>::ext_int(const uint32_t & p_value)
     {
         m_root = extract<uint32_t>(p_value, m_ext);
+        if(is_trimmable())
+        {
+            trim();
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>::ext_int(const int64_t & p_value)
+    {
+        m_root = extract<int64_t>(p_value, m_ext);
+        if(is_trimmable())
+        {
+            trim();
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>::ext_int(const uint64_t & p_value)
+    {
+        m_root = extract<uint64_t>(p_value, m_ext);
         if(is_trimmable())
         {
             trim();
