@@ -573,26 +573,6 @@ namespace quicky_utils
                 )
         {
             l_sum = propagate_add(m_ext[l_index],p_op.m_ext[l_index], l_previous_overflow);
-/*
-
-            bool l_overflow;
-            l_sum = safe_uint<ubase_type >::check_add(m_ext[l_index],p_op.m_ext[l_index],l_overflow);
-            if(l_previous_overflow)
-            {
-                if (!l_overflow)
-                {
-                    l_sum = safe_uint<ubase_type>::check_add(l_sum,
-                                                             l_previous_overflow,
-                                                             l_overflow
-                                                            );
-                }
-                else
-                {
-                    l_sum += l_previous_overflow;
-                }
-            }
-            l_previous_overflow = l_overflow;
-*/
             l_new_ext.push_back(l_sum);
         }
         if(m_ext.size() != p_op.m_ext.size())
@@ -603,25 +583,6 @@ namespace quicky_utils
             // Add shorter's root to longer.m_ext[l_min_size]
             ubase_type l_unsigned_root = l_shorter.m_root;
             l_sum = propagate_add(l_longer.m_ext[l_min_size],l_unsigned_root,l_previous_overflow);
-/*
-            bool l_overflow;
-            l_sum = safe_uint<ubase_type>::check_add(l_longer.m_ext[l_min_size],l_unsigned_root,l_overflow);
-            if(l_previous_overflow)
-            {
-                if (!l_overflow)
-                {
-                    l_sum = safe_uint<ubase_type >::check_add(l_sum,
-                                                   l_previous_overflow,
-                                                   l_overflow
-                                                  );
-                }
-                else
-                {
-                    l_sum += l_previous_overflow;
-                }
-            }
-            l_previous_overflow = l_overflow;
-*/
             l_new_ext.push_back(l_sum);
 
             if(l_shorter.m_root >= 0)
@@ -632,19 +593,6 @@ namespace quicky_utils
                         )
                 {
                     l_sum = propagate_add(l_longer.m_ext[l_index],0, l_previous_overflow);
-/*
-                    if(!l_previous_overflow)
-                    {
-                        l_sum = l_longer.m_ext[l_index];
-                    }
-                    else
-                    {
-                        l_sum = safe_uint<ubase_type >::check_add(l_longer.m_ext[l_index],
-                                                        l_previous_overflow,
-                                                        l_previous_overflow
-                                                       );
-                    }
-*/
                     l_new_ext.push_back(l_sum);
                 }
             }
@@ -658,25 +606,6 @@ namespace quicky_utils
                         )
                 {
                     l_sum = propagate_add(l_longer.m_ext[l_index], l_fill_value,l_previous_overflow);
-/*
-                    bool l_overflow;
-                    l_sum = safe_uint<ubase_type >::check_add(l_longer.m_ext[l_index], l_fill_value,l_overflow);
-                    if(l_previous_overflow)
-                    {
-                        if (!l_overflow)
-                        {
-                            l_sum = safe_uint<ubase_type >::check_add(l_sum,
-                                                            l_previous_overflow,
-                                                            l_overflow
-                                                           );
-                        }
-                        else
-                        {
-                            l_sum += l_previous_overflow;
-                        }
-                    }
-                    l_previous_overflow = l_overflow;
-*/
                     l_new_ext.push_back(l_sum);
                 }
             }
@@ -692,50 +621,10 @@ namespace quicky_utils
             {
                 l_new_root = l_sum;
             }
-/*
-            T l_root_sum = safe_int<T>::check_add(l_longer.m_root, m_root > 0 ? 0 : -1, l_overflow);
-            if(l_previous_overflow)
-            {
-                bool l_overflow;
-                T l_root_sum = safe_int<T>::check_add(l_longer.m_root, l_previous_overflow, l_overflow);
-                if(l_overflow)
-                {
-                    l_new_ext.push_back(l_root_sum);
-                    l_new_root = 1;
-                }
-                else
-                {
-                    l_new_root = l_root_sum;
-                }
-            }
-            else
-            {
-                l_new_root = l_longer.m_root;
-            }
-*/
-
         }
         else // Extension has same size
         {
             l_sum = propagate_add(m_root, p_op.m_root,l_previous_overflow);
-/*
-            bool l_overflow;
-            l_sum = safe_int<T>::check_add(m_root, p_op.m_root,l_overflow);
-            if(l_previous_overflow)
-            {
-                if (!l_overflow)
-                {
-                    l_sum = safe_uint<ubase_type >::check_add(l_sum,
-                                                    l_previous_overflow,
-                                                    l_overflow
-                                                   );
-                }
-                else
-                {
-                    l_sum += l_previous_overflow;
-                }
-            }
-*/
             if(l_previous_overflow)
             {
                 l_new_ext.push_back(l_sum);
