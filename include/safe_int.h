@@ -135,6 +135,21 @@ namespace  quicky_utils
                   bool & p_overflow
                  );
 
+        /**
+         * Method performing substraction, returning the result and setting a
+         * boolean to true in case of overflow
+         * @param p_op1 first operand
+         * @param p_op2 second operand
+         * @param p_overflow true in case of overflow
+         * @return result of traditionnal substraction
+         */
+        static
+        T
+        check_sub(const T & p_op1,
+                  const T & p_op2,
+                  bool & p_overflow
+                 );
+
         typedef T base_type;
       private:
         static_assert(std::is_signed<T>::value,"Ckeck base type is signed");
@@ -258,11 +273,9 @@ namespace  quicky_utils
     safe_int<T>
     safe_int<T>::operator-(const safe_int & p_op) const
     {
-        T l_result = m_value - p_op.m_value;
-        unsigned int l_pos1 = m_value >= 0;
-        unsigned int l_pos2 = p_op.m_value >= 0;
-        unsigned int l_pos_result = l_result >= 0;
-        if(l_pos1 != l_pos2 && l_pos1 != l_pos_result)
+        bool l_overflow = false;
+        T l_result = check_sub(m_value, p_op.m_value, l_overflow);
+        if(l_overflow)
         {
              throw safe_type_exception("Substraction underflow",
                                       __LINE__,
@@ -453,6 +466,27 @@ namespace  quicky_utils
             }
         }
         return l_sum;
+
+    }
+
+    //-----------------------------------------------------------------------------
+    template <typename T>
+    T
+    safe_int<T>::check_sub(const T & p_op1,
+                           const T & p_op2,
+                           bool & p_overflow
+                          )
+    {
+        T l_result = p_op1 - p_op2;
+        p_overflow = false;
+        unsigned int l_pos1 = p_op1 >= 0;
+        unsigned int l_pos2 = p_op2 >= 0;
+        unsigned int l_pos_result = l_result >= 0;
+        if(l_pos1 != l_pos2 && l_pos1 != l_pos_result)
+          {
+             p_overflow = true;
+          }
+        return l_result;
 
     }
 
