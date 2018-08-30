@@ -649,7 +649,7 @@ namespace quicky_utils
         {
            l_new_ext.push_back(~l_iter);
         }
-        return ext_int<T>(l_root, l_new_ext);
+        return ext_int<T>(l_root, l_new_ext, false);
     }
 
     //-------------------------------------------------------------------------
