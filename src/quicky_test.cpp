@@ -20,5 +20,6 @@
 namespace quicky_utils
 {
     quicky_test quicky_test::m_unique_instance(std::cout);
+    quicky_test::test_verbosity_t quicky_test::m_verbosity = quicky_test::test_verbosity::FAILED_ONLY;
 }
 //EOF

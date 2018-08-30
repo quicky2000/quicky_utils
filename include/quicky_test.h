@@ -18,6 +18,7 @@
 #ifndef QUICKY_UTILS_QUICKY_TEST_H
 #define QUICKY_UTILS_QUICKY_TEST_H
 
+#include "quicky_exception.h"
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -31,6 +32,8 @@ namespace quicky_utils
     class quicky_test
     {
       public:
+        typedef enum class test_verbosity {QUIET, FAILED_ONLY, VERBOSE} test_verbosity_t;
+
         /**
          * Generate automatic message with file info
          * @param p_file_name file name
@@ -52,6 +55,25 @@ namespace quicky_utils
          * @return default output stream
          */
         static inline std::ostream & get_ostream();
+
+        /**
+         * Define test verbosity
+         * @param p_verbosity verbosity level
+         */
+        static inline void set_verbosity(const test_verbosity_t & p_verbosity);
+
+        /**
+         * Get test verbosity
+         * @return verbosity level
+         */
+        static inline test_verbosity_t get_verbosity();
+
+        /**
+         * Provide string representation of verbosity
+         * @param p_verbosity
+         * @return string representation of verbosity
+         */
+        static std::string to_string(const test_verbosity_t & p_verbosity);
 
         /**
          * Check expected value without displaying message
@@ -154,7 +176,7 @@ namespace quicky_utils
                        const T & p_expected,
                        const std::string & p_message,
                        std::ostream & p_stream,
-                       bool p_quiet
+                       test_verbosity_t p_quiet
                       );
 
         /**
@@ -174,7 +196,7 @@ namespace quicky_utils
                         bool p_exception_expected,
                         const std::string & p_message,
                         std::ostream & p_ostream,
-                        bool p_quiet
+                        test_verbosity_t p_quiet
                        );
 
         /**
@@ -193,14 +215,22 @@ namespace quicky_utils
                                const std::string & p_expected,
                                const std::string & p_message,
                                std::ostream & p_ostream,
-                               bool p_quiet
+                               test_verbosity_t p_quiet
                               );
 
         inline quicky_test(std::ostream & p_ostream);
 
         std::ostream * m_default_ostream;
         static quicky_test m_unique_instance;
+        static test_verbosity_t m_verbosity;
     };
+
+    //-------------------------------------------------------------------------
+    inline std::ostream & operator<<(std::ostream & p_stream, const quicky_test::test_verbosity_t & p_verbosity)
+    {
+        p_stream << quicky_test::to_string(p_verbosity);
+        return p_stream;
+    }
 
     //-------------------------------------------------------------------------
     template<typename T>
@@ -209,16 +239,16 @@ namespace quicky_utils
                                 const T & p_expected,
                                 const std::string & p_message,
                                 std::ostream & p_stream,
-                                bool p_quiet
+                                test_verbosity_t p_quiet
                                )
     {
-        if(!p_message.empty())
-        {
-            p_stream << p_message << ": ";
-        }
         bool l_result = p_value == p_expected;
-        if(!p_quiet)
+        if(test_verbosity_t::VERBOSE == p_quiet || ( test_verbosity_t::FAILED_ONLY == p_quiet && !l_result))
         {
+            if(!p_message.empty())
+            {
+                p_stream << p_message << ": ";
+            }
             p_stream << "Expected value : " << p_expected << "\tValue : " << p_value << " => " << (l_result ? "PASSED" : "FAILED") << std::endl;
         }
         return l_result;
@@ -231,16 +261,16 @@ namespace quicky_utils
                                 const std::string & p_expected,
                                 const std::string & p_message,
                                 std::ostream & p_stream,
-                                bool p_quiet
+                                test_verbosity_t p_quiet
                                )
     {
-        if(!p_message.empty())
-        {
-            p_stream << p_message << ": ";
-        }
         bool l_result = p_value == p_expected;
-        if(!p_quiet)
+        if(test_verbosity_t::VERBOSE == p_quiet || ( test_verbosity_t::FAILED_ONLY == p_quiet && !l_result))
         {
+            if(!p_message.empty())
+            {
+                p_stream << p_message << ": ";
+            }
             p_stream << "Expected value : \"" << p_expected << "\"\tValue : \"" << p_value << "\" => " << (l_result ? "PASSED" : "FAILED") << std::endl;
         }
         return l_result;
@@ -250,11 +280,11 @@ namespace quicky_utils
     template <class EXCEPTION>
     bool
     quicky_test::check_exception(const std::function<void(void)> & p_function,
-                                     bool p_exception_expected,
-                                     const std::string & p_message,
-                                     std::ostream & p_ostream,
-                                     bool p_quiet
-                                    )
+                                 bool p_exception_expected,
+                                 const std::string & p_message,
+                                 std::ostream & p_ostream,
+                                 test_verbosity_t p_quiet
+                                )
     {
         bool l_exception_raised = false;
         try
@@ -266,12 +296,12 @@ namespace quicky_utils
             l_exception_raised = true;
         }
         bool l_result = p_exception_expected == l_exception_raised;
-        if(!p_message.empty())
+        if(test_verbosity_t::VERBOSE == p_quiet || ( test_verbosity_t::FAILED_ONLY == p_quiet && !l_result))
         {
-            p_ostream << p_message << ": ";
-        }
-        if(!p_quiet)
-        {
+            if(!p_message.empty())
+            {
+                p_ostream << p_message << ": ";
+            }
             p_ostream << "Exception expected : " << (p_exception_expected ? "YES" : "NO") << "\tException raised : " << (l_exception_raised ? "YES" : "NO") << " => " << (l_result ? "PASSED" : "FAILED") << std::endl;
         }
         return l_result;
@@ -284,7 +314,7 @@ namespace quicky_utils
                                         const std::string & p_expected,
                                         const std::string & p_message,
                                         std::ostream & p_ostream,
-                                        bool p_quiet
+                                        test_verbosity_t p_quiet
                                        )
     {
         std::stringstream l_stream;
@@ -330,7 +360,7 @@ namespace quicky_utils
                                       const T & p_expected
                                      )
     {
-        return check_expected<T>(p_value,p_expected,"",*m_unique_instance.m_default_ostream,true);
+        return check_expected<T>(p_value,p_expected,"",*m_unique_instance.m_default_ostream,test_verbosity_t::QUIET);
     }
 
     //-------------------------------------------------------------------------
@@ -341,7 +371,7 @@ namespace quicky_utils
                                 const std::string & p_message
                                )
     {
-        return check_expected<T>(p_value,p_expected,p_message,*m_unique_instance.m_default_ostream,false);
+        return check_expected<T>(p_value,p_expected,p_message,*m_unique_instance.m_default_ostream,m_verbosity);
     }
 
     //-------------------------------------------------------------------------
@@ -351,7 +381,7 @@ namespace quicky_utils
                                        bool p_exception_expected
                                       )
     {
-        return check_exception<EXCEPTION>(p_function, p_exception_expected, "", *m_unique_instance.m_default_ostream, true);
+        return check_exception<EXCEPTION>(p_function, p_exception_expected, "", *m_unique_instance.m_default_ostream, test_verbosity::QUIET);
     }
 
     //-------------------------------------------------------------------------
@@ -362,7 +392,7 @@ namespace quicky_utils
                                  const std::string & p_message
                                 )
     {
-        return check_exception<EXCEPTION>(p_function, p_exception_expected, p_message, *m_unique_instance.m_default_ostream, false);
+        return check_exception<EXCEPTION>(p_function, p_exception_expected, p_message, *m_unique_instance.m_default_ostream, m_verbosity);
     }
 
     //-------------------------------------------------------------------------
@@ -372,7 +402,7 @@ namespace quicky_utils
                                               const std::string & p_expected
                                              )
     {
-        return check_ostream_operator(p_object, p_expected, "", *m_unique_instance.m_default_ostream, true);
+        return check_ostream_operator(p_object, p_expected, "", *m_unique_instance.m_default_ostream, test_verbosity::QUIET);
     }
 
     //-------------------------------------------------------------------------
@@ -383,7 +413,43 @@ namespace quicky_utils
                                         const std::string & p_message
                                        )
     {
-        return check_ostream_operator(p_object, p_expected, p_message, *m_unique_instance.m_default_ostream, false);
+        return check_ostream_operator(p_object, p_expected, p_message, *m_unique_instance.m_default_ostream, m_verbosity);
+    }
+
+    //-------------------------------------------------------------------------
+    void
+    quicky_test::set_verbosity(const quicky_test::test_verbosity_t & p_verbosity)
+    {
+        m_verbosity = p_verbosity;
+    }
+
+    //-------------------------------------------------------------------------
+    quicky_test::test_verbosity_t
+    quicky_test::get_verbosity()
+    {
+        return m_verbosity;
+    }
+
+    //-------------------------------------------------------------------------
+    inline
+    std::string
+    quicky_test::to_string(const quicky_test::test_verbosity_t & p_verbosity)
+    {
+        switch(p_verbosity)
+        {
+            case test_verbosity_t::QUIET:
+                return "QUIET";
+                break;
+            case test_verbosity_t::FAILED_ONLY:
+                return "FAILED_ONLY";
+                break;
+            case test_verbosity_t::VERBOSE:
+                return "VERBOSE";
+                break;
+            default:
+                throw quicky_exception::quicky_logic_exception("Unknown value for test_verbosity_t :" + std::to_string((int)p_verbosity), __LINE__, __FILE__);
+        }
+        return "";
     }
 }
 #endif //QUICKY_UTILS_QUICKY_TEST_H
