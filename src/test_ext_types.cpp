@@ -270,7 +270,7 @@ namespace quicky_utils
         l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<uint64_t>::min()), quicky_utils::ext_int<int8_t>(0,{}), "uint64_t min");
         l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<int64_t>::max()), quicky_utils::ext_int<int8_t>(0x7F,{0xFF,0xFF,0xFF, 0xFF, 0xFF, 0xFF, 0xFF}), "int64_t max");
         l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<int64_t>::min()), quicky_utils::ext_int<int8_t>((int8_t)0x80,{0x0,0x0,0x0, 0x0, 0x0, 0x0, 0x0}), "int64_t min");
-        
+
         // Check ostream operator
         for(auto l_iter: l_test_values)
         {
@@ -374,6 +374,19 @@ namespace quicky_utils
                 l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(l_result),
                                                     l_iter1.second + l_iter2.second,
                                                     (std::string)l_iter1.second + " + " + (std::string)l_iter2.second
+                                                   );
+            }
+        }
+
+        // Check - operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(auto l_iter2: l_test_values)
+            {
+                int64_t l_result = (int64_t)l_iter1.first - (int64_t)l_iter2.first;
+                l_ok &= quicky_test::check_expected(l_iter1.second - l_iter2.second,
+                                                    quicky_utils::ext_int<int8_t>(l_result),
+                                                    (std::string)l_iter1.second + " - " + (std::string)l_iter2.second
                                                    );
             }
         }

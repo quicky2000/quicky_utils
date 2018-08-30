@@ -141,6 +141,9 @@ namespace quicky_utils
         ext_int<T>
         operator+(const ext_int & p_op) const;
 
+        ext_int<T>
+        operator-(const ext_int & p_op) const;
+
         ext_int<T> operator~(void) const;
 
         ext_int<T>
@@ -722,6 +725,114 @@ namespace quicky_utils
         }
         p_overflow = l_overflow;
         return l_sum;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int <T>
+    ext_int<T>::operator-(const ext_int & p_op) const
+    {
+        // Simple case where there are only 2 roots
+        std::vector<ubase_type> l_new_ext;
+        if(!m_ext.size() && !p_op.m_ext.size())
+        {
+            bool l_overflow = false;
+            T l_sum = safe_int<T>::check_sub(m_root, p_op.m_root, l_overflow);
+            if(!l_overflow)
+            {
+                return ext_int<T>(l_sum);
+            }
+            else
+            {
+                l_new_ext.push_back((ubase_type )l_sum);
+                return ext_int<T>(m_root >= 0 ? 0 : -1, l_new_ext, false);
+            }
+        }
+
+        T l_new_root;
+        size_t l_max_size = m_ext.size() > p_op.m_ext.size() ? m_ext.size() : p_op.m_ext.size();
+        size_t l_min_size = m_ext.size() < p_op.m_ext.size() ? m_ext.size() : p_op.m_ext.size();
+        bool l_previous_overflow = true;
+
+        bool l_this_shorter = m_ext.size() < p_op.m_ext.size();
+        const ext_int<T> & l_shorter = m_ext.size() < p_op.m_ext.size() ? *this : p_op;
+        const ext_int<T> & l_longer = m_ext.size() >= p_op.m_ext.size() ? *this : p_op;
+
+        // Fill result with extended shorter operand
+        // Manage short extension
+        T l_fill_value = l_shorter.m_root >= 0 ? 0 : -1;
+        ubase_type l_unsigned_root = l_shorter.m_root;
+        if(l_this_shorter)
+        {
+            for(size_t l_index = 0; l_index < l_min_size; ++l_index)
+            {
+                l_new_ext.push_back(l_shorter.m_ext[l_index]);
+            }
+        }
+        else
+        {
+            for(size_t l_index = 0; l_index < l_min_size; ++l_index)
+            {
+                l_new_ext.push_back(~l_shorter.m_ext[l_index]);
+            }
+            l_unsigned_root = ~l_unsigned_root;
+            l_fill_value = ~l_fill_value;
+        }
+        if(m_ext.size() != p_op.m_ext.size())
+        {
+            // Manage root
+            l_new_ext.push_back(l_unsigned_root);
+
+            // Manage Fill values to reach max size
+            for (size_t l_index = l_min_size + 1;
+                 l_index < l_max_size;
+                 ++l_index
+                    )
+            {
+                l_new_ext.push_back(l_fill_value);
+            }
+            l_new_root = l_fill_value;
+        }
+        else
+        {
+            l_new_root = l_unsigned_root;
+        }
+
+
+        if(l_this_shorter)
+        {
+            for (size_t l_index = 0;
+                 l_index < l_max_size;
+                 ++l_index
+                    )
+            {
+                l_new_ext[l_index] = propagate_add(~l_longer.m_ext[l_index],
+                                                   l_new_ext[l_index],
+                                                   l_previous_overflow
+                                                  );
+            }
+            l_new_root = propagate_add(l_new_root, ~l_longer.m_root,l_previous_overflow);
+        }
+        else
+        {
+            for (size_t l_index = 0;
+                 l_index < l_max_size;
+                 ++l_index
+                    )
+            {
+                l_new_ext[l_index] = propagate_add(l_longer.m_ext[l_index],
+                                                   l_new_ext[l_index],
+                                                   l_previous_overflow
+                                                  );
+            }
+            l_new_root = propagate_add(l_new_root, l_longer.m_root,l_previous_overflow);
+        }
+        if(l_previous_overflow)
+        {
+            l_new_ext.push_back(l_new_root);
+            l_new_root = m_root < 0 ? -1:0;
+        }
+        return ext_int(l_new_root, l_new_ext, false).trim();
     }
 
     //-------------------------------------------------------------------------
