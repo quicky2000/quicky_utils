@@ -254,8 +254,8 @@ namespace quicky_utils
             }
 #ifdef DEBUG
             std::cout << std::endl;
-#endif // DEBUG
             std::cout << "0x" << std::hex << (uint32_t)l_int32 << std::dec << "\t" << l_int32 << std::endl;
+#endif // DEBUG
             l_test_values.push_back(test_value_t(l_int32,
                                                  quicky_utils::ext_int<int8_t>(l_int32)
                                                 )
