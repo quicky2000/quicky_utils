@@ -158,6 +158,18 @@ namespace quicky_utils
          */
         operator std::string() const;
 
+        /**
+         * Root accessor
+         * @return root
+         */
+        T get_root() const;
+
+        /**
+         * Extension accesssor
+         * @return extension
+         */
+        const std::vector<ubase_type> & get_extension() const;
+
       private:
         /**
         * Perform addition and manage input output overflow
@@ -879,6 +891,22 @@ namespace quicky_utils
             l_root = p_value;
         }
         return l_root;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    T
+    ext_int<T>::get_root() const
+    {
+        return m_root;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    const std::vector<typename ext_int<T>::ubase_type> &
+    ext_int<T>::get_extension() const
+    {
+        return m_ext;
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST

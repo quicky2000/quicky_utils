@@ -169,6 +169,11 @@ namespace quicky_utils
 
         typedef T base_type;
 
+        /**
+         * Extension accessor
+         * @return extension
+         */
+        const std::vector<T> & get_extension()const;
       private:
 
         /**
@@ -940,6 +945,14 @@ namespace quicky_utils
     {
         *this = *this / p_op;
         return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    const std::vector<T> &
+    ext_uint<T>::get_extension() const
+    {
+        return m_ext;
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST
