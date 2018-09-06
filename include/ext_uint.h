@@ -673,12 +673,13 @@ namespace quicky_utils
                     if (!l_overflow)
                     {
                         l_new_ext[l_index + 1] = safe_uint<T>::check_add(l_new_ext[l_index + 1],
-                                                                         l_overflow,
+                                                                         l_previous_overflow,
                                                                          l_overflow
                                                                         );
-                    } else
+                    }
+                    else
                     {
-                        l_new_ext[l_index + 1] += l_overflow;
+                        l_new_ext[l_index + 1] += l_previous_overflow;
                     }
                 }
                 if(l_overflow)
