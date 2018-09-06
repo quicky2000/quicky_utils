@@ -65,6 +65,18 @@ namespace quicky_utils
          */
         ext_uint(const std::initializer_list<T> & p_init_list);
 
+        /**
+         * Constructor from uint32_t
+         * @param p_value value to convert to ext_uint
+         */
+        ext_uint(const uint32_t & p_value);
+
+        /**
+         * Constructor from uint64_t
+         * @param p_value value to convert to ext_uint
+         */
+        ext_uint(const uint64_t & p_value);
+
         explicit operator bool() const;
 
         /**
@@ -191,6 +203,19 @@ namespace quicky_utils
 
         ext_uint(const std::vector<T> & p_vec);
 
+        /**
+         * Methods extracting necessary info to build ext_int from an integer
+         * value ( int64_t etc )
+         * @tparam UINT_TYPE type of unsigned integer value to extract
+         * @param p_value value to extract
+         * @param p_vector vector to fill
+         * */
+        template <typename UINT_TYPE>
+        static
+        void extract(const UINT_TYPE & p_value,
+                     std::vector<T> & p_vector
+                    );
+
         static void partial_mult(const T & p_op1,
                                  const T & p_op2,
                                  T & p_result_low,
@@ -247,6 +272,20 @@ namespace quicky_utils
             m_ext(p_vec)
     {
 
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>::ext_uint(const uint32_t & p_value)
+    {
+        extract<uint32_t>(p_value, m_ext);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>::ext_uint(const uint64_t & p_value)
+    {
+        extract<uint64_t>(p_value, m_ext);
     }
 
     //-----------------------------------------------------------------------------
@@ -953,6 +992,24 @@ namespace quicky_utils
     ext_uint<T>::get_extension() const
     {
         return m_ext;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    template <typename UINT_TYPE>
+    void
+    ext_uint<T>::extract(const UINT_TYPE & p_value,
+                         std::vector<T> & p_vector
+                        )
+    {
+        UINT_TYPE l_value = p_value;
+        do
+        {
+            T l_chunk = l_value & ((T) -1);
+            l_value = l_value >> (8 * sizeof(T));
+            p_vector.push_back(l_chunk);
+        }
+        while(l_value);
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST
