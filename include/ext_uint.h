@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cassert>
 #include <iomanip>
+#include <sstream>
 
 namespace quicky_utils
 {
@@ -186,6 +187,13 @@ namespace quicky_utils
          * @return extension
          */
         const std::vector<T> & get_extension()const;
+
+        /**
+         * string cast operator
+         * @return string representation
+         */
+        operator std::string() const;
+
       private:
 
         /**
@@ -1010,6 +1018,15 @@ namespace quicky_utils
             p_vector.push_back(l_chunk);
         }
         while(l_value);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>::operator std::string() const
+    {
+        std::stringstream l_stream;
+        l_stream << *this;
+        return l_stream.str();
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST
