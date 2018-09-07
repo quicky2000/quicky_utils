@@ -73,6 +73,43 @@ namespace quicky_utils
     }
 
     //------------------------------------------------------------------------------
+    template <typename T1, typename T2>
+    void generate_test_values(const std::vector<uint8_t> & p_bytes
+                             ,std::vector<std::pair<T1, T2 >> & p_test_values
+                             )
+    {
+        T1 l_value = 0;
+        uint8_t * l_ptr = (uint8_t*)&l_value;
+        for(unsigned int l_i = 0;
+            l_i < pow(p_bytes.size(),sizeof(T1));
+            ++l_i
+                )
+        {
+            for (unsigned int l_j = sizeof(T1) - 1;
+                 l_j <= sizeof(T1) - 1;
+                 --l_j
+                    )
+            {
+                size_t l_byte_index = (l_i / ((typename std::make_unsigned<T1>::type) pow(p_bytes.size(),
+                                                                                 l_j
+                                                                                ))) % p_bytes.size();
+                l_ptr[l_j] = p_bytes[l_byte_index];
+#ifdef DEBUG
+                std::cout << l_byte_index;
+#endif // DEBUG
+            }
+#ifdef DEBUG
+            std::cout << std::endl;
+                        std::cout << "0x" << std::hex << (typename std::make_unsigned<T1>::type)l_value << std::dec << "\t" << l_value << std::endl;
+#endif // DEBUG
+            p_test_values.push_back(std::pair<T1, T2 >(l_value
+                                                      ,T2(l_value)
+                                                      )
+                                   );
+        }
+    }
+
+    //------------------------------------------------------------------------------
     bool
     test_ext_uint()
     {
@@ -233,34 +270,7 @@ namespace quicky_utils
         typedef std::pair<int32_t, quicky_utils::ext_int<int8_t> > test_value_t;
         std::vector<test_value_t> l_test_values;
 
-        // Compute meaningfull numbers that will be used for test
-        int32_t l_int32 = 0;
-        uint8_t * l_uint32_ptr = (uint8_t*)&l_int32;
-        for(unsigned int l_i = 0;
-            l_i < pow(l_significative_bytes.size(),4);
-            ++l_i
-                )
-        {
-            for(unsigned int l_j = 3;
-                l_j <= 3;
-                --l_j
-               )
-            {
-                size_t l_byte_index = (l_i / ((uint32_t)pow(l_significative_bytes.size(),l_j))) % l_significative_bytes.size();
-                l_uint32_ptr[l_j] = l_significative_bytes[l_byte_index];
-#ifdef DEBUG
-                std::cout << l_byte_index;
-#endif // DEBUG
-            }
-#ifdef DEBUG
-            std::cout << std::endl;
-            std::cout << "0x" << std::hex << (uint32_t)l_int32 << std::dec << "\t" << l_int32 << std::endl;
-#endif // DEBUG
-            l_test_values.push_back(test_value_t(l_int32,
-                                                 quicky_utils::ext_int<int8_t>(l_int32)
-                                                )
-                                   );
-        }
+        generate_test_values<int32_t, quicky_utils::ext_int<int8_t >>(l_significative_bytes,l_test_values);
 
         l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<uint32_t>::max()), quicky_utils::ext_int<int8_t>(0,{0xFF,0xFF,0xFF,0xFF}), "uint32_t max");
         l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<uint32_t>::min()), quicky_utils::ext_int<int8_t>(0,{}), "uint32_t min");
