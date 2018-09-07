@@ -257,6 +257,101 @@ namespace quicky_utils
         l_result = quicky_utils::ext_uint<uint8_t >({0xFF,0x1}) % quicky_utils::ext_uint<uint8_t>({0x12});
         l_ok &= quicky_test::check_expected(l_result, ext_uint<uint8_t>({7}), quicky_test::auto_message(__FILE__, __LINE__));
 
+        std::vector<uint8_t> l_significative_bytes = {0x0, 0x1, 0xFE, 0xFF};
+        typedef std::pair<uint32_t, quicky_utils::ext_uint<uint8_t> > test_value_t;
+        std::vector<test_value_t> l_test_values;
+        generate_test_values<uint32_t, quicky_utils::ext_uint<uint8_t >>(l_significative_bytes,l_test_values);
+
+
+        // Check + operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(auto l_iter2: l_test_values)
+            {
+                uint64_t l_result = (uint64_t)l_iter1.first + (uint64_t)l_iter2.first;
+                l_ok &= quicky_test::check_expected(l_iter1.second + l_iter2.second,
+                                                    quicky_utils::ext_uint<uint8_t>(l_result),
+                                                    (std::string)l_iter1.second + " + " + (std::string)l_iter2.second
+                                                   );
+            }
+        }
+
+        // Check + operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(auto l_iter2: l_test_values)
+            {
+                uint64_t l_result = (uint64_t)l_iter1.first + (uint64_t)l_iter2.first;
+                l_ok &= quicky_test::check_expected(l_iter1.second + l_iter2.second,
+                                                    quicky_utils::ext_uint<uint8_t>(l_result),
+                                                    (std::string)l_iter1.second + " + " + (std::string)l_iter2.second
+                                                   );
+            }
+        }
+
+        // Check - operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(auto l_iter2: l_test_values)
+            {
+                if(l_iter1.first < l_iter2.first)
+                {
+                    break;
+                }
+                uint64_t l_result = (uint64_t)l_iter1.first - (uint64_t)l_iter2.first;
+                l_ok &= quicky_test::check_expected(l_iter1.second - l_iter2.second,
+                                                    quicky_utils::ext_uint<uint8_t>(l_result),
+                                                    (std::string)l_iter1.second + " - " + (std::string)l_iter2.second
+                                                   );
+            }
+        }
+
+        // Check * operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(auto l_iter2: l_test_values)
+            {
+                uint64_t l_result = (uint64_t)l_iter1.first * (uint64_t)l_iter2.first;
+                l_ok &= quicky_test::check_expected(l_iter1.second * l_iter2.second,
+                                                    quicky_utils::ext_uint<uint8_t>(l_result),
+                                                    (std::string)l_iter1.second + " * " + (std::string)l_iter2.second
+                                                   );
+            }
+        }
+
+        // Check / operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(auto l_iter2: l_test_values)
+            {
+                if(l_iter2.first)
+                {
+                    uint64_t l_result = (uint64_t) l_iter1.first / (uint64_t) l_iter2.first;
+                    l_ok &= quicky_test::check_expected(l_iter1.second / l_iter2.second,
+                                                        quicky_utils::ext_uint<uint8_t>(l_result),
+                                                        (std::string) l_iter1.second + " / " +
+                                                        (std::string) l_iter2.second
+                                                       );
+                }
+            }
+        }
+
+        // Check % operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(auto l_iter2: l_test_values)
+            {
+                if(l_iter2.first)
+                {
+                    uint64_t l_result = (uint64_t) l_iter1.first % (uint64_t) l_iter2.first;
+                    l_ok &= quicky_test::check_expected(l_iter1.second % l_iter2.second,
+                                                        quicky_utils::ext_uint<uint8_t>(l_result),
+                                                        (std::string) l_iter1.second + " % " +
+                                                        (std::string) l_iter2.second
+                                                       );
+                }
+            }
+        }
         return l_ok;
     }
 
