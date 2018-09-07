@@ -496,6 +496,19 @@ namespace quicky_utils
             }
         }
 
+        // Check * operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(auto l_iter2: l_test_values)
+            {
+                int64_t l_result = (int64_t)l_iter1.first * (int64_t)l_iter2.first;
+                l_ok &= quicky_test::check_expected(l_iter1.second * l_iter2.second,
+                                                    quicky_utils::ext_int<int8_t>(l_result),
+                                                    (std::string)l_iter1.second + " * " + (std::string)l_iter2.second
+                                                   );
+            }
+        }
+
         // Experiments around int type
         int16_t l_int = -1;
         for(unsigned int l_index = 0; l_index < 16; ++ l_index)
@@ -518,6 +531,13 @@ namespace quicky_utils
         // ||   0 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | =>    0
         // ||   1 |   0 |   0 |   0 |   0 |   0 |   0 |   1 | => -127
         // ||   1 |   0 |   0 |   0 |   0 |   0 |   0 |   0 | => -128
+        // ||   1 |   1 |   1 |   1 |   1 |   1 |   0 |   1 | => -  3 [253]
+        // ||   1 |   1 |   1 |   1 |   1 |   0 |   1 |   1 | => -  5 [251]
+        // ||   0 |   0 |   0 |   0 |   1 |   1 |   1 |   1 | =>   15 [ 3 * 5]
+        // ||   1 |   1 |   1 |   1 |   0 |   0 |   0 |   1 | =>  -15
+//100      ||   1 |   1 |   1 |   1 |   0 |   0 |   0 |   1 | =>  -15 [-3 * 5]
+// 10      ||   1 |   1 |   1 |   1 |   0 |   0 |   0 |   1 | =>  -15 [-5 * 3]
+
 
         // -512 | 256 || 128 |  64 |  32 |  16 |   8 |   4 |   2 |   1 |
         //------------||-----------------------------------------------|

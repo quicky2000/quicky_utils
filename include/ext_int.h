@@ -154,6 +154,9 @@ namespace quicky_utils
         ext_int<T>
         operator-(const ext_int & p_op) const;
 
+        ext_int<T>
+        operator*(const ext_int & p_op) const;
+
         ext_int<T> operator~(void) const;
 
         ext_int<T>
@@ -931,6 +934,53 @@ namespace quicky_utils
     ext_int<T>::get_extension() const
     {
         return m_ext;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>
+    ext_int<T>::operator*(const ext_int & p_op) const
+    {
+        if(*this == ext_int<T>(0,{}) || p_op == ext_int<T>(0,{}))
+        {
+            return ext_int<T>(0,{});
+        }
+        unsigned int l_case = ((*this > ext_int<T>(0,{})) << 1) + (p_op > ext_int<T>(0,{}));
+        switch(l_case)
+        {
+            case 0:
+            {
+                auto l_this_abs = ext_uint<ubase_type>(-*this);
+                auto l_op_abs = ext_uint<ubase_type>(-p_op);
+                return ext_int<T>(l_this_abs * l_op_abs);
+            }
+                break;
+            case 1:
+            {
+                auto l_this_abs = ext_uint<ubase_type>(-*this);
+                auto l_op_abs = ext_uint<ubase_type>(p_op);
+                return -ext_int<T>(l_this_abs * l_op_abs);
+            }
+                break;
+            case 2:
+            {
+                auto l_this_abs = ext_uint<ubase_type>(*this);
+                auto l_op_abs = ext_uint<ubase_type>(-p_op);
+                return -ext_int<T>(l_this_abs * l_op_abs);
+            }
+                break;
+            case 3:
+            {
+                auto l_this_abs = ext_uint<ubase_type>(*this);
+                auto l_op_abs = ext_uint<ubase_type>(p_op);
+                return ext_int<T>(l_this_abs * l_op_abs);
+            }
+                break;
+            default:
+                // Should never occur
+                assert(false);
+        }
+        return ext_int<T>(0,{});
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST
