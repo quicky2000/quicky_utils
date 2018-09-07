@@ -19,6 +19,7 @@
 
 #include "safe_uint.h"
 #include "quicky_exception.h"
+#include "ext_int.h"
 #include <vector>
 #include <cstdio>
 #include <cassert>
@@ -30,6 +31,9 @@ namespace quicky_utils
 
     template <typename T>
     class ext_uint;
+
+    template <typename T>
+    class ext_int;
 
     template <typename T>
     std::ostream &
@@ -77,6 +81,12 @@ namespace quicky_utils
          * @param p_value value to convert to ext_uint
          */
         ext_uint(const uint64_t & p_value);
+
+        /**
+         * Constructor from ext_uint
+         * @param T
+         */
+        explicit ext_uint(const ext_int<typename std::make_signed<T>::type> & p_ext_int);
 
         explicit operator bool() const;
 
@@ -303,7 +313,22 @@ namespace quicky_utils
         {
             throw quicky_exception::quicky_logic_exception("Upper word of ext_uint should be non-zero", __LINE__, __FILE__);
         }
+    }
 
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T>::ext_uint(const ext_int<typename std::make_signed<T>::type> & p_ext_int):
+    m_ext(p_ext_int.get_extension())
+    {
+        auto l_root = p_ext_int.get_root();
+        if(l_root < 0)
+        {
+            throw quicky_exception::quicky_logic_exception("Convert negative ext_int to ext_uint", __LINE__, __FILE__);
+        }
+        if(l_root)
+        {
+            m_ext.push_back(l_root);
+        }
     }
 
     //-------------------------------------------------------------------------

@@ -24,11 +24,15 @@
 #include <iomanip>
 #include <type_traits>
 #include <sstream>
+#include <cassert>
 
 namespace quicky_utils
 {
     template <typename T>
     class ext_int;
+
+    template <typename T>
+    class ext_uint;
 
     template <typename T>
     std::ostream &
@@ -95,6 +99,12 @@ namespace quicky_utils
          * @param p_value value to convert to ext_int
          */
         explicit ext_int(const int64_t & p_value);
+
+        /**
+         * Constructor from ext_uint
+         * @param p_value
+         */
+        explicit ext_int(const ext_uint<ubase_type > & p_value);
 
         /**
          * Display content of ext_int in hexadecimal
@@ -342,6 +352,20 @@ namespace quicky_utils
         if(is_trimmable())
         {
             trim();
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>::ext_int(const ext_uint<ext_int::ubase_type> & p_value):
+    m_root(0),
+    m_ext(p_value.get_extension())
+    {
+        auto l_root_candidate = m_ext.back();
+        if(!(l_root_candidate & m_upper_bit_mask))
+        {
+            m_ext.pop_back();
+            m_root = l_root_candidate;
         }
     }
 
