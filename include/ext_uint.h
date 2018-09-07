@@ -195,6 +195,17 @@ namespace quicky_utils
         operator std::string() const;
 
       private:
+        /**
+         * Method checking ig object has the shortest possible representation
+         * @return true if object don't have shortest possible representation
+         */
+        bool is_trimmable() const;
+
+        /**
+         * Method ensuring that object has the shortest possible representation
+         */
+        ext_uint<T> & trim();
+
 
         /**
          * Helper method used in / and % operator
@@ -209,7 +220,14 @@ namespace quicky_utils
                     ext_uint <T> & p_mult
                    ) const;
 
-        ext_uint(const std::vector<T> & p_vec);
+        /**
+         * Constuctor form a vector
+         * @param p_vec Vector representing number
+         * @param check_trim check if number is trimmable or not
+         */
+        ext_uint(const std::vector<T> & p_vec
+                ,bool check_trim = true
+                );
 
         /**
          * Methods extracting necessary info to build ext_int from an integer
@@ -268,7 +286,7 @@ namespace quicky_utils
             m_ext(p_init_list)
     {
         assert(p_init_list.size());
-        if(!m_ext.back() && m_ext.size() > 1)
+        if(is_trimmable())
         {
             throw quicky_exception::quicky_logic_exception("Upper word of ext_uint should be non-zero", __LINE__, __FILE__);
         }
@@ -276,9 +294,15 @@ namespace quicky_utils
 
     //-----------------------------------------------------------------------------
     template <typename T>
-    ext_uint<T>::ext_uint(const std::vector<T> & p_vec):
+    ext_uint<T>::ext_uint(const std::vector<T> & p_vec
+                         ,bool p_check_trim
+                         ):
             m_ext(p_vec)
     {
+        if(p_check_trim && is_trimmable())
+        {
+            throw quicky_exception::quicky_logic_exception("Upper word of ext_uint should be non-zero", __LINE__, __FILE__);
+        }
 
     }
 
@@ -560,7 +584,7 @@ namespace quicky_utils
         {
             l_new_ext.push_back(1);
         }
-        return ext_uint(l_new_ext);
+        return ext_uint(l_new_ext, false).trim();
     }
 
     //-----------------------------------------------------------------------------
@@ -621,7 +645,7 @@ namespace quicky_utils
                 l_new_ext.push_back(l_result);
             }
         }
-        return ext_uint(l_new_ext);
+        return ext_uint(l_new_ext, false).trim();
     }
 
     //-------------------------------------------------------------------------
@@ -692,7 +716,7 @@ namespace quicky_utils
         {
             l_new_ext.pop_back();
         }
-        return ext_uint(l_new_ext);
+        return ext_uint(l_new_ext, false).trim();
     }
 
     //-------------------------------------------------------------------------
@@ -813,7 +837,7 @@ namespace quicky_utils
             true,
             l_mult
            );
-        return *this - l_mult;
+        return (*this - l_mult).trim();
     }
 
     //-------------------------------------------------------------------------
@@ -855,7 +879,7 @@ namespace quicky_utils
                     l_new_ext[l_index + l_additional_ext] = m_ext[l_index];
                 }
             }
-        return ext_uint<T>(l_new_ext);
+        return ext_uint<T>(l_new_ext, false).trim();
         }
         throw quicky_exception::quicky_logic_exception("ext_uint shift operator works only for single extesion", __LINE__, __FILE__);
     }
@@ -904,7 +928,7 @@ namespace quicky_utils
             {
                 l_new_ext.pop_back();
             }
-            return ext_uint<T>(l_new_ext);
+            return ext_uint<T>(l_new_ext, false).trim();
         }
         throw quicky_exception::quicky_logic_exception("ext_uint shift operator works only for single extesion", __LINE__, __FILE__);
     }
@@ -1028,6 +1052,26 @@ namespace quicky_utils
         std::stringstream l_stream;
         l_stream << *this;
         return l_stream.str();
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    bool
+    ext_uint<T>::is_trimmable() const
+    {
+        return m_ext.size() > 1 && !m_ext.back();
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_uint<T> &
+    ext_uint<T>::trim()
+    {
+        while(is_trimmable())
+        {
+            m_ext.pop_back();
+        }
+        return *this;
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST
