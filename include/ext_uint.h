@@ -830,7 +830,7 @@ namespace quicky_utils
         }
         if(*this < p_op)
         {
-            return ext_uint();
+            return *this;
         }
         ext_uint<T> l_mult;
         div(p_op,
