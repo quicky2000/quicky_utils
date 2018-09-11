@@ -945,7 +945,7 @@ namespace quicky_utils
         {
             return ext_int<T>(0,{});
         }
-        unsigned int l_case = ((*this > ext_int<T>(0,{})) << 1) + (p_op > ext_int<T>(0,{}));
+        unsigned int l_case = 2 * (this->m_root >= 0) + (p_op.m_root >= 0);
         switch(l_case)
         {
             case 0:
