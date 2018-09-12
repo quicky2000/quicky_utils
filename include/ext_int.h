@@ -157,6 +157,9 @@ namespace quicky_utils
         ext_int<T>
         operator*(const ext_int & p_op) const;
 
+        ext_int<T>
+        operator/(const ext_int & p_op) const;
+
         ext_int<T> operator~(void) const;
 
         ext_int<T>
@@ -974,6 +977,91 @@ namespace quicky_utils
                 auto l_this_abs = ext_uint<ubase_type>(*this);
                 auto l_op_abs = ext_uint<ubase_type>(p_op);
                 return ext_int<T>(l_this_abs * l_op_abs);
+            }
+                break;
+            default:
+                // Should never occur
+                assert(false);
+        }
+        return ext_int<T>(0,{});
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>
+    ext_int<T>::operator/(const ext_int & p_op) const
+    {
+        if(!m_ext.size()  && !m_root)
+        {
+            return ext_int();
+        }
+        if(!p_op.m_ext.size())
+        {
+            if (1 == p_op.m_root)
+            {
+                return *this;
+            }
+            else if(-1 == p_op.m_root)
+            {
+                return -*this;
+            }
+            else if (!p_op.m_root)
+            {
+                throw quicky_exception::quicky_logic_exception("Illegal division by 0 ext_int",
+                                                               __LINE__,
+                                                               __FILE__
+                                                              );
+            }
+            if(!m_ext.size())
+            {
+                return ext_int<T>({(T)(m_root / p_op.m_root)});
+            }
+        }
+        unsigned int l_case = 2 * (this->m_root >= 0) + (p_op.m_root >= 0);
+        switch(l_case)
+        {
+            case 0:
+            {
+                auto l_this_abs = ext_uint<ubase_type>(-*this);
+                auto l_op_abs = ext_uint<ubase_type>(-p_op);
+                if(l_this_abs < l_op_abs)
+                {
+                    return ext_int();
+                }
+                return ext_int<T>(l_this_abs / l_op_abs);
+            }
+                break;
+            case 1:
+            {
+                auto l_this_abs = ext_uint<ubase_type>(-*this);
+                auto l_op_abs = ext_uint<ubase_type>(p_op);
+                if(l_this_abs < l_op_abs)
+                {
+                    return ext_int();
+                }
+                return -ext_int<T>(l_this_abs / l_op_abs);
+            }
+                break;
+            case 2:
+            {
+                auto l_this_abs = ext_uint<ubase_type>(*this);
+                auto l_op_abs = ext_uint<ubase_type>(-p_op);
+                if(l_this_abs < l_op_abs)
+                {
+                    return ext_int();
+                }
+                return -ext_int<T>(l_this_abs / l_op_abs);
+            }
+                break;
+            case 3:
+            {
+                auto l_this_abs = ext_uint<ubase_type>(*this);
+                auto l_op_abs = ext_uint<ubase_type>(p_op);
+                if(l_this_abs < l_op_abs)
+                {
+                    return ext_int();
+                }
+                return ext_int<T>(l_this_abs / l_op_abs);
             }
                 break;
             default:
