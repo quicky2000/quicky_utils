@@ -204,6 +204,19 @@ namespace quicky_utils
          */
         operator std::string() const;
 
+        /**
+         * Helper method used in / and % operator
+         * @param p_op operand for division
+         * @param p_compute_mult indicate if mult should be computed
+         * @param p_mult value or returned result * p_op
+         * @return value of this / div
+         */
+        ext_uint <T>
+        div(const ext_uint & p_op,
+            bool p_compute_mult,
+            ext_uint <T> & p_mult
+           ) const;
+
       private:
         /**
          * Method checking ig object has the shortest possible representation
@@ -216,19 +229,6 @@ namespace quicky_utils
          */
         ext_uint<T> & trim();
 
-
-        /**
-         * Helper method used in / and % operator
-         * @param p_op operand for division
-         * @param p_compute_mult indicate if mult should be computed
-         * @param p_mult value or returned result * p_op
-         * @return value of this / div
-         */
-        ext_uint <T>
-        div(const ext_uint & p_op,
-                    bool p_compute_mult,
-                    ext_uint <T> & p_mult
-                   ) const;
 
         /**
          * Constuctor form a vector
