@@ -171,6 +171,19 @@ namespace quicky_utils
         ext_int<T>
         operator+(void)const;
 
+        ext_int<T>
+        operator+=(const ext_int & p_op);
+
+        ext_int<T>
+        operator-=(const ext_int & p_op);
+
+        ext_int<T>
+        operator*=(const ext_int & p_op);
+
+        ext_int<T>
+        operator/=(const ext_int & p_op);
+
+
         /**
          * string cast operator
          * @return string representation
@@ -1159,6 +1172,43 @@ namespace quicky_utils
         }
         return ext_int<T>(0,{});
     }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>
+    ext_int<T>::operator+=(const ext_int & p_op)
+    {
+        *this = *this + p_op;
+        return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>
+    ext_int<T>::operator-=(const ext_int & p_op)
+    {
+        *this = *this - p_op;
+        return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>
+    ext_int<T>::operator*=(const ext_int & p_op)
+    {
+        *this = *this * p_op;
+        return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>
+    ext_int<T>::operator/=(const ext_int & p_op)
+    {
+        *this = *this / p_op;
+        return *this;
+    }
+
 
 #ifdef QUICKY_UTILS_SELF_TEST
     /**
