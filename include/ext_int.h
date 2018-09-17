@@ -184,6 +184,9 @@ namespace quicky_utils
         operator/=(const ext_int & p_op);
 
 
+        ext_int<T>
+        operator>>(const ext_int & p_op) const;
+
         /**
          * string cast operator
          * @return string representation
@@ -1207,6 +1210,66 @@ namespace quicky_utils
     {
         *this = *this / p_op;
         return *this;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>
+    ext_int<T>::operator>>(const ext_int & p_op) const
+    {
+        if(p_op.m_root < 0)
+        {
+            throw quicky_exception::quicky_logic_exception("ext_int negative shift operator", __LINE__, __FILE__);
+        }
+        if(!p_op.m_ext.size())
+        {
+            if(!m_ext.size())
+            {
+                return ext_int<T>(m_root >> p_op.m_root,{});
+            }
+            size_t l_remove_ext = ((size_t)p_op.m_root) / (8 * sizeof(T));
+            size_t l_real_shift = ((size_t)p_op.m_root) % (8 * sizeof(T));
+            if(l_remove_ext >= (1 + m_ext.size()))
+            {
+                return ext_int<T>(m_root >= 0 ? 0 : -1,{});
+            }
+            size_t l_new_size = m_ext.size() - l_remove_ext;
+            if(!l_new_size)
+            {
+                return ext_int<T>(m_root >> p_op.m_root,{});
+            }
+            std::vector<ubase_type> l_new_ext(l_new_size);
+            T l_new_root;
+            if(l_real_shift)
+            {
+                T l_apply_shift = 8 * sizeof(T) - l_real_shift;
+                T l_select_mask = (((T)1) << l_real_shift) - 1;
+                T l_reminder = m_root & l_select_mask;
+                l_new_root = m_root >> l_real_shift;
+                for (size_t l_index = l_new_size - 1;
+                     l_index < l_new_size;
+                     --l_index
+                        )
+                {
+                    l_new_ext[l_index] =
+                            (m_ext[l_index + l_remove_ext] >> l_real_shift) | (l_reminder << l_apply_shift);
+                    l_reminder = m_ext[l_index + l_remove_ext] & l_select_mask;
+                }
+            }
+            else
+            {
+                for (size_t l_index = 0;
+                     l_index < l_new_size;
+                     ++l_index
+                        )
+                {
+                    l_new_ext[l_index] = m_ext[l_index + l_remove_ext];
+                }
+                l_new_root = m_root;
+            }
+            return ext_int<T>(l_new_root, l_new_ext, false).trim();
+        }
+        throw quicky_exception::quicky_logic_exception("ext_int shift operator works only for single extension", __LINE__, __FILE__);
     }
 
 
