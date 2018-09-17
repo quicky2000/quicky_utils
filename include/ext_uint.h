@@ -949,10 +949,6 @@ namespace quicky_utils
                     l_new_ext[l_index] = m_ext[l_index + l_remove_ext];
                 }
             }
-            if(!l_new_ext[l_new_ext.size() -1])
-            {
-                l_new_ext.pop_back();
-            }
             return ext_uint<T>(l_new_ext, false).trim();
         }
         throw quicky_exception::quicky_logic_exception("ext_uint shift operator works only for single extesion", __LINE__, __FILE__);
