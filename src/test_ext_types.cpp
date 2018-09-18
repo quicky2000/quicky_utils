@@ -628,17 +628,14 @@ namespace quicky_utils
         // Check >> operator
         for(auto l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(unsigned int l_i = 0; l_i < 1 + 8 * sizeof(uint32_t); ++l_i)
             {
-                if(!l_iter2.second.get_extension().size() && l_iter2.first > 0)
-                {
-                    int64_t l_result = ((int64_t) l_iter1.first) >> ((int64_t) l_iter2.first);
-                    l_ok &= quicky_test::check_expected(l_iter1.second >> l_iter2.second,
+                    int64_t l_result = ((int64_t) l_iter1.first) >> l_i;
+                    l_ok &= quicky_test::check_expected(l_iter1.second >> ext_int<int8_t>(l_i),
                                                         quicky_utils::ext_int<int8_t>(l_result),
                                                         (std::string) l_iter1.second + " >> " +
-                                                        (std::string) l_iter2.second
+                                                        std::to_string(l_i)
                                                        );
-                }
             }
         }
 

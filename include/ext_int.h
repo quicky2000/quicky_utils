@@ -1280,7 +1280,16 @@ namespace quicky_utils
         {
             if(!m_ext.size())
             {
-                return ext_int<T>(m_root >> p_op.m_root,{});
+                if(p_op.m_root < 8 * sizeof(T))
+                {
+                    return ext_int<T>(m_root >> p_op.m_root,
+                                      {}
+                                     );
+                }
+                else
+                {
+                    return ext_int(m_root >= 0 ? 0 : -1,{});
+                }
             }
             size_t l_remove_ext = ((size_t)p_op.m_root) / (8 * sizeof(T));
             size_t l_real_shift = ((size_t)p_op.m_root) % (8 * sizeof(T));
@@ -1291,7 +1300,7 @@ namespace quicky_utils
             size_t l_new_size = m_ext.size() - l_remove_ext;
             if(!l_new_size)
             {
-                return ext_int<T>(m_root >> p_op.m_root,{});
+                return ext_int<T>(m_root >> l_real_shift,{});
             }
             std::vector<ubase_type> l_new_ext(l_new_size);
             T l_new_root;
