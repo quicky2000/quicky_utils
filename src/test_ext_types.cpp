@@ -642,6 +642,20 @@ namespace quicky_utils
             }
         }
 
+        // Check << operator
+        for(auto l_iter1: l_test_values)
+        {
+            for(unsigned int l_i = 0; l_i < 8 * sizeof(uint32_t); ++l_i)
+            {
+                    int64_t l_result = ((int64_t) l_iter1.first) << l_i;
+                    l_ok &= quicky_test::check_expected(l_iter1.second << ext_int<int8_t>(l_i),
+                                                        quicky_utils::ext_int<int8_t>(l_result),
+                                                        (std::string) l_iter1.second + " << " +
+                                                        std::to_string(l_i)
+                                                       );
+            }
+        }
+
         // Experiments around int type
         int16_t l_int = -1;
         for(unsigned int l_index = 0; l_index < 16; ++ l_index)
