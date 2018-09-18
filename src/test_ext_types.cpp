@@ -113,6 +113,7 @@ namespace quicky_utils
     bool
     test_ext_uint()
     {
+        std::string l_type_name = type_string<ext_uint<uint8_t>>::name();
         bool l_ok = true;
         quicky_utils::ext_uint<uint8_t> l_zero;
         quicky_utils::ext_uint<uint8_t> l_zero_bis;
@@ -124,18 +125,18 @@ namespace quicky_utils
         quicky_utils::ext_uint<uint8_t> l_256_bis({0,1});
         quicky_utils::ext_uint<uint8_t> l_max({0xFF, 0xFF, 0xFF, 0xFF});
 
-        quicky_test::get_ostream() << std::endl << "Test ext_uint output stream operator:" << std::endl;
+        quicky_test::get_ostream() << std::endl << "Test " << l_type_name << " output stream operator:" << std::endl;
         l_ok &= quicky_test::check_ostream_operator(l_zero,"0x00");
         l_ok &= quicky_test::check_ostream_operator(l_un,"0x01");
         l_ok &= quicky_test::check_ostream_operator(l_256,"0x0100");
 
-        quicky_test::get_ostream() << std::endl << "Test conversion to integer type" << std::endl;
+        quicky_test::get_ostream() << std::endl << "Test " << l_type_name << " conversion to integer type" << std::endl;
         l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_256, 256);
         l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_zero, 0);
         l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_un, 1);
         l_ok &= check_convert<uint32_t,quicky_utils::ext_uint<uint8_t>>(l_max, std::numeric_limits<uint32_t>::max());
 
-        quicky_test::get_ostream() << std::endl << "Test == operator" << std::endl;
+        quicky_test::get_ostream() << std::endl << "Test " << l_type_name << " == operator" << std::endl;
         l_ok &= quicky_test::check_expected(l_zero == l_zero_bis, true, quicky_test::auto_message(__FILE__, __LINE__));
         l_ok &= quicky_test::check_expected(l_zero_list_init == l_zero_list_init_bis, true, quicky_test::auto_message(__FILE__, __LINE__));
         l_ok &= quicky_test::check_expected(l_zero == l_zero_list_init_bis, true, quicky_test::auto_message(__FILE__, __LINE__));
@@ -263,6 +264,7 @@ namespace quicky_utils
         generate_test_values<uint32_t, quicky_utils::ext_uint<uint8_t >>(l_significative_bytes,l_test_values);
 
 
+        std::cout << "Check " << l_type_name << " + operator" << std::endl;
         // Check + operator
         for(auto l_iter1: l_test_values)
         {
@@ -276,19 +278,7 @@ namespace quicky_utils
             }
         }
 
-        // Check + operator
-        for(auto l_iter1: l_test_values)
-        {
-            for(auto l_iter2: l_test_values)
-            {
-                uint64_t l_result = (uint64_t)l_iter1.first + (uint64_t)l_iter2.first;
-                l_ok &= quicky_test::check_expected(l_iter1.second + l_iter2.second,
-                                                    quicky_utils::ext_uint<uint8_t>(l_result),
-                                                    (std::string)l_iter1.second + " + " + (std::string)l_iter2.second
-                                                   );
-            }
-        }
-
+        std::cout << "Check " << l_type_name << " - operator" << std::endl;
         // Check - operator
         for(auto l_iter1: l_test_values)
         {
@@ -306,6 +296,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " * operator" << std::endl;
         // Check * operator
         for(auto l_iter1: l_test_values)
         {
@@ -319,6 +310,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " / operator" << std::endl;
         // Check / operator
         for(auto l_iter1: l_test_values)
         {
@@ -336,6 +328,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " % operator" << std::endl;
         // Check % operator
         for(auto l_iter1: l_test_values)
         {
@@ -353,6 +346,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " >> operator" << std::endl;
         // Check >> operator
         for(auto l_iter1: l_test_values)
         {
@@ -367,6 +361,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " << operator" << std::endl;
         // Check << operator
         for(auto l_iter1: l_test_values)
         {
@@ -388,6 +383,8 @@ namespace quicky_utils
     bool
     test_ext_int()
     {
+        std::string l_type_name = type_string<ext_int<int8_t>>::name();
+
         bool l_ok = true;
 
         std::vector<uint8_t> l_significative_bytes = {0x0, 0x1, 0x7F, 0x80, 0xFE, 0xFF};
@@ -406,6 +403,8 @@ namespace quicky_utils
         l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(std::numeric_limits<int64_t>::min()), quicky_utils::ext_int<int8_t>((int8_t)0x80,{0x0,0x0,0x0, 0x0, 0x0, 0x0, 0x0}), "int64_t min");
 
         // Check ostream operator
+        std::cout << "Check " << l_type_name << " ostream operator" << std::endl;
+
         for(auto l_iter: l_test_values)
         {
             // Build reference string from integer
@@ -427,6 +426,7 @@ namespace quicky_utils
             l_ok &= quicky_test::check_ostream_operator(l_iter.second, l_reference, quicky_test::auto_message(__FILE__, __LINE__));
         }
 
+        std::cout << "Check " << l_type_name << " == operator" << std::endl;
         // Check == operator
         for(auto l_iter1: l_test_values)
         {
@@ -439,6 +439,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " != operator" << std::endl;
         // Check != operator
         for(auto l_iter1: l_test_values)
         {
@@ -451,6 +452,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " < operator" << std::endl;
         // Check < operator
         for(auto l_iter1: l_test_values)
         {
@@ -463,6 +465,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " <= operator" << std::endl;
         // Check <= operator
         for(auto l_iter1: l_test_values)
         {
@@ -475,6 +478,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " > operator" << std::endl;
         // Check > operator
         for(auto l_iter1: l_test_values)
         {
@@ -487,6 +491,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " >= operator" << std::endl;
         // Check >= operator
         for(auto l_iter1: l_test_values)
         {
@@ -499,6 +504,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " + operator" << std::endl;
         // Check + operator
         for(auto l_iter1: l_test_values)
         {
@@ -512,6 +518,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " - operator" << std::endl;
         // Check - operator
         for(auto l_iter1: l_test_values)
         {
@@ -525,6 +532,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " * operator" << std::endl;
         // Check * operator
         for(auto l_iter1: l_test_values)
         {
@@ -538,6 +546,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " / operator" << std::endl;
         // Check / operator
         for(auto l_iter1: l_test_values)
         {
@@ -555,6 +564,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " % operator" << std::endl;
         // Check % operator
         for(auto l_iter1: l_test_values)
         {
@@ -572,6 +582,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " += operator" << std::endl;
         // Check += operator
         for(auto l_iter1: l_test_values)
         {
@@ -589,7 +600,7 @@ namespace quicky_utils
             }
         }
 
-
+        std::cout << "Check " << l_type_name << " -= operator" << std::endl;
         // Check -= operator
         for(auto l_iter1: l_test_values)
         {
@@ -607,6 +618,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " *= operator" << std::endl;
         // Check *= operator
         for(auto l_iter1: l_test_values)
         {
@@ -624,6 +636,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " /= operator" << std::endl;
         // Check /= operator
         for(auto l_iter1: l_test_values)
         {
@@ -644,6 +657,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " abs method" << std::endl;
         // Check abs operator
         for(auto l_iter1: l_test_values)
         {
@@ -654,6 +668,7 @@ namespace quicky_utils
                                                );
         }
 
+        std::cout << "Check " << l_type_name << " >> operator" << std::endl;
         // Check >> operator
         for(auto l_iter1: l_test_values)
         {
@@ -668,6 +683,7 @@ namespace quicky_utils
             }
         }
 
+        std::cout << "Check " << l_type_name << " << operator" << std::endl;
         // Check << operator
         for(auto l_iter1: l_test_values)
         {
@@ -721,6 +737,7 @@ namespace quicky_utils
         //    0 |   1 ||   0 |   0 |   0 |   0 |   0 |   0 |   0 |   1 | =>  257
         //    1 |   0 ||   1 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | => -257
 
+        std::cout << "Check " << l_type_name << " << bad constructs" << std::endl;
         l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(0, {0x0});},true,"Check zero bad construct");
         l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(0, {});},false,"Check zero good construct");
         l_ok &= quicky_test::check_exception<quicky_exception::quicky_logic_exception>([]{ext_int<int8_t> l_int8_t(-1, {});},false,"Check -1 good construct");
@@ -737,6 +754,8 @@ namespace quicky_utils
         ext_int<int8_t> l_256(1,{0});
         ext_int<int8_t> l_257(1,{1});
         ext_int<int8_t> l_257_bis(1,{1});
+
+        std::cout << "Check " << l_type_name << " ostream operator" << std::endl;
 
         l_ok &= quicky_test::check_ostream_operator(l_0,"0x00",quicky_test::auto_message(__FILE__, __LINE__));
         l_ok &= quicky_test::check_ostream_operator(l_1,"0x01",quicky_test::auto_message(__FILE__, __LINE__));

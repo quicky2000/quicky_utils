@@ -20,6 +20,7 @@
 #include "safe_uint.h"
 #include "quicky_exception.h"
 #include "ext_int.h"
+#include "type_string.h"
 #include <vector>
 #include <cstdio>
 #include <cassert>
@@ -1094,6 +1095,9 @@ namespace quicky_utils
         }
         return *this;
     }
+
+    declare_template_specialise_type_string(typename T,ext_uint<T>,"ext_uint<" + type_string<T>::name() + ">");
+    template_specialise_type_string(typename T,ext_uint<T>,"ext_uint<" + type_string<T>::name() + ">");
 
 #ifdef QUICKY_UTILS_SELF_TEST
     /**

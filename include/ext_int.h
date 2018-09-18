@@ -19,6 +19,7 @@
 
 #include "safe_int.h"
 #include "quicky_exception.h"
+#include "type_string.h"
 #include <iostream>
 #include <vector>
 #include <iomanip>
@@ -1336,6 +1337,8 @@ namespace quicky_utils
         throw quicky_exception::quicky_logic_exception("ext_int shift operator works only for single extension", __LINE__, __FILE__);
     }
 
+    declare_template_specialise_type_string(typename T,ext_int<T>,"ext_int<" + type_string<T>::name() + ">");
+    template_specialise_type_string(typename T,ext_int<T>,"ext_int<" + type_string<T>::name() + ">");
 
 #ifdef QUICKY_UTILS_SELF_TEST
     /**
