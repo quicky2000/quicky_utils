@@ -676,7 +676,7 @@ namespace quicky_utils
                     ++l_index
                         )
                 {
-                    l_sum = propagate_add(l_longer.m_ext[l_index],0, l_previous_overflow);
+                    l_sum = propagate_add(l_longer.m_ext[l_index],(ubase_type)0, l_previous_overflow);
                     l_new_ext.push_back(l_sum);
                 }
             }
