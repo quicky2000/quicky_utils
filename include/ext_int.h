@@ -1388,5 +1388,12 @@ namespace std
     }
 
 }
+
+template <typename T>
+quicky_utils::ext_int<T> abs(const quicky_utils::ext_int<T> & p_ext_int)
+{
+    return std::abs(p_ext_int);
+}
+
 #endif //QUICKY_UTILS_EXT_INT_H
 // EOF
