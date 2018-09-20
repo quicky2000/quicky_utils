@@ -41,6 +41,11 @@ namespace quicky_utils
                const ext_int<T> & p_ext_uint
               );
 
+    template <typename T>
+    bool operator==(const T & p_op1,
+                    const ext_int<T> & p_ext_int
+                   );
+
     /**
      * Class defining uint type that will extend as necessary to avoid overflows
      * @tparam T build-in types made safe
@@ -454,6 +459,16 @@ namespace quicky_utils
             p_stream << "-" << -p_ext_int;
         }
         return p_stream;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    bool
+    operator==(const T & p_op1,
+               const ext_int<T> & p_ext_int
+              )
+    {
+        return ext_int<T>(p_op1) == p_ext_int;
     }
 
     //-------------------------------------------------------------------------
