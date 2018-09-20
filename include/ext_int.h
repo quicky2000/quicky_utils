@@ -131,6 +131,8 @@ namespace quicky_utils
          */
         ext_int<T> & operator=(const ext_int<T> & p_op);
 
+        explicit operator bool() const;
+
         bool
         operator==(const ext_int & p_op) const;
 
@@ -1335,6 +1337,13 @@ namespace quicky_utils
             return ext_int<T>(l_new_root, l_new_ext, false).trim();
         }
         throw quicky_exception::quicky_logic_exception("ext_int shift operator works only for single extension", __LINE__, __FILE__);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>::operator bool() const
+    {
+        return m_root || m_ext.size();
     }
 
     declare_template_specialise_type_string(typename T,ext_int<T>,"ext_int<" + type_string<T>::name() + ">");
