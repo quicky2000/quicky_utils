@@ -698,20 +698,6 @@ namespace quicky_utils
             }
         }
 
-        // Experiments around int type
-        int16_t l_int = -1;
-        for(unsigned int l_index = 0; l_index < 16; ++ l_index)
-        {
-            std::cout << "SHIFT=" << l_index << std::endl;
-            std::cout << std::dec << l_int << std::endl;
-            std::cout << std::hex << l_int << std::dec << std::endl;
-            l_int = l_int << 1;
-        }
-
-        int16_t l_int16 = -1;
-        auto l_uint16 = (uint16_t) l_int16;
-        std::cout << l_int16 << "\t" << l_uint16 << std::endl;
-
         // ||-128 |  64 |  32 |  16 |   8 |   4 |   2 |   1 |
         //-||-----------------------------------------------|
         // ||   0 |   1 |   1 |   1 |   1 |   1 |   1 |   1 | =>  127
