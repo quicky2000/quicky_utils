@@ -262,11 +262,26 @@ namespace quicky_utils
          * @param p_vector vector to fill
          * @return root value
          */
-        template <typename INT_TYPE>
+        template <typename INT_TYPE, typename std::enable_if<!(sizeof(INT_TYPE) <= sizeof(T)), int>::type = 0>
         static
         T extract(const INT_TYPE & p_value,
-                 std::vector<ubase_type> & p_vector
+                  std::vector<ubase_type> & p_vector
                  );
+
+        /**
+         * Methods extracting necessary info to build ext_int from an integer
+         * value ( int64_t etc )
+         * @tparam INT_TYPE type of integer value to extract
+         * @param p_value value to extract
+         * @param p_vector vector to fill
+         * @return root value
+         */
+        template <typename INT_TYPE, typename std::enable_if<sizeof(INT_TYPE)<= sizeof(T), int>::type = 0>
+        static
+        T extract(const INT_TYPE & p_value,
+                  std::vector<ubase_type> & p_vector
+                 );
+
         /**
          *
          * @param p_root  root value
@@ -927,39 +942,43 @@ namespace quicky_utils
 
     //-------------------------------------------------------------------------
     template <typename T>
-    template <typename INT_TYPE>
+    template <typename INT_TYPE, typename std::enable_if<!(sizeof(INT_TYPE) <= sizeof(T)), int>::type>
     T
     ext_int<T>::extract(const INT_TYPE & p_value,
                         std::vector<ext_int::ubase_type> & p_vector
                        )
     {
         T l_root = 0;
-        if(sizeof(INT_TYPE) >= sizeof(T))
+        typename std::make_unsigned<INT_TYPE>::type l_value = p_value;
+        while(l_value)
         {
-            typename std::make_unsigned<INT_TYPE>::type l_value = p_value;
-            while(l_value)
+            ubase_type l_chunk = l_value & ((ubase_type) -1);
+            l_value = l_value >> (8 * sizeof(ubase_type));
+            if(l_value)
             {
-                ubase_type l_chunk = l_value & ((ubase_type) -1);
-                l_value = l_value >> (8 * sizeof(ubase_type));
-                if(l_value)
-                {
-                    p_vector.push_back(l_chunk);
-                }
-                else if(p_value > 0 && ((T)l_chunk) < 0)
-                {
-                    p_vector.push_back(l_chunk);
-                }
-                else
-                {
-                    l_root = l_chunk;
-                }
+                p_vector.push_back(l_chunk);
+            }
+            else if(p_value > 0 && ((T)l_chunk) < 0)
+            {
+                p_vector.push_back(l_chunk);
+            }
+            else
+            {
+                l_root = l_chunk;
             }
         }
-        else
-        {
-            l_root = p_value;
-        }
         return l_root;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    template <typename INT_TYPE, typename std::enable_if<sizeof(INT_TYPE) <= sizeof(T), int>::type>
+    T
+    ext_int<T>::extract(const INT_TYPE & p_value,
+                        std::vector<ext_int::ubase_type> & p_vector
+                       )
+    {
+        return p_value;
     }
 
     //-------------------------------------------------------------------------
