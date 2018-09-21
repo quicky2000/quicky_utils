@@ -1298,7 +1298,7 @@ namespace quicky_utils
         {
             if(!m_ext.size())
             {
-                if(p_op.m_root < 8 * sizeof(T))
+                if((size_t)(p_op.m_root) < 8 * sizeof(T))
                 {
                     return ext_int<T>(m_root >> p_op.m_root,
                                       {}
