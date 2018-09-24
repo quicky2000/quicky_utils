@@ -326,7 +326,7 @@ namespace quicky_utils
         {
             throw quicky_exception::quicky_logic_exception("Convert negative ext_int to ext_uint", __LINE__, __FILE__);
         }
-        if(l_root)
+        if(l_root || !m_ext.size())
         {
             m_ext.push_back(l_root);
         }
