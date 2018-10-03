@@ -215,6 +215,12 @@ namespace quicky_utils
          */
         const std::vector<ubase_type> & get_extension() const;
 
+        /**
+         * Accessor returning number of bytes composing type
+         * @return number of bytes composing type
+         */
+        size_t get_nb_bytes() const;
+
       private:
         /**
         * Perform addition and manage input output overflow
@@ -1378,6 +1384,14 @@ namespace quicky_utils
     ext_int<T>::operator bool() const
     {
         return m_root || m_ext.size();
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    size_t
+    ext_int<T>::get_nb_bytes() const
+    {
+        return sizeof(m_root) + m_ext.size() * sizeof(ubase_type);
     }
 
     declare_template_specialise_type_string(typename T,ext_int<T>,"ext_int<" + type_string<T>::name() + ">");
