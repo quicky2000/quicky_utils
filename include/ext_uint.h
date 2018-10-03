@@ -26,6 +26,7 @@
 #include <cassert>
 #include <iomanip>
 #include <sstream>
+#include <type_traits>
 
 namespace quicky_utils
 {
@@ -247,7 +248,20 @@ namespace quicky_utils
          * @param p_value value to extract
          * @param p_vector vector to fill
          * */
-        template <typename UINT_TYPE>
+        template <typename UINT_TYPE, typename std::enable_if<sizeof(T) < sizeof(UINT_TYPE), int>::type = 0>
+        static
+        void extract(const UINT_TYPE & p_value,
+                     std::vector<T> & p_vector
+                    );
+
+        /**
+         * Methods extracting necessary info to build ext_int from an integer
+         * value ( int64_t etc )
+         * @tparam UINT_TYPE type of unsigned integer value to extract
+         * @param p_value value to extract
+         * @param p_vector vector to fill
+         * */
+        template <typename UINT_TYPE, typename std::enable_if<sizeof(UINT_TYPE) <= sizeof(T), int>::type = 0>
         static
         void extract(const UINT_TYPE & p_value,
                      std::vector<T> & p_vector
@@ -1051,12 +1065,13 @@ namespace quicky_utils
 
     //-------------------------------------------------------------------------
     template <typename T>
-    template <typename UINT_TYPE>
+    template <typename UINT_TYPE, typename std::enable_if<sizeof(T) < sizeof(UINT_TYPE), int>::type>
     void
     ext_uint<T>::extract(const UINT_TYPE & p_value,
                          std::vector<T> & p_vector
                         )
     {
+        static_assert(std::is_unsigned<UINT_TYPE>::value, "ext_uint extract method should be used on unsigned types");
         UINT_TYPE l_value = p_value;
         do
         {
@@ -1065,6 +1080,18 @@ namespace quicky_utils
             p_vector.push_back(l_chunk);
         }
         while(l_value);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    template <typename UINT_TYPE, typename std::enable_if<sizeof(UINT_TYPE) <= sizeof(T), int>::type>
+    void
+    ext_uint<T>::extract(const UINT_TYPE & p_value,
+                         std::vector<T> & p_vector
+                        )
+    {
+        static_assert(std::is_unsigned<UINT_TYPE>::value, "ext_uint extract method should be used on unsigned types");
+        p_vector.push_back(p_value);
     }
 
     //-------------------------------------------------------------------------
