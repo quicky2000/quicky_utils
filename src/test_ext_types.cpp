@@ -72,6 +72,85 @@ namespace quicky_utils
         return quicky_test::check_expected<INT_TYPE>(l_result, p_expected, "Check conversion of " + l_stream.str() + " to " + quicky_utils::type_string<INT_TYPE>::name());
     }
 
+    /**
+     * Display internal representation of floating types
+     * @tparam T Floating type
+     * @tparam INT_T size equivalent integer type
+     * @param p_floating floating number to display representation
+     */
+    template <typename T, typename INT_T>
+    void display_floating(const T & p_floating)
+    {
+        static_assert(sizeof(T) == sizeof(INT_T), "INT_T is unsifficant to store floating type representation");
+        constexpr const size_t l_mantissa_size = std::numeric_limits<T>::digits - 1;
+        constexpr const INT_T l_mantissa_mask = (((INT_T)1) << l_mantissa_size) - 1;
+        constexpr const INT_T l_exponent_mask = (((INT_T)1) << (8 * sizeof(T) - l_mantissa_size - 1)) - 1;
+        INT_T l_int = *((INT_T*)&p_floating);
+        INT_T l_mantissa = l_int & l_mantissa_mask;
+        INT_T l_exponent = (l_int >> l_mantissa_size) & l_exponent_mask;
+        INT_T l_sign = l_int >> (8 *sizeof(INT_T) - 1);
+        std::cout << "Sign: " << l_sign << " Exp: 0x" << std::hex << l_exponent << " Mantissa: 0x" << l_mantissa << std::dec << std::endl;
+    }
+
+    /**
+     * Display internal representation of floating types
+     * There are specialisations for float and double
+     * @tparam T Float type
+     * @param p_floating floating number to display representation
+     */
+    template <typename T>
+    void display_floating(const T & p_floating)
+    {
+        throw quicky_exception::quicky_logic_exception("Not implemented", __LINE__, __FILE__);
+    }
+
+    /**
+     * Display internal representation of float
+     * @param p_floating float number to display representation
+     */
+    template <>
+    void display_floating<float>(const float & p_floating)
+    {
+        display_floating<float,uint32_t>(p_floating);
+    }
+
+    /**
+     * Display internal representation of double
+     * @param p_floating double number to display representation
+     */
+    template <>
+    void display_floating<double>(const double & p_floating)
+    {
+        display_floating<double,uint64_t>(p_floating);
+    }
+
+    template <typename INT_T, typename EXT_INT_T, typename FLOATING_T>
+    bool check_floating_conversion(const INT_T & p_mantissa)
+    {
+        EXT_INT_T l_number(p_mantissa);
+        FLOATING_T l_float = p_mantissa;
+        FLOATING_T l_previous_float;
+        bool l_ok = true;
+        while(l_float != l_previous_float)
+        {
+            FLOATING_T l_float_ext = (FLOATING_T) l_number;
+            std::cout << l_float << " " << l_float_ext << " " << (std::string) l_number << std::endl;
+            std::cout << "Ref: ";
+            display_floating(l_float);
+            std::cout << "Ext: ";
+            display_floating(l_float_ext);
+            std::cout << std::endl;
+            l_ok &= quicky_test::check_expected(l_float_ext,
+                                                l_float,
+                                                "To float " + std::string(l_number)
+                                               );
+            l_previous_float = l_float;
+            l_float *= 2;
+            l_number *= 2;
+        }
+        return l_ok;
+    }
+
     //------------------------------------------------------------------------------
     template <typename T1, typename T2>
     void generate_test_values(const std::vector<uint8_t> & p_bytes
@@ -696,6 +775,19 @@ namespace quicky_utils
                                                         std::to_string(l_i)
                                                        );
             }
+        }
+
+        std::cout << "Check " << l_type_name << " << float() operator" << std::endl;
+        for(auto l_iter: l_test_values)
+        {
+            l_ok &= check_floating_conversion<int32_t, ext_int<int8_t>, float>(l_iter.first);
+            l_ok &= check_floating_conversion<int32_t, ext_int<int8_t>, double>(l_iter.first);
+            l_ok &= check_floating_conversion<int32_t, ext_int<int16_t>, float>(l_iter.first);
+            l_ok &= check_floating_conversion<int32_t, ext_int<int16_t>, double>(l_iter.first);
+            l_ok &= check_floating_conversion<int32_t, ext_int<int32_t>, float>(l_iter.first);
+            l_ok &= check_floating_conversion<int32_t, ext_int<int32_t>, double>(l_iter.first);
+            l_ok &= check_floating_conversion<int32_t, ext_int<int64_t>, float>(l_iter.first);
+            l_ok &= check_floating_conversion<int32_t, ext_int<int64_t>, double>(l_iter.first);
         }
 
         // ||-128 |  64 |  32 |  16 |   8 |   4 |   2 |   1 |

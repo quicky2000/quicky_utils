@@ -26,6 +26,8 @@
 #include <type_traits>
 #include <sstream>
 #include <cassert>
+#include <functional>
+#include <cmath>
 
 namespace quicky_utils
 {
@@ -137,6 +139,8 @@ namespace quicky_utils
         ext_int<T> & operator=(const ext_int<T> & p_op);
 
         explicit operator bool() const;
+        explicit operator float() const;
+        explicit operator double() const;
 
         bool
         operator==(const ext_int & p_op) const;
@@ -1384,6 +1388,28 @@ namespace quicky_utils
     ext_int<T>::operator bool() const
     {
         return m_root || m_ext.size();
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>::operator float() const
+    {
+        if(m_root >= 0)
+        {
+            return (float)ext_uint<ubase_type>(*this);
+        }
+        return -(float)ext_uint<ubase_type>(-*this);
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    ext_int<T>::operator double() const
+    {
+        if(m_root >= 0)
+        {
+            return (double)ext_uint<ubase_type>(*this);
+        }
+        return -(double)ext_uint<ubase_type>(-*this);
     }
 
     //-------------------------------------------------------------------------
