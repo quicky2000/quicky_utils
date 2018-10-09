@@ -124,6 +124,38 @@ namespace quicky_utils
         display_floating<double,uint64_t>(p_floating);
     }
 
+    /**
+    * Display ldexp arguments leading to floating type
+    * @tparam T Floatin type
+    * @param p_floating floating type to revert
+    */
+    template <typename T>
+    void rdisplay_floating(const T & p_floating)
+    {
+        int l_exp;
+        T l_mantissa = frexp(p_floating, &l_exp);
+        std::cout << "Inverted M: ";
+        if(l_mantissa < 1)
+        {
+            std::cout << l_mantissa;
+        }
+        else
+        {
+            std::cout << "0x" << std::hex << l_mantissa << std::dec;
+        }
+        std::cout << " E: ";
+        if(l_exp >= 0)
+        {
+            std::cout << "0x" << std::hex << l_exp << std::dec;
+        }
+        else
+        {
+            std::cout << l_exp;
+        }
+        std::cout << std::endl;
+    }
+
+
     template <typename INT_T, typename EXT_INT_T, typename FLOATING_T>
     bool check_floating_conversion(const INT_T & p_mantissa)
     {
@@ -134,19 +166,23 @@ namespace quicky_utils
         while(l_float != l_previous_float)
         {
             FLOATING_T l_float_ext = (FLOATING_T) l_number;
-            std::cout << l_float << " " << l_float_ext << " " << (std::string) l_number << std::endl;
-            std::cout << "Ref: ";
-            display_floating(l_float);
-            std::cout << "Ext: ";
-            display_floating(l_float_ext);
-            std::cout << std::endl;
             l_ok &= quicky_test::check_expected(l_float_ext,
                                                 l_float,
                                                 "To float " + std::string(l_number)
                                                );
+            if(!l_ok)
+            {
+                std::cout << l_float << " " << l_float_ext << " " << (std::string) l_number << std::endl;
+                std::cout << "Ref: ";
+                display_floating(l_float);
+                std::cout << "Ext: ";
+                display_floating(l_float_ext);
+                std::cout << std::endl;
+                l_float_ext = (FLOATING_T) l_number;
+            }
             l_previous_float = l_float;
             l_float *= 2;
-            l_number *= 2;
+            l_number *= (EXT_INT_T)((uint32_t)2);
         }
         return l_ok;
     }
@@ -453,6 +489,19 @@ namespace quicky_utils
                                                     std::to_string(l_i)
                                                    );
             }
+        }
+
+        std::cout << "Check " << l_type_name << " << float()/double() operator" << std::endl;
+        for(auto l_iter: l_test_values)
+        {
+            l_ok &= check_floating_conversion<uint32_t, ext_uint<uint8_t>, float>(l_iter.first);
+            l_ok &= check_floating_conversion<uint32_t, ext_uint<uint8_t>, double>(l_iter.first);
+            l_ok &= check_floating_conversion<uint32_t, ext_uint<uint16_t>, float>(l_iter.first);
+            l_ok &= check_floating_conversion<uint32_t, ext_uint<uint16_t>, double>(l_iter.first);
+            l_ok &= check_floating_conversion<uint32_t, ext_uint<uint32_t>, float>(l_iter.first);
+            l_ok &= check_floating_conversion<uint32_t, ext_uint<uint32_t>, double>(l_iter.first);
+            l_ok &= check_floating_conversion<uint32_t, ext_uint<uint64_t>, float>(l_iter.first);
+            l_ok &= check_floating_conversion<uint32_t, ext_uint<uint64_t>, double>(l_iter.first);
         }
 
         return l_ok;
@@ -777,17 +826,104 @@ namespace quicky_utils
             }
         }
 
-        std::cout << "Check " << l_type_name << " << float() operator" << std::endl;
+        //------------------------------------------------------------------
+        //    |  0 |  0 |  0 |  0 |  0 |  0 |
+        //    |0000|0000|0000|0000|0000|0000|
+        // Sign: 0 Exp: 0x0 Mantissa: 0x0
+        // Inverted M: 0 E: 0x0
+        // OK = > 0x0
+        //------------------------------------------------------------------
+        //    |  0 |  0 |  0 |  0 |  0 |  1 |
+        //    |0000|0000|0000|0000|0000|0001| Complete Mantissa
+        // Sign: 0 Exp: 0x7f Mantissa: 0x0
+        // Inverted M: 0.5 E: 0x1
+        // OK = > 0x1
+        //------------------------------------------------------------------
+        //    |  0 |  0 |  0 |  0 |  0 |  2 |
+        //    |0000|0000|0000|0000|0000|0010| Complete Mantissa
+        // Sign: 0 Exp: 0x80 Mantissa: 0x0
+        // Inverted M: 0.5 E: 0x2
+        // OK = > 0x2
+        //------------------------------------------------------------------
+        //    |  4 |  0 |  0 |  0 |  0 |  1 |
+        //    |0100|0000|0000|0000|0000|0001|
+        //    |1000|0000|0000|0000|0000|0010| Complete Mantissa Shift <- 1
+        //    | 000|0000|0000|0000|0000|0010| Truncated Mantissa
+        // Sign: 0 Exp: 0x95 Mantissa: 0x2
+        // Inverted M: 0.5 E: 0x17
+        // OK = > 0x400001
+        //------------------------------------------------------------------
+        //    |  8 |  0 |  0 |  0 |  0 |  1 |
+        //    |1000|0000|0000|0000|0000|0001|
+        //    |1000|0000|0000|0000|0000|0001| Complete Mantissa Shift 0
+        //    | 000|0000|0000|0000|0000|0001| Truncated Mantissa
+        // Sign: 0 Exp: 0x96 Mantissa: 0x1
+        // Inverted M: 0.5 E: 0x18
+        // OK = > 0x800001
+        //------------------------------------------------------------------
+        //    |  8 |  0 |  0 |  0 |  0 |  0 |
+        //    |1000|0000|0000|0000|0000|0000|
+        //    |1000|0000|0000|0000|0000|0000| Complete Mantissa Shift 0
+        //    | 000|0000|0000|0000|0000|0000| Truncated Mantissa
+        // Sign: 0 Exp: 0x96 Mantissa: 0x0
+        // Inverted M: 0.5 E: 0x18
+        // OK = > 0x800000
+        //------------------------------------------------------------------
+        // 1  |  8 |  0 |  0 |  0 |  0 |  1 |
+        //0001|1000|0000|0000|0000|0000|0001|
+        // 000|1100|0000|0000|0000|0000|0000| Complete Mantissa Shift -> 1
+        //    | 100|0000|0000|0000|0000|0000| Truncated Mantissa
+        // Sign: 0 Exp: 0x97 Mantissa: 0x400000
+        // Inverted M: 0.75 E: 0x19
+        // KO = > 0x1800000
+        //------------------------------------------------------------------
+        // 1  |  8 |  0 |  0 |  0 |  0 |  2 |
+        //0001|1000|0000|0000|0000|0000|0010|
+        // 000|1100|0000|0000|0000|0000|0001| Complete Mantissa Shift -> 1
+        //    | 100|0000|0000|0000|0000|0001| Truncated Mantissa
+        // Sign: 0 Exp: 0x97 Mantissa: 0x400001
+        // Inverted M: 0.75 E: 0x19
+        // OK = > 0x1800002
+        //------------------------------------------------------------------
+        // 1  |  0 |  0 |  0 |  0 |  0 |  1 |
+        //0001|0000|0000|0000|0000|0000|0001|
+        // 000|1000|0000|0000|0000|0000|0000| Complete Mantissa Shift -> 1
+        //    | 000|0000|0000|0000|0000|0000| Truncated Mantissa
+        // Sign: 0 Exp: 0x97 Mantissa: 0x0
+        // Inverted M: 0.5 E: 0x19
+        // KO = > 0x1000000
+        //------------------------------------------------------------------
+        // 1  |  0 |  0 |  0 |  0 |  0 |  2 |
+        //0001|0000|0000|0000|0000|0000|0010|
+        // 000|1000|0000|0000|0000|0000|0001| Complete Mantissa Shift -> 1
+        //    | 000|0000|0000|0000|0000|0001| Truncated Mantissa
+        // Sign: 0 Exp: 0x97 Mantissa: 0x1
+        // Inverted M: 0.5 E: 0x19
+        // OK = > 0x1000002
+        //------------------------------------------------------------------
+        // 8  |  0 |  0 |  0 |  0 |  0 |  8 |  0 |
+        //1000|0000|0000|0000|0000|0000|1000|0000|
+        //          1000|0000|0000|0000|0000|0000| Complete Mantissa shift -> 8
+        // Sign: 0 Exp: 0x9e Mantissa: 0x0
+        // Inverted M: 0.5 E: 0x20
+        // KO = > 0x80000000
+        //------------------------------------------------------------------
+        // 0  |  1 |  0 |  0 |  0 |  0 |  7 |  f |
+        //0000|0001|0000|0000|0000|0000|0111|1111|
+        //         |1000|0000|0000|0000|0011|1111| Complete Mantissa shift -> 1
+        //           000|0000|0000|0000|0011|1111| Truncated Mantissa
+
+        std::cout << "Check " << l_type_name << " << float()/double() operator" << std::endl;
         for(auto l_iter: l_test_values)
         {
-            l_ok &= check_floating_conversion<int32_t, ext_int<int8_t>, float>(l_iter.first);
-            l_ok &= check_floating_conversion<int32_t, ext_int<int8_t>, double>(l_iter.first);
-            l_ok &= check_floating_conversion<int32_t, ext_int<int16_t>, float>(l_iter.first);
-            l_ok &= check_floating_conversion<int32_t, ext_int<int16_t>, double>(l_iter.first);
-            l_ok &= check_floating_conversion<int32_t, ext_int<int32_t>, float>(l_iter.first);
-            l_ok &= check_floating_conversion<int32_t, ext_int<int32_t>, double>(l_iter.first);
-            l_ok &= check_floating_conversion<int32_t, ext_int<int64_t>, float>(l_iter.first);
-            l_ok &= check_floating_conversion<int32_t, ext_int<int64_t>, double>(l_iter.first);
+          l_ok &= check_floating_conversion<int32_t, ext_int<int8_t>, float>(l_iter.first);
+          l_ok &= check_floating_conversion<int32_t, ext_int<int8_t>, double>(l_iter.first);
+          l_ok &= check_floating_conversion<int32_t, ext_int<int16_t>, float>(l_iter.first);
+          l_ok &= check_floating_conversion<int32_t, ext_int<int16_t>, double>(l_iter.first);
+          l_ok &= check_floating_conversion<int32_t, ext_int<int32_t>, float>(l_iter.first);
+          l_ok &= check_floating_conversion<int32_t, ext_int<int32_t>, double>(l_iter.first);
+          l_ok &= check_floating_conversion<int32_t, ext_int<int64_t>, float>(l_iter.first);
+          l_ok &= check_floating_conversion<int32_t, ext_int<int64_t>, double>(l_iter.first);
         }
 
         // ||-128 |  64 |  32 |  16 |   8 |   4 |   2 |   1 |

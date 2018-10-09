@@ -276,10 +276,22 @@ namespace quicky_utils
                                 );
 
         template <typename FLOATING_TYPE, typename MANTISSA_TYPE, typename std::enable_if< sizeof(FLOATING_TYPE) <= sizeof(T), int>::type = 0>
-        std::pair<FLOATING_TYPE,int> extract_mantissa() const;
+        FLOATING_TYPE
+        extract_mantissa() const;
         template <typename FLOATING_TYPE, typename MANTISSA_TYPE, typename std::enable_if< sizeof(T) < sizeof(FLOATING_TYPE), int>::type = 0>
-        std::pair<FLOATING_TYPE,int> extract_mantissa() const;
+        FLOATING_TYPE
+        extract_mantissa() const;
 
+       template <typename FLOATING_TYPE, typename MANTISSA_TYPE>
+        FLOATING_TYPE complete_mantissa(MANTISSA_TYPE p_mantissa
+                                        ,size_t p_index
+                                       ) const;
+
+        template <typename FLOATING_TYPE, typename MANTISSA_TYPE>
+        static
+        FLOATING_TYPE add_exponent(FLOATING_TYPE & p_floating
+                                  ,int p_add
+                                  );
 
         static_assert(std::is_unsigned<T>::value,"Ckeck base type is unsigned");
 
@@ -380,89 +392,14 @@ namespace quicky_utils
     template <typename T>
     ext_uint<T>::operator float() const
     {
-        std::pair<float,int> l_result = extract_mantissa<float, uint32_t>();
-        float l_float = ldexpf(l_result.first, l_result.second);
-        int l_exp;
-        float l_mantissa = frexpf(l_float, &l_exp);
-        std::cout << "Inverted M: " << l_mantissa << " E: " << l_exp << std::endl;
-        return l_float;
-#if 0
-        assert(m_ext.size());
-        constexpr const size_t l_mantissa_size = 23;
-        int l_exp = 8 * (m_ext.size() - 1) * sizeof(T);
-        if(8 * sizeof(T) >= l_mantissa_size)
-        {
-            constexpr const T l_mantissa_limit = ((T)1) << l_mantissa_size;
-            T l_mantissa = m_ext.back();
-            std::cout << "Limit: 0x" << std::hex << l_mantissa_limit << std::dec << std::endl;
-            if(l_mantissa >= l_mantissa_limit)
-            {
-                do
-                {
-                    ++l_exp;
-                    l_mantissa = l_mantissa >> 1;
-                }
-//                while (l_mantissa > (1 << l_mantissa_size));
-                while (l_mantissa >= l_mantissa_limit);
-            }
-            else if(m_ext.size() > 1)
-            {
-                constexpr const T l_mask = l_mantissa_limit >> 1;
-                size_t l_shift = 0;
-                while(!(l_mantissa & l_mask))
-                {
-                    --l_exp;
-                    ++l_shift;
-                    l_mantissa = l_mantissa << 1;
-                }
-                T l_shifted_part = ((T)m_ext[m_ext.size() - 2]) >> (8 * sizeof(T) - l_shift);
-                l_mantissa |= l_shifted_part;
-            }
-            return ldexpf(l_mantissa, l_exp);
-        }
-        else
-        {
-            uint32_t l_mantissa = m_ext.back();
-            size_t l_index = m_ext.size() - 2;
-            constexpr const uint32_t l_limit = ((uint32_t)1) << (l_mantissa_size - 8 * sizeof(T));
-            std::cout << "Limit: 0x" << std::hex << l_limit << std::dec << std::endl;
-            while(l_index < m_ext.size() && l_mantissa < l_limit)
-            {
-                l_exp -= 8 * sizeof(T);
-                l_mantissa = l_mantissa << 8 * sizeof(T);
-                l_mantissa |= m_ext[l_index];
-                --l_index;
-            }
-            if(l_index < m_ext.size())
-            {
-                constexpr const uint32_t l_mantissa_limit = ((T) 1) << l_mantissa_size;
-                constexpr const uint32_t l_mask = l_mantissa_limit >> 1;
-                size_t l_shift = 0;
-                while (!(l_mantissa & l_mask))
-                {
-                    --l_exp;
-                    ++l_shift;
-                    l_mantissa = l_mantissa << 1;
-                }
-                if (l_shift)
-                {
-                    T l_shifted_part = ((T) m_ext[l_index]) >> (8 * sizeof(T) - l_shift);
-                    l_mantissa |= l_shifted_part;
-                }
-            }
-            return ldexpf(l_mantissa, l_exp);
-        }
-
-        throw quicky_exception::quicky_logic_exception("float operator not implemented for " + type_string<ext_uint<T>>::name(), __LINE__, __FILE__);
-#endif
+        return extract_mantissa<float, uint32_t>();
     }
 
     //-------------------------------------------------------------------------
     template <typename T>
     ext_uint<T>::operator double() const
     {
-        std::pair<double,int> l_result = extract_mantissa<double,uint64_t>();
-        return ldexp(l_result.first, l_result.second);
+        return extract_mantissa<double,uint64_t>();
     }
 
 
@@ -1224,84 +1161,122 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     template <typename FLOATING_TYPE, typename MANTISSA_TYPE, typename std::enable_if< sizeof(FLOATING_TYPE) <= sizeof(T), int>::type>
-    std::pair<FLOATING_TYPE,int>
+    FLOATING_TYPE
     ext_uint<T>::extract_mantissa() const
     {
+        static_assert(sizeof(MANTISSA_TYPE) >= sizeof(FLOATING_TYPE), "Sizeof MANTISSA_TYPE is unsifficiant to represent FLOATING_TYPE mantissa");
         assert(m_ext.size());
-        constexpr const size_t l_mantissa_size = std::numeric_limits<FLOATING_TYPE>::digits - 1;
-        int l_exp = 8 * (m_ext.size() - 1) * sizeof(T);
-        constexpr const T l_mantissa_limit = ((T)1) << l_mantissa_size;
-        T l_mantissa = m_ext.back();
-        std::cout << "Limit: 0x" << std::hex << l_mantissa_limit << std::dec << std::endl;
-        if(l_mantissa >= l_mantissa_limit)
+        if(1 == m_ext.size())
         {
-            do
-            {
-                ++l_exp;
-                l_mantissa = l_mantissa >> 1;
-            }
-            while (l_mantissa >= l_mantissa_limit);
+            return (FLOATING_TYPE)m_ext.back();
         }
-        else if(m_ext.size() > 1)
-        {
-            constexpr const T l_mask = l_mantissa_limit >> 1;
-            size_t l_shift = 0;
-            while(!(l_mantissa & l_mask))
-            {
-                --l_exp;
-                ++l_shift;
-                l_mantissa = l_mantissa << 1;
-            }
-            if(l_shift)
-            {
-                T l_shifted_part = ((T) m_ext[m_ext.size() - 2]) >> (8 * sizeof(T) - l_shift);
-                l_mantissa |= l_shifted_part;
-            }
-        }
-        std::cout << "Ldexp M: 0x" << std::hex << l_mantissa << " E: 0x" << l_exp << std::dec << std::endl;
-        return std::pair<FLOATING_TYPE,int>(l_mantissa, l_exp);
+        // Rebuild mantissa with MSB bits
+        if(m_ext.back() > std::numeric_limits<MANTISSA_TYPE>::max())
+          {
+            FLOATING_TYPE l_result = m_ext.back();
+            return add_exponent<FLOATING_TYPE,MANTISSA_TYPE>(l_result, 8 * sizeof(T) * (m_ext.size() - 1));
+          }
+        MANTISSA_TYPE l_mantissa = m_ext.back();
+        unsigned int l_index = m_ext.size() - 2;
+        return complete_mantissa<FLOATING_TYPE,MANTISSA_TYPE>(l_mantissa, l_index);
     }
 
     //-------------------------------------------------------------------------
     template <typename T>
     template <typename FLOATING_TYPE, typename MANTISSA_TYPE, typename std::enable_if< sizeof(T) < sizeof(FLOATING_TYPE), int>::type>
-    std::pair<FLOATING_TYPE,int>
+    FLOATING_TYPE
     ext_uint<T>::extract_mantissa() const
     {
-        assert(m_ext.size());
         static_assert(sizeof(MANTISSA_TYPE) >= sizeof(FLOATING_TYPE), "Sizeof MANTISSA_TYPE is unsifficiant to represent FLOATING_TYPE mantissa");
-        constexpr const size_t l_mantissa_size = std::numeric_limits<FLOATING_TYPE>::digits - 1;
-        int l_exp = 8 * (m_ext.size() - 1) * sizeof(T);
+        assert(m_ext.size());
         MANTISSA_TYPE l_mantissa = m_ext.back();
         size_t l_index = m_ext.size() - 2;
-        constexpr const MANTISSA_TYPE l_limit = ((MANTISSA_TYPE)1) << (l_mantissa_size - 8 * sizeof(T));
-        std::cout << "Limit: 0x" << std::hex << l_limit << std::dec << std::endl;
+        constexpr const MANTISSA_TYPE l_limit = ((MANTISSA_TYPE)1) << (8 * sizeof(MANTISSA_TYPE) - 8 * sizeof(T));
+        // Rebuild mantissa using complete extension words
         while(l_index < m_ext.size() && l_mantissa < l_limit)
         {
-            l_exp -= 8 * sizeof(T);
             l_mantissa = l_mantissa << 8 * sizeof(T);
             l_mantissa |= m_ext[l_index];
             --l_index;
         }
+        FLOATING_TYPE l_result = l_mantissa;
         if(l_index < m_ext.size())
+          {
+            l_result = complete_mantissa<FLOATING_TYPE,MANTISSA_TYPE>(l_mantissa, l_index);
+          }
+        return l_result;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    template <typename FLOATING_TYPE, typename MANTISSA_TYPE>
+    FLOATING_TYPE ext_uint<T>::complete_mantissa(MANTISSA_TYPE p_mantissa
+                                                ,size_t p_index
+                                                ) const
+    {
+      constexpr const MANTISSA_TYPE l_limit = ((MANTISSA_TYPE)1) << (8 * sizeof(MANTISSA_TYPE) - 1);
+      unsigned int l_exp = 0;
+      size_t l_shift = 0;
+      while(!(p_mantissa & l_limit))
+      {
+          ++l_shift;
+          p_mantissa = p_mantissa << 1;
+      }
+
+      FLOATING_TYPE l_result = p_mantissa;
+      if(l_shift)
+      {
+          size_t l_ignored = (8 * sizeof(T) - l_shift);
+          T l_shifted_part = ((T) m_ext[p_index]) >> l_ignored;
+          p_mantissa |= l_shifted_part;
+          l_exp += l_ignored;
+          l_result = (FLOATING_TYPE)p_mantissa;
+          if(p_index - 1 < m_ext.size())
+          {
+              l_exp += 8 * sizeof(T) * p_index;
+          }
+      }
+      else
+      {
+          l_exp += 8 * sizeof(T) * (p_index + 1);
+      }
+      if(l_exp)
+      {
+          l_result = add_exponent<FLOATING_TYPE, MANTISSA_TYPE>(l_result, l_exp);
+      }
+      return l_result;
+    }
+
+    //-------------------------------------------------------------------------
+    template <typename T>
+    template <typename FLOATING_TYPE, typename MANTISSA_TYPE>
+    FLOATING_TYPE ext_uint<T>::add_exponent(FLOATING_TYPE & p_floating
+                                           ,int p_add
+                                           )
+    {
+      constexpr const size_t l_mantissa_size = std::numeric_limits<FLOATING_TYPE>::digits - 1;
+      constexpr const MANTISSA_TYPE l_mantissa_mask = (((MANTISSA_TYPE)1) << l_mantissa_size) - 1;
+      constexpr const size_t l_exp_size = (8 * sizeof(FLOATING_TYPE) - l_mantissa_size - 1);
+      constexpr const MANTISSA_TYPE l_exponent_mask = (((MANTISSA_TYPE)1) << l_exp_size) - 1;
+      // Extract mantissa un exponent
+      MANTISSA_TYPE & l_floating_ref = *((MANTISSA_TYPE*) (&p_floating));
+      MANTISSA_TYPE l_mantissa = l_floating_ref & l_mantissa_mask;
+      unsigned int l_exponent = (l_floating_ref >> l_mantissa_size) & l_exponent_mask;
+
+      l_exponent += p_add;
+
+      constexpr const int l_max_exp = (1 << l_exp_size) - 1;
+      if(l_max_exp <= l_exponent)
         {
-            constexpr const MANTISSA_TYPE l_mantissa_limit = ((MANTISSA_TYPE) 1) << l_mantissa_size;
-            constexpr const MANTISSA_TYPE l_mask = l_mantissa_limit >> 1;
-            size_t l_shift = 0;
-            while (!(l_mantissa & l_mask))
-            {
-                --l_exp;
-                ++l_shift;
-                l_mantissa = l_mantissa << 1;
-            }
-            if (l_shift)
-            {
-                T l_shifted_part = ((T) m_ext[l_index]) >> (8 * sizeof(T) - l_shift);
-                l_mantissa |= l_shifted_part;
-            }
+          l_mantissa = 0;
         }
-        std::cout << "Ldexp M: 0x" << std::hex << l_mantissa << " E: 0x" << l_exp << std::dec << std::endl;
-        return std::pair<FLOATING_TYPE,int>(l_mantissa, l_exp);
+
+      // Rebuild new result
+      FLOATING_TYPE l_result = 0.0;
+      MANTISSA_TYPE & l_result_ref = *((MANTISSA_TYPE*) (&l_result));
+      l_result_ref = l_mantissa;
+      l_result_ref |= ((MANTISSA_TYPE)l_exponent) << l_mantissa_size;
+      return l_result;
     }
 
     declare_template_specialise_type_string(typename T,ext_uint<T>,"ext_uint<" + type_string<T>::name() + ">");
