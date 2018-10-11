@@ -476,7 +476,7 @@ namespace quicky_utils
     m_double(p_num),
 #endif // FRACT_DOUBLE_CHECK
     m_num(p_num),
-    m_den(1)
+    m_den((unsigned int)1)
   {
   }
 
@@ -556,7 +556,7 @@ namespace quicky_utils
   {
       assert(p_den);
       t_coef_den l_pgcd = PGCD(p_num,p_den);
-      m_num = (t_coef_num)(p_num / l_pgcd) * ((t_coef_num)(p_den < 0 ? - 1: 1));
+      m_num = (t_coef_num)(p_num / l_pgcd) * ((t_coef_num)(p_den < ((t_coef_num)0) ? - 1: 1));
       m_den = ((t_coef_den) abs(p_den)) / l_pgcd;
   }
 
@@ -705,7 +705,7 @@ namespace quicky_utils
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
 #endif // FRACT_DOUBLE_CHECK
-    *this = *this + fract(1);
+    *this = *this + fract((typename fract<T>::t_coef_num)1);
 #ifdef FRACT_DOUBLE_CHECK
     assert(double_equal(this->to_double(), (l_before + 1)));
 #endif // FRACT_DOUBLE_CHECK
@@ -717,7 +717,7 @@ namespace quicky_utils
   fract<T> fract<T>::operator++(int)
   {
     fract tmp(*this); 
-    *this = *this + fract(1);
+    *this = *this + fract((typename fract<T>::t_coef_num)1);
 #ifdef FRACT_DOUBLE_CHECK
     assert(double_equal(this->to_double(), (tmp.to_double() + 1)));
 #endif // FRACT_DOUBLE_CHECK
@@ -731,7 +731,7 @@ namespace quicky_utils
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
 #endif // FRACT_DOUBLE_CHECK
-    *this = *this - fract(1);
+    *this = *this - fract((typename fract<T>::t_coef_num)1);
 #ifdef FRACT_DOUBLE_CHECK
     assert(double_equal(this->to_double(), (l_before - 1)));
 #endif // FRACT_DOUBLE_CHECK
@@ -743,7 +743,7 @@ namespace quicky_utils
   fract<T> fract<T>::operator--(int)
   {
     fract tmp(*this); 
-    *this = *this - fract(1);
+    *this = *this - fract((typename fract<T>::t_coef_num)1);
 #ifdef FRACT_DOUBLE_CHECK
     assert(double_equal(this->to_double(), (tmp.to_double() - 1)));
 #endif // FRACT_DOUBLE_CHECK
@@ -1097,7 +1097,7 @@ namespace quicky_utils
 				   )
   {
     p_stream << p_fract.m_num;
-    if(p_fract.m_num && ((decltype(p_fract.m_den))1) != p_fract.m_den)
+    if(p_fract.m_num && ((decltype(p_fract.m_den))(unsigned int)1) != p_fract.m_den)
       {
 	p_stream << "/" << p_fract.m_den;
       }
@@ -1110,7 +1110,7 @@ namespace quicky_utils
 			 const fract<T> & p_op2
 			 )
   {
-    fract<T> l_result = fract<T>(p_op1) + p_op2;
+    fract<T> l_result = fract<T>((typename fract<T>::t_coef_num)p_op1) + p_op2;
 #ifdef FRACT_DOUBLE_CHECK
     assert(fract<T>::double_equal(l_result.to_double(), (((double)p_op1) + p_op2.to_double())));
 #endif // FRACT_DOUBLE_CHECK
@@ -1188,7 +1188,7 @@ namespace quicky_utils
 			 const fract<T> & p_op2
 			 )
   {
-    bool l_result = fract<T>(p_op1) != p_op2;
+    bool l_result = fract<T>((typename fract<T>::t_coef_num)p_op1) != p_op2;
 #ifdef FRACT_DOUBLE_CHECK
     assert(l_result != fract<T>::double_equal((double)p_op1,p_op2.to_double()));
 #endif // FRACT_DOUBLE_CHECK
@@ -1201,7 +1201,7 @@ namespace quicky_utils
 			 const int & p_op2
 			 )
   {
-    bool l_result = p_op1 != fract<T>(p_op2);
+    bool l_result = p_op1 != fract<T>((typename fract<T>::t_coef_num)p_op2);
 #ifdef FRACT_DOUBLE_CHECK
     assert(l_result != fract<T>::double_equal(p_op1.to_double(),(double)p_op2));
 #endif // FRACT_DOUBLE_CHECK
@@ -1214,7 +1214,7 @@ namespace quicky_utils
 			const int & p_op2
 			)
   {
-    return p_op1 < fract<T>(p_op2);
+    return p_op1 < fract<T>((typename fract<T>::t_coef_num)p_op2);
   }
 
   //----------------------------------------------------------------------------
@@ -1223,7 +1223,7 @@ namespace quicky_utils
 			const int & p_op2
 			)
   {
-    return p_op1 <= fract<T>(p_op2);
+    return p_op1 <= fract<T>((typename fract<T>::t_coef_num)p_op2);
   }
 
   //----------------------------------------------------------------------------
@@ -1232,7 +1232,7 @@ namespace quicky_utils
 			const int & p_op2
 			)
   {
-    return p_op1 > fract<T>(p_op2);
+    return p_op1 > fract<T>((typename fract<T>::t_coef_num)p_op2);
   }
 
   //----------------------------------------------------------------------------
@@ -1241,7 +1241,7 @@ namespace quicky_utils
 			const int & p_op2
 			)
   {
-    return p_op1 >= fract<T>(p_op2);
+    return p_op1 >= fract<T>((typename fract<T>::t_coef_num)p_op2);
   }
 
 #ifdef FRACT_DOUBLE_CHECK

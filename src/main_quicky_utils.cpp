@@ -61,6 +61,7 @@ int main(int argc,char ** argv)
         l_ok &= test_type_string();
         l_ok &= test_fract<uint32_t>();
         l_ok &= test_fract<quicky_utils::safe_int<int32_t>>();
+        l_ok &= test_fract<quicky_utils::ext_int<int32_t>>();
         l_ok &= test_safe_types();
         test_ansi_colors();
         l_report_file.close();
