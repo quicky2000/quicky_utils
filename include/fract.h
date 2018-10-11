@@ -227,20 +227,47 @@ namespace quicky_utils
        implementation
        @return PGCD of first and second number
     */
-    inline static constexpr t_coef_den PGCD(const t_coef_num & p_a,
-					    const t_coef_num & p_b,
-					    std::nullptr_t
-					    );
+    inline static constexpr
+    t_coef_den PGCD(const t_coef_num & p_a
+                   ,const t_coef_num & p_b
+                   ,std::nullptr_t
+                   );
 
-    /**
+      /**
+         Return PGCD computed yusing Euclide algorithm
+         @param first number
+         @param second number
+         @param dummy parameter to have a different prototype of non constexpr
+         implementation
+         @return PGCD of first and second number
+      */
+      inline static constexpr
+      t_coef_den PGCD(const t_coef_den & p_a
+                     ,const t_coef_den & p_b
+                     ,std::nullptr_t
+                     );
+
+      /**
        Return PGCD computed yusing Euclide algorithm
        @param first number
        @param second number
        @return PGCD of first and second number
-    */
-    inline static t_coef_den PGCD(const t_coef_num & p_a,
-				  const t_coef_num & p_b
-				  );
+      */
+      inline static
+      t_coef_den PGCD(const t_coef_num & p_a
+                     ,const t_coef_num & p_b
+		             );
+
+      /**
+       Return PGCD computed yusing Euclide algorithm
+       @param first number
+       @param second number
+       @return PGCD of first and second number
+      */
+      inline static
+      t_coef_den PGCD(const t_coef_den & p_a
+                     ,const t_coef_den & p_b
+                     );
 
       /**
          Return PPCM using PGCD/PPCM correspondancy
@@ -248,9 +275,21 @@ namespace quicky_utils
          @param second number
          @return PPCM of first and second number
       */
-      inline static t_coef_den PPCM(const t_coef_num & p_a,
-                                    const t_coef_num & p_b
-                                   );
+      inline static
+      t_coef_den PPCM(const t_coef_num & p_a
+                     ,const t_coef_num & p_b
+                     );
+
+      /**
+         Return PPCM using PGCD/PPCM correspondancy
+         @param first number
+         @param second number
+         @return PPCM of first and second number
+      */
+      inline static
+      t_coef_den PPCM(const t_coef_den & p_a
+                     ,const t_coef_den & p_b
+                     );
 
       /**
        Return PPCM using PGCD/PPCM correspondancy
@@ -259,13 +298,28 @@ namespace quicky_utils
        @param dummy parameter to have a different prototype of non constexpr
        implementation
        @return PPCM of first and second number
-    */
-    inline static constexpr t_coef_den PPCM(const t_coef_num & p_a,
-					    const t_coef_num & p_b,
-					    std::nullptr_t
-					    );
+      */
+      inline static constexpr
+      t_coef_den PPCM(const t_coef_num & p_a
+                     ,const t_coef_num & p_b
+                     ,std::nullptr_t
+                     );
 
-  private:
+      /**
+       Return PPCM using PGCD/PPCM correspondancy
+       @param first number
+       @param second number
+       @param dummy parameter to have a different prototype of non constexpr
+       implementation
+       @return PPCM of first and second number
+      */
+      inline static constexpr
+      t_coef_den PPCM(const t_coef_den & p_a
+                     ,const t_coef_den & p_b
+                     ,std::nullptr_t
+                     );
+
+    private:
 #ifdef FRACT_DOUBLE_CHECK
     inline static bool double_equal(const double & p_op1,
 				    const double & p_op2
@@ -658,26 +712,35 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
-  typename fract<T>::t_coef_den fract<T>::PGCD(const t_coef_num & p_a,
-				const t_coef_num & p_b
-				)
+  typename fract<T>::t_coef_den fract<T>::PGCD(const t_coef_den & p_a
+                                              ,const t_coef_den & p_b
+                                              )
   {
-    assert(p_b);
-    t_coef_den l_a = abs(p_a);
-    t_coef_den l_b = abs(p_b);
-    t_coef_den l_r;
-    while((l_r = (l_a % l_b)))
+      assert(p_b);
+      t_coef_den l_a = p_a;
+      t_coef_den l_b = p_b;
+      t_coef_den l_r;
+      while((l_r = (l_a % l_b)))
       {
-	l_a = l_b;
-	l_b = l_r;
+          l_a = l_b;
+          l_b = l_r;
       }
-    return l_b;
+      return l_b;
   }
+
+    //----------------------------------------------------------------------------
+    template <typename T>
+    typename fract<T>::t_coef_den fract<T>::PGCD(const t_coef_num & p_a
+                                                ,const t_coef_num & p_b
+                                                )
+    {
+        return PGCD((t_coef_den) abs(p_a),(t_coef_den) abs(p_b));
+    }
 
   //----------------------------------------------------------------------------
   template <typename T>
-  constexpr typename fract<T>::t_coef_den fract<T>::PGCD(const t_coef_num & p_a,
-					  const t_coef_num & p_b,
+  constexpr typename fract<T>::t_coef_den fract<T>::PGCD(const t_coef_num & p_a
+                                                        ,					  const t_coef_num & p_b,
 					  std::nullptr_t
 					  )
   {
@@ -686,12 +749,32 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
+  constexpr typename fract<T>::t_coef_den fract<T>::PGCD(const t_coef_den & p_a
+                                                        ,const t_coef_den & p_b
+                                                        ,std::nullptr_t
+                                                        )
+  {
+      return ((p_a % p_b) ? PGCD(p_b,p_a % p_b,nullptr) : p_b);
+  }
+
+    //----------------------------------------------------------------------------
+  template <typename T>
+  typename fract<T>::t_coef_den fract<T>::PPCM(const t_coef_den & p_a,
+                                               const t_coef_den & p_b
+                                              )
+  {
+    return p_a *p_b / PGCD(p_a, p_b);
+  }
+
+  //----------------------------------------------------------------------------
+  template <typename T>
   typename fract<T>::t_coef_den fract<T>::PPCM(const t_coef_num & p_a,
                                                const t_coef_num & p_b
                                               )
   {
-    return abs(p_a) * abs(p_b) / PGCD(abs(p_a),abs(p_b));
+      return PPCM((t_coef_den )abs(p_a), (t_coef_den)abs(p_b));
   }
+
 
   //----------------------------------------------------------------------------
   template <typename T>
