@@ -20,6 +20,7 @@
 
 #include "fract.h"
 #include <iostream>
+#include "quicky_test.h"
 
 namespace quicky_utils
 {
@@ -44,975 +45,328 @@ namespace quicky_utils
         typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den l_pos_den = 6;
         typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num l_neg_den = -6;
 
-        typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE
-                                                                                                >::PGCD(l_pos_num,
-                                                                                                        l_pos_den
-                                                                                                       );
-        std::cout << "PGCD( 3, 6) = " << l_result << std::endl;
-        assert(3 == l_result);
+        typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef l_result;
 
-        l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_neg_num,
-                                                                  l_pos_den
-                                                                 );
-        std::cout << "PGCD(-3, 6) = " << l_result << std::endl;
-        assert(3 == l_result);
-
-        l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_pos_num,
-                                                                  l_neg_den
-                                                                 );
-        std::cout << "PGCD( 3,-6) = " << l_result << std::endl;
-        assert(3 == l_result);
-
-        l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_neg_num,
-                                                                  l_neg_den
-                                                                 );
-        std::cout << "PGCD(-3,-6) = " << l_result << std::endl;
-        assert(3 == l_result);
-
-        l_result = quicky_utils::fract<uint32_t>::PGCD(1071,
-                                                       1029
-                                                      );
-        std::cout << "PGCD(1071,1029) = " << l_result << std::endl;
-        assert(21 == l_result);
-
-        l_result = quicky_utils::fract<uint32_t>::PGCD(1029,
-                                                       1071
-                                                      );
-        std::cout << "PGCD(1029,1071) = " << l_result << std::endl;
-        assert(21 == l_result);
-
-        l_result = quicky_utils::fract<uint32_t>::PGCD(60,
-                                                       168
-                                                      );
-        std::cout << "PGCD(60,168) = " << l_result << std::endl;
-        assert(12 == l_result);
-
-        l_result = quicky_utils::fract<uint32_t>::PGCD(168,
-                                                       60
-                                                      );
-        std::cout << "PGCD(168,60) = " << l_result << std::endl;
-        assert(12 == l_result);
-
-        l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(6,
-                                                                  9
-                                                                 );
-        std::cout << "PGCD(6,9) = " << l_result << std::endl;
-        assert(3 == l_result);
+	    l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_pos_num, l_pos_den), 3, "PGCD( 3, 6)");
+	    l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_neg_num, l_pos_den), 3, "PGCD(-3, 6)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_pos_num, l_neg_den), 3, "PGCD( 3,-6)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_neg_num, l_neg_den), 3, "PGCD(-3,-6)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(1071, 1029),21, "PGCD(1071,1029)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(1029, 1071),21, "PGCD(1029,1071)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(60, 168),12, "PGCD(60,168)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(168, 60),12, "PGCD(168,60)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)6
+                                                                                                                                                         ,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)9
+                                                                                                                                                         )
+                                                                                                          ,3
+                                                                                                          ,"PGCD(6,9)"
+                                                                                                          );
 
         std::cout << std::endl;
         std::cout << "---------------------------------------" << std::endl;
         std::cout << "- PPCM" << std::endl;
         std::cout << "---------------------------------------" << std::endl;
 
-        l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_pos_num,
-                                                                  l_pos_den
-                                                                 );
-        std::cout << "PPCM( 3, 6) = " << l_result << std::endl;
-        assert(6 == l_result);
-
-        l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_neg_num,
-                                                                  l_pos_den
-                                                                 );
-        std::cout << "PPCM(-3, 6) = " << l_result << std::endl;
-        assert(6 == l_result);
-
-        l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_pos_num,
-                                                                  l_neg_den
-                                                                 );
-        std::cout << "PPCM( 3,-6) = " << l_result << std::endl;
-        assert(6 == l_result);
-
-        l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_neg_num,
-                                                                  l_neg_den
-                                                                 );
-        std::cout << "PPCM(-3,-6) = " << l_result << std::endl;
-        assert(6 == l_result);
-
-        l_result = quicky_utils::fract<uint32_t>::PPCM(60,
-                                                       168
-                                                      );
-        std::cout << "PPCM(60,168) = " << l_result << std::endl;
-        assert(840 == l_result);
-
-        l_result = quicky_utils::fract<uint32_t>::PPCM(168,
-                                                       60
-                                                      );
-        std::cout << "PPCM(168,60) = " << l_result << std::endl;
-        assert(840 == l_result);
-
-        l_result = quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(6,
-                                                                  9
-                                                                 );
-        std::cout << "PPCM(6,9) = " << l_result << std::endl;
-        assert(18 == l_result);
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_pos_num, l_pos_den), 6, "PPCM( 3, 6)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_neg_num, l_pos_den), 6, "PPCM(-3, 6)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_pos_num, l_neg_den), 6, "PPCM( 3,-6)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_neg_num, l_neg_den), 6, "PPCM(-3,-6)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PPCM(60, 168), 840, "PPCM(60,168)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PPCM(168, 60), 840, "PPCM(168,60)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)6
+                                                                                                                                                         ,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)9
+                                                                                                                                                         )
+                                                                                                          , 18
+                                                                                                          , "PPCM(6,9)"
+                                                                                                          );
 
         std::cout << "---------------------------------------" << std::endl;
 
-        std::cout << quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                              1
-                                                             ) * quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,
-                                                                                                          1
-                                                                                                         ) << std::endl;
-        std::cout << quicky_utils::fract<FRACT_INTERNAL_TYPE>(-21,
-                                                              1
-                                                             ) / quicky_utils::fract<FRACT_INTERNAL_TYPE>(6,
-                                                                                                          1
-                                                                                                         ) << std::endl;
-        std::cout << quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,
-                                                              1
-                                                             ) - quicky_utils::fract<FRACT_INTERNAL_TYPE>(-21,
-                                                                                                          6
-                                                                                                         ) << std::endl;
+        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3, 1) * quicky_utils::fract<FRACT_INTERNAL_TYPE>(7, 1), quicky_utils::fract<FRACT_INTERNAL_TYPE>(-21), "-3/1 * 7/1 == -21");
+        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-21, 1) / quicky_utils::fract<FRACT_INTERNAL_TYPE>(6, 1), quicky_utils::fract<FRACT_INTERNAL_TYPE>(-7, 2), "-21/1 / 6/1 == -7/2");
+        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4, 1) - quicky_utils::fract<FRACT_INTERNAL_TYPE>(-21, 6), quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1, 2), "-4/1 - (-21/6) == -1/2");
 
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_nb1(1,
-                                                       2
-                                                      );
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_nb1(1, 2);
         quicky_utils::fract<FRACT_INTERNAL_TYPE> l_nb2(2);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_nb3(10,
-                                                       2
-                                                      );
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_nb3(10, 2);
+        l_ok &= quicky_test::check_expected(l_nb3, quicky_utils::fract<FRACT_INTERNAL_TYPE>(5), "10/2 == 5");
         std::cout << l_nb1 << std::endl;
         std::cout << l_nb2 << std::endl;
         std::cout << l_nb3 << std::endl;
 
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_a(1,
-                                                     3
-                                                    );
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_b(1,
-                                                     4
-                                                    );
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_c = l_a + l_b;
-        std::cout << l_a << " + " << l_b << " => " << l_c << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,
-                                                        12
-                                                       ) == l_c);
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_a(1, 3);
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_b(1, 4);
 
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_d = l_a - l_b;
-        std::cout << l_a << " - " << l_b << " => " << l_d << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        12
-                                                       ) == l_d);
+        l_ok &= quicky_test::check_expected(l_a + l_b, quicky_utils::fract<FRACT_INTERNAL_TYPE>(7, 12),std::to_string(l_a) + " + " + std::to_string(l_b));
+        l_ok &= quicky_test::check_expected(l_a - l_b, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1, 12),std::to_string(l_a) + " - " + std::to_string(l_b));
+        l_ok &= quicky_test::check_expected(l_a * l_b, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1, 12),std::to_string(l_a) + " * " + std::to_string(l_b));
+        l_ok &= quicky_test::check_expected(l_a / l_b, quicky_utils::fract<FRACT_INTERNAL_TYPE>(4, 3),std::to_string(l_a) + " / " + std::to_string(l_b));
+        l_ok &= quicky_test::check_expected(1 + l_a, quicky_utils::fract<FRACT_INTERNAL_TYPE>(4, 3), "1 + " + std::to_string(l_a));
 
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_e = l_a * l_b;
-        std::cout << l_a << " * " << l_b << " => " << l_e << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        12
-                                                       ) == l_e);
-
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_f = l_a / l_b;
-        std::cout << l_a << " / " << l_b << " => " << l_f << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,
-                                                        3
-                                                       ) == l_f);
-
-        std::cout << 1 << " + " << l_a << " => " << 1 + l_a << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,
-                                                        3
-                                                       ) == 1 + l_a);
-
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x(1,
-                                                     2
-                                                    );
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x(1, 2);
         quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x2(l_x);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y(2,
-                                                     -3
-                                                    );
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y(2, -3);
         quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y2(l_y);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z(-3,
-                                                     5
-                                                    );
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z(-3, 5);
         quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z2(l_z);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x_bis(-1,
-                                                         -2
-                                                        );
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x_bis(-1, -2);
         quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x_bis2(l_x_bis);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y_bis(-2,
-                                                         3
-                                                        );
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y_bis(-2, 3);
         quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y_bis2(l_y_bis);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z_bis(3,
-                                                         -5
-                                                        );
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z_bis(3, -5);
         quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z_bis2(l_z_bis);
 
         // Check equality independantly of - position ( num or den)
-        std::cout << l_x << std::endl;
-        std::cout << l_x_bis << std::endl;
-        assert(l_x == l_x_bis);
-        std::cout << l_y << std::endl;
-        std::cout << l_y_bis << std::endl;
-        assert(l_y == l_y_bis);
-        std::cout << l_z << std::endl;
-        std::cout << l_z_bis << std::endl;
-        assert(l_z == l_z_bis);
-        assert(l_x != l_y);
+        l_ok &= quicky_test::check_expected(l_x == l_x_bis, true, std::to_string(l_x) + " == " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y == l_y_bis, true, std::to_string(l_y) + " == " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z == l_z_bis, true, std::to_string(l_z) + " == " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_x != l_y, true, std::to_string(l_x) + " != " + std::to_string(l_y));
 
         //------------------------------------------------------------------------
-        std::cout << l_x << " + " << l_x << " => " << l_x + l_x << std::endl;
-        assert(1 == l_x + l_x);
-
-        std::cout << l_x << " + " << l_y << " => " << l_x + l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        6
-                                                       ) == l_x + l_y);
-
-        std::cout << l_x << " + " << l_z << " => " << l_x + l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        10
-                                                       ) == l_x + l_z);
-
-        std::cout << l_x << " + " << l_x_bis << " => " << l_x + l_x_bis << std::endl;
-        assert(1 == l_x + l_x_bis);
-
-        std::cout << l_x << " + " << l_y_bis << " => " << l_x + l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        6
-                                                       ) == l_x + l_y_bis);
-
-        std::cout << l_x << " + " << l_z_bis << " => " << l_x + l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        10
-                                                       ) == l_x + l_z_bis);
+        l_ok &= quicky_test::check_expected(l_x + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_x) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1, 6), std::to_string(l_x) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1, 10), std::to_string(l_x) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_x) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1, 6), std::to_string(l_x) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,10), std::to_string(l_x) + " + " + std::to_string(l_z_bis));
 
 
         //------------------------------------------------------------------------
-        std::cout << l_y << " + " << l_x << " => " << l_y + l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        6
-                                                       ) == l_y + l_x);
-
-        std::cout << l_y << " + " << l_y << " => " << l_y + l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,
-                                                        3
-                                                       ) == l_y + l_y);
-
-        std::cout << l_y << " + " << l_z << " => " << l_y + l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,
-                                                        15
-                                                       ) == l_y + l_z);
-
-        std::cout << l_y << " + " << l_x_bis << " => " << l_y + l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        6
-                                                       ) == l_y + l_x_bis);
-
-        std::cout << l_y << " + " << l_y_bis << " => " << l_y + l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,
-                                                        3
-                                                       ) == l_y + l_y_bis);
-
-        std::cout << l_y << " + " << l_z_bis << " => " << l_y + l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,
-                                                        15
-                                                       ) == l_y + l_z_bis);
+        l_ok &= quicky_test::check_expected(l_y + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,6), std::to_string(l_y) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,3), std::to_string(l_y) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,15), std::to_string(l_y) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,6), std::to_string(l_y) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,3), std::to_string(l_y) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,15), std::to_string(l_y) + " + " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_z << " + " << l_x << " => " << l_z + l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        10
-                                                       ) == l_z + l_x);
-
-        std::cout << l_z << " + " << l_y << " => " << l_z + l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,
-                                                        15
-                                                       ) == l_z + l_y);
-
-        std::cout << l_z << " + " << l_z << " => " << l_z + l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,
-                                                        5
-                                                       ) == l_z + l_z);
-
-        std::cout << l_z << " + " << l_x_bis << " => " << l_z + l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        10
-                                                       ) == l_z + l_x_bis);
-
-        std::cout << l_z << " + " << l_y_bis << " => " << l_z + l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,
-                                                        15
-                                                       ) == l_z + l_y_bis);
-
-        std::cout << l_z << " + " << l_z_bis << " => " << l_z + l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,
-                                                        5
-                                                       ) == l_z + l_z_bis);
+        l_ok &= quicky_test::check_expected(l_z + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,10), std::to_string(l_z) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,15), std::to_string(l_z) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,5), std::to_string(l_z) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,10), std::to_string(l_z) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,15), std::to_string(l_z) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,5), std::to_string(l_z) + " + " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_x_bis << " + " << l_x << " => " << l_x_bis + l_x << std::endl;
-        assert(1 == l_x_bis + l_x);
-
-        std::cout << l_x_bis << " + " << l_y << " => " << l_x_bis + l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        6
-                                                       ) == l_x_bis + l_y);
-
-        std::cout << l_x_bis << " + " << l_z << " => " << l_x_bis + l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        10
-                                                       ) == l_x_bis + l_z);
-
-        std::cout << l_x_bis << " + " << l_x_bis << " => " << l_x_bis + l_x_bis << std::endl;
-        assert(1 == l_x_bis + l_x_bis);
-
-        std::cout << l_x_bis << " + " << l_y_bis << " => " << l_x_bis + l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        6
-                                                       ) == l_x_bis + l_y_bis);
-
-        std::cout << l_x_bis << " + " << l_z_bis << " => " << l_x_bis + l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        10
-                                                       ) == l_x_bis + l_z_bis);
+        l_ok &= quicky_test::check_expected(l_x_bis + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_x_bis) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,6), std::to_string(l_x_bis) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,10), std::to_string(l_x_bis) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_x_bis) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,6), std::to_string(l_x_bis) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,10), std::to_string(l_x_bis) + " + " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_y_bis << " + " << l_x << " => " << l_y_bis + l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        6
-                                                       ) == l_y_bis + l_x);
-
-        std::cout << l_y_bis << " + " << l_y << " => " << l_y_bis + l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,
-                                                        3
-                                                       ) == l_y_bis + l_y);
-
-        std::cout << l_y_bis << " + " << l_z << " => " << l_y_bis + l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,
-                                                        15
-                                                       ) == l_y_bis + l_z);
-
-        std::cout << l_y_bis << " + " << l_x_bis << " => " << l_y_bis + l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        6
-                                                       ) == l_y_bis + l_x_bis);
-
-        std::cout << l_y_bis << " + " << l_y_bis << " => " << l_y_bis + l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,
-                                                        3
-                                                       ) == l_y_bis + l_y_bis);
-
-        std::cout << l_y_bis << " + " << l_z_bis << " => " << l_y_bis + l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,
-                                                        15
-                                                       ) == l_y_bis + l_z_bis);
+        l_ok &= quicky_test::check_expected(l_y_bis + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,6), std::to_string(l_y_bis) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,3), std::to_string(l_y_bis) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,15), std::to_string(l_y_bis) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,6), std::to_string(l_y_bis) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,3), std::to_string(l_y_bis) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,15), std::to_string(l_y_bis) + " + " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_z_bis << " + " << l_x << " => " << l_z_bis + l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        10
-                                                       ) == l_z_bis + l_x);
-
-        std::cout << l_z_bis << " + " << l_y << " => " << l_z_bis + l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,
-                                                        15
-                                                       ) == l_z_bis + l_y);
-
-        std::cout << l_z_bis << " + " << l_z << " => " << l_z_bis + l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,
-                                                        5
-                                                       ) == l_z_bis + l_z);
-
-        std::cout << l_z_bis << " + " << l_x_bis << " => " << l_z_bis + l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        10
-                                                       ) == l_z_bis + l_x_bis);
-
-        std::cout << l_z_bis << " + " << l_y_bis << " => " << l_z_bis + l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,
-                                                        15
-                                                       ) == l_z_bis + l_y_bis);
-
-        std::cout << l_z_bis << " + " << l_z_bis << " => " << l_z_bis + l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,
-                                                        5
-                                                       ) == l_z_bis + l_z_bis);
+        l_ok &= quicky_test::check_expected(l_z_bis + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,10), std::to_string(l_z_bis) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,15), std::to_string(l_z_bis) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,5), std::to_string(l_z_bis) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,10), std::to_string(l_z_bis) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-19,15), std::to_string(l_z_bis) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,5), std::to_string(l_z_bis) + " + " + std::to_string(l_z_bis));
 
         //----------------------------------------
         // Operator -
         //----------------------------------------
         //------------------------------------------------------------------------
-        std::cout << l_x << " - " << l_x2 << " => " << l_x - l_x2 << std::endl;
-        assert(0 == l_x - l_x2);
-
-        std::cout << l_x << " - " << l_y << " => " << l_x - l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,
-                                                        6
-                                                       ) == l_x - l_y);
-
-        std::cout << l_x << " - " << l_z << " => " << l_x - l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(11,
-                                                        10
-                                                       ) == l_x - l_z);
-
-        std::cout << l_x << " - " << l_x_bis << " => " << l_x - l_x_bis << std::endl;
-        assert(0 == l_x - l_x_bis);
-
-        std::cout << l_x << " - " << l_y_bis << " => " << l_x - l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,
-                                                        6
-                                                       ) == l_x - l_y_bis);
-
-        std::cout << l_x << " - " << l_z_bis << " => " << l_x - l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(11,
-                                                        10
-                                                       ) == l_x - l_z_bis);
+        l_ok &= quicky_test::check_expected(l_x - l_x2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_x) + " - " + std::to_string(l_x2));
+        l_ok &= quicky_test::check_expected(l_x - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,6), std::to_string(l_x) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(11,10), std::to_string(l_x) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_x) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,6), std::to_string(l_x) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(11,10), std::to_string(l_x) + " - " + std::to_string(l_z_bis));
 
 
         //------------------------------------------------------------------------
-        std::cout << l_y << " - " << l_x << " => " << l_y - l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-7,
-                                                        6
-                                                       ) == l_y - l_x);
-
-        std::cout << l_y << " - " << l_y2 << " => " << l_y - l_y2 << std::endl;
-        assert(0 == l_y - l_y2);
-
-        std::cout << l_y << " - " << l_z << " => " << l_y - l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        15
-                                                       ) == l_y - l_z);
-
-        std::cout << l_y << " - " << l_x_bis << " => " << l_y - l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-7,
-                                                        6
-                                                       ) == l_y - l_x_bis);
-
-        std::cout << l_y << " - " << l_y_bis << " => " << l_y - l_y_bis << std::endl;
-        assert(0 == l_y - l_y_bis);
-
-        std::cout << l_y << " - " << l_z_bis << " => " << l_y - l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        15
-                                                       ) == l_y - l_z_bis);
+        l_ok &= quicky_test::check_expected(l_y - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-7,6), std::to_string(l_y) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y - l_y2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_y) + " - " + std::to_string(l_y2));
+        l_ok &= quicky_test::check_expected(l_y - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,15), std::to_string(l_y) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-7,6), std::to_string(l_y) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_y) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,15), std::to_string(l_y) + " - " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_z << " - " << l_x << " => " << l_z - l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-11,
-                                                        10
-                                                       ) == l_z - l_x);
-
-        std::cout << l_z << " - " << l_y << " => " << l_z - l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        15
-                                                       ) == l_z - l_y);
-
-        std::cout << l_z << " - " << l_z2 << " => " << l_z - l_z2 << std::endl;
-        assert(0 == l_z - l_z2);
-
-        std::cout << l_z << " - " << l_x_bis << " => " << l_z - l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-11,
-                                                        10
-                                                       ) == l_z - l_x_bis);
-
-        std::cout << l_z << " - " << l_y_bis << " => " << l_z - l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        15
-                                                       ) == l_z - l_y_bis);
-
-        std::cout << l_z << " - " << l_z_bis << " => " << l_z - l_z_bis << std::endl;
-        assert(0 == l_z - l_z_bis);
+        l_ok &= quicky_test::check_expected(l_z - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-11,10), std::to_string(l_z) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,15), std::to_string(l_z) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z - l_z2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_z) + " - " + std::to_string(l_z2));
+        l_ok &= quicky_test::check_expected(l_z - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-11,10), std::to_string(l_z) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,15), std::to_string(l_z) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_z) + " - " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_x_bis << " - " << l_x << " => " << l_x_bis - l_x << std::endl;
-        assert(0 == l_x_bis - l_x);
-
-        std::cout << l_x_bis << " - " << l_y << " => " << l_x_bis - l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,
-                                                        6
-                                                       ) == l_x_bis - l_y);
-
-        std::cout << l_x_bis << " - " << l_z << " => " << l_x_bis - l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(11,
-                                                        10
-                                                       ) == l_x_bis - l_z);
-
-        std::cout << l_x_bis << " - " << l_x_bis2 << " => " << l_x_bis - l_x_bis2 << std::endl;
-        assert(0 == l_x_bis - l_x_bis2);
-
-        std::cout << l_x_bis << " - " << l_y_bis << " => " << l_x_bis - l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,
-                                                        6
-                                                       ) == l_x_bis - l_y_bis);
-
-        std::cout << l_x_bis << " - " << l_z_bis << " => " << l_x_bis - l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(11,
-                                                        10
-                                                       ) == l_x_bis - l_z_bis);
+        l_ok &= quicky_test::check_expected(l_x_bis - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_x_bis) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,6), std::to_string(l_x_bis) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(11,10), std::to_string(l_x_bis) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_x_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_x_bis) + " - " + std::to_string(l_x_bis2));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(7,6), std::to_string(l_x_bis) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(11,10), std::to_string(l_x_bis) + " - " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_y_bis << " - " << l_x << " => " << l_y_bis - l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-7,
-                                                        6
-                                                       ) == l_y_bis - l_x);
-
-        std::cout << l_y_bis << " - " << l_y << " => " << l_y_bis - l_y << std::endl;
-        assert(0 == l_y_bis - l_y);
-
-        std::cout << l_y_bis << " - " << l_z << " => " << l_y_bis - l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        15
-                                                       ) == l_y_bis - l_z);
-
-        std::cout << l_y_bis << " - " << l_x_bis << " => " << l_y_bis - l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-7,
-                                                        6
-                                                       ) == l_y_bis - l_x_bis);
-
-        std::cout << l_y_bis << " - " << l_y_bis2 << " => " << l_y_bis - l_y_bis2 << std::endl;
-        assert(0 == l_y_bis - l_y_bis2);
-
-        std::cout << l_y_bis << " - " << l_z_bis << " => " << l_y_bis - l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        15
-                                                       ) == l_y_bis - l_z_bis);
+        l_ok &= quicky_test::check_expected(l_y_bis - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-7,6), std::to_string(l_y_bis) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_y_bis) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,15), std::to_string(l_y_bis) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-7,6), std::to_string(l_y_bis) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_y_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_y_bis) + " - " + std::to_string(l_y_bis2));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,15), std::to_string(l_y_bis) + " - " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_z_bis << " - " << l_x << " => " << l_z_bis - l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-11,
-                                                        10
-                                                       ) == l_z_bis - l_x);
-
-        std::cout << l_z_bis << " - " << l_y << " => " << l_z_bis - l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        15
-                                                       ) == l_z_bis - l_y);
-
-        std::cout << l_z_bis << " - " << l_z << " => " << l_z_bis - l_z << std::endl;
-        assert(0 == l_z_bis - l_z);
-
-        std::cout << l_z_bis << " - " << l_x_bis << " => " << l_z_bis - l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-11,
-                                                        10
-                                                       ) == l_z_bis - l_x_bis);
-
-        std::cout << l_z_bis << " - " << l_y_bis << " => " << l_z_bis - l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        15
-                                                       ) == l_z_bis - l_y_bis);
-
-        std::cout << l_z_bis << " - " << l_z_bis2 << " => " << l_z_bis - l_z_bis2 << std::endl;
-        assert(0 == l_z_bis - l_z_bis2);
+        l_ok &= quicky_test::check_expected(l_z_bis - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-11,10), std::to_string(l_z_bis) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,15), std::to_string(l_z_bis) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_z_bis) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-11,10), std::to_string(l_z_bis) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,15), std::to_string(l_z_bis) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_z_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(0), std::to_string(l_z_bis) + " - " + std::to_string(l_z_bis2));
 
 
         //----------------------------------------
         // Operator *
         //----------------------------------------
         //------------------------------------------------------------------------
-        std::cout << l_x << " * " << l_x << " => " << l_x * l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        4
-                                                       ) == l_x * l_x);
-
-        std::cout << l_x << " * " << l_y << " => " << l_x * l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-2,
-                                                        6
-                                                       ) == l_x * l_y);
-
-        std::cout << l_x << " * " << l_z << " => " << l_x * l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        10
-                                                       ) == l_x * l_z);
-
-        std::cout << l_x << " * " << l_x_bis << " => " << l_x * l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        4
-                                                       ) == l_x * l_x_bis);
-
-        std::cout << l_x << " * " << l_y_bis << " => " << l_x * l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-2,
-                                                        6
-                                                       ) == l_x * l_y_bis);
-
-        std::cout << l_x << " * " << l_z_bis << " => " << l_x * l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        10
-                                                       ) == l_x * l_z_bis);
+        l_ok &= quicky_test::check_expected(l_x * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,4), std::to_string(l_x) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-2,6), std::to_string(l_x) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,10), std::to_string(l_x) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,4), std::to_string(l_x) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-2,6), std::to_string(l_x) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,10), std::to_string(l_x) + " * " + std::to_string(l_z_bis));
 
 
         //------------------------------------------------------------------------
-        std::cout << l_y << " * " << l_x << " => " << l_y * l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-2,
-                                                        6
-                                                       ) == l_y * l_x);
-
-        std::cout << l_y << " * " << l_y << " => " << l_y * l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,
-                                                        9
-                                                       ) == l_y * l_y);
-
-        std::cout << l_y << " * " << l_z << " => " << l_y * l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,
-                                                        5
-                                                       ) == l_y * l_z);
-
-        std::cout << l_y << " * " << l_x_bis << " => " << l_y * l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-2,
-                                                        6
-                                                       ) == l_y * l_x_bis);
-
-        std::cout << l_y << " * " << l_y_bis << " => " << l_y * l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,
-                                                        9
-                                                       ) == l_y * l_y_bis);
-
-        std::cout << l_y << " * " << l_z_bis << " => " << l_y * l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,
-                                                        5
-                                                       ) == l_y * l_z_bis);
+        l_ok &= quicky_test::check_expected(l_y * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-2,6), std::to_string(l_y) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,9), std::to_string(l_y) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,5), std::to_string(l_y) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-2,6), std::to_string(l_y) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,9), std::to_string(l_y) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,5), std::to_string(l_y) + " * " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_z << " * " << l_x << " => " << l_z * l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        10
-                                                       ) == l_z * l_x);
-
-        std::cout << l_z << " * " << l_y << " => " << l_z * l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,
-                                                        5
-                                                       ) == l_z * l_y);
-
-        std::cout << l_z << " * " << l_z << " => " << l_z * l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,
-                                                        25
-                                                       ) == l_z * l_z);
-
-        std::cout << l_z << " * " << l_x_bis << " => " << l_z * l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        10
-                                                       ) == l_z * l_x_bis);
-
-        std::cout << l_z << " * " << l_y_bis << " => " << l_z * l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,
-                                                        5
-                                                       ) == l_z * l_y_bis);
-
-        std::cout << l_z << " * " << l_z_bis << " => " << l_z * l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,
-                                                        25
-                                                       ) == l_z * l_z_bis);
+        l_ok &= quicky_test::check_expected(l_z * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,10), std::to_string(l_z) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,5), std::to_string(l_z) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,25), std::to_string(l_z) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,10), std::to_string(l_z) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,5), std::to_string(l_z) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,25), std::to_string(l_z) + " * " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_x_bis << " * " << l_x << " => " << l_x_bis * l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        4
-                                                       ) == l_x_bis * l_x);
-
-        std::cout << l_x_bis << " * " << l_y << " => " << l_x_bis * l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        3
-                                                       ) == l_x_bis * l_y);
-
-        std::cout << l_x_bis << " * " << l_z << " => " << l_x_bis * l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        10
-                                                       ) == l_x_bis * l_z);
-
-        std::cout << l_x_bis << " * " << l_x_bis << " => " << l_x_bis * l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        4
-                                                       ) == l_x_bis * l_x_bis);
-
-        std::cout << l_x_bis << " * " << l_y_bis << " => " << l_x_bis * l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        3
-                                                       ) == l_x_bis * l_y_bis);
-
-        std::cout << l_x_bis << " * " << l_z_bis << " => " << l_x_bis * l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        10
-                                                       ) == l_x_bis * l_z_bis);
+        l_ok &= quicky_test::check_expected(l_x_bis * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,4), std::to_string(l_x_bis) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,3), std::to_string(l_x_bis) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,10), std::to_string(l_x_bis) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,4), std::to_string(l_x_bis) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,3), std::to_string(l_x_bis) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,10), std::to_string(l_x_bis) + " * " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_y_bis << " * " << l_x << " => " << l_y_bis * l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        3
-                                                       ) == l_y_bis * l_x);
-
-        std::cout << l_y_bis << " * " << l_y << " => " << l_y_bis * l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,
-                                                        9
-                                                       ) == l_y_bis * l_y);
-
-        std::cout << l_y_bis << " * " << l_z << " => " << l_y_bis * l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,
-                                                        5
-                                                       ) == l_y_bis * l_z);
-
-        std::cout << l_y_bis << " * " << l_x_bis << " => " << l_y_bis * l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,
-                                                        3
-                                                       ) == l_y_bis * l_x_bis);
-
-        std::cout << l_y_bis << " * " << l_y_bis << " => " << l_y_bis * l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,
-                                                        9
-                                                       ) == l_y_bis * l_y_bis);
-
-        std::cout << l_y_bis << " * " << l_z_bis << " => " << l_y_bis * l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,
-                                                        5
-                                                       ) == l_y_bis * l_z_bis);
+        l_ok &= quicky_test::check_expected(l_y_bis * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,3), std::to_string(l_y_bis) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,9), std::to_string(l_y_bis) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,5), std::to_string(l_y_bis) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1,3), std::to_string(l_y_bis) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(4,9), std::to_string(l_y_bis) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,5), std::to_string(l_y_bis) + " * " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_z_bis << " * " << l_x << " => " << l_z_bis * l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        10
-                                                       ) == l_z_bis * l_x);
-
-        std::cout << l_z_bis << " * " << l_y << " => " << l_z_bis * l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,
-                                                        5
-                                                       ) == l_z_bis * l_y);
-
-        std::cout << l_z_bis << " * " << l_z << " => " << l_z_bis * l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,
-                                                        25
-                                                       ) == l_z_bis * l_z);
-
-        std::cout << l_z_bis << " * " << l_x_bis << " => " << l_z_bis * l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        10
-                                                       ) == l_z_bis * l_x_bis);
-
-        std::cout << l_z_bis << " * " << l_y_bis << " => " << l_z_bis * l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,
-                                                        5
-                                                       ) == l_z_bis * l_y_bis);
-
-        std::cout << l_z_bis << " * " << l_z_bis << " => " << l_z_bis * l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,
-                                                        25
-                                                       ) == l_z_bis * l_z_bis);
+        l_ok &= quicky_test::check_expected(l_z_bis * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,10), std::to_string(l_z_bis) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,5), std::to_string(l_z_bis) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,25), std::to_string(l_z_bis) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,10), std::to_string(l_z_bis) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,5), std::to_string(l_z_bis) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,25), std::to_string(l_z_bis) + " * " + std::to_string(l_z_bis));
 
         //----------------------------------------
         // Operator /
         //----------------------------------------
         //------------------------------------------------------------------------
-        std::cout << l_x << " / " << l_x2 << " => " << l_x / l_x2 << std::endl;
-        assert(1 == l_x / l_x2);
-
-        std::cout << l_x << " / " << l_y << " => " << l_x / l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        4
-                                                       ) == l_x / l_y);
-
-        std::cout << l_x << " / " << l_z << " => " << l_x / l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-5,
-                                                        6
-                                                       ) == l_x / l_z);
-
-        std::cout << l_x << " / " << l_x_bis << " => " << l_x / l_x_bis << std::endl;
-        assert(1 == l_x / l_x_bis);
-
-        std::cout << l_x << " / " << l_y_bis << " => " << l_x / l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        4
-                                                       ) == l_x / l_y_bis);
-
-        std::cout << l_x << " / " << l_z_bis << " => " << l_x / l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-5,
-                                                        6
-                                                       ) == l_x / l_z_bis);
+        l_ok &= quicky_test::check_expected(l_x / l_x2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_x) + " / " + std::to_string(l_x2));
+        l_ok &= quicky_test::check_expected(l_x / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,4), std::to_string(l_x) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-5,6), std::to_string(l_x) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_x) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,4), std::to_string(l_x) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-5,6), std::to_string(l_x) + " / " + std::to_string(l_z_bis));
 
 
         //------------------------------------------------------------------------
-        std::cout << l_y << " / " << l_x << " => " << l_y / l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,
-                                                        3
-                                                       ) == l_y / l_x);
-
-        std::cout << l_y << " / " << l_y2 << " => " << l_y / l_y2 << std::endl;
-        assert(1 == l_y / l_y2);
-
-        std::cout << l_y << " / " << l_z << " => " << l_y / l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(10,
-                                                        9
-                                                       ) == l_y / l_z);
-
-        std::cout << l_y << " / " << l_x_bis << " => " << l_y / l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,
-                                                        3
-                                                       ) == l_y / l_x_bis);
-
-        std::cout << l_y << " / " << l_y_bis << " => " << l_y / l_y_bis << std::endl;
-        assert(1 == l_y / l_y_bis);
-
-        std::cout << l_y << " / " << l_z_bis << " => " << l_y / l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(10,
-                                                        9
-                                                       ) == l_y / l_z_bis);
+        l_ok &= quicky_test::check_expected(l_y / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,3), std::to_string(l_y) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y / l_y2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_y) + " / " + std::to_string(l_y2));
+        l_ok &= quicky_test::check_expected(l_y / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(10,9), std::to_string(l_y) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,3), std::to_string(l_y) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_y) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(10,9), std::to_string(l_y) + " / " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_z << " / " << l_x << " => " << l_z / l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,
-                                                        5
-                                                       ) == l_z / l_x);
-
-        std::cout << l_z << " / " << l_y << " => " << l_z / l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,
-                                                        10
-                                                       ) == l_z / l_y);
-
-        std::cout << l_z << " / " << l_z2 << " => " << l_z / l_z2 << std::endl;
-        assert(1 == l_z / l_z2);
-
-        std::cout << l_z << " / " << l_x_bis << " => " << l_z / l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,
-                                                        5
-                                                       ) == l_z / l_x_bis);
-
-        std::cout << l_z << " / " << l_y_bis << " => " << l_z / l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,
-                                                        10
-                                                       ) == l_z / l_y_bis);
-
-        std::cout << l_z << " / " << l_z_bis << " => " << l_z / l_z_bis << std::endl;
-        assert(1 == l_z / l_z_bis);
+        l_ok &= quicky_test::check_expected(l_z / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,5), std::to_string(l_z) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,10), std::to_string(l_z) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z / l_z2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_z) + " / " + std::to_string(l_z2));
+        l_ok &= quicky_test::check_expected(l_z / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,5), std::to_string(l_z) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,10), std::to_string(l_z) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_z) + " / " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_x_bis << " / " << l_x << " => " << l_x_bis / l_x << std::endl;
-        assert(1 == l_x_bis / l_x);
-
-        std::cout << l_x_bis << " / " << l_y << " => " << l_x_bis / l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        4
-                                                       ) == l_x_bis / l_y);
-
-        std::cout << l_x_bis << " / " << l_z << " => " << l_x_bis / l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-5,
-                                                        6
-                                                       ) == l_x_bis / l_z);
-
-        std::cout << l_x_bis << " / " << l_x_bis2 << " => " << l_x_bis / l_x_bis2 << std::endl;
-        assert(1 == l_x_bis / l_x_bis2);
-
-        std::cout << l_x_bis << " / " << l_y_bis << " => " << l_x_bis / l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,
-                                                        4
-                                                       ) == l_x_bis / l_y_bis);
-
-        std::cout << l_x_bis << " / " << l_z_bis << " => " << l_x_bis / l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-5,
-                                                        6
-                                                       ) == l_x_bis / l_z_bis);
+        l_ok &= quicky_test::check_expected(l_x_bis / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_x_bis) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,4), std::to_string(l_x_bis) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-5,6), std::to_string(l_x_bis) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_x_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_x_bis) + " / " + std::to_string(l_x_bis2));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-3,4), std::to_string(l_x_bis) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-5,6), std::to_string(l_x_bis) + " / " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_y_bis << " / " << l_x << " => " << l_y_bis / l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,
-                                                        3
-                                                       ) == l_y_bis / l_x);
-
-        std::cout << l_y_bis << " / " << l_y << " => " << l_y_bis / l_y << std::endl;
-        assert(1 == l_y_bis / l_y);
-
-        std::cout << l_y_bis << " / " << l_z << " => " << l_y_bis / l_z << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(10,
-                                                        9
-                                                       ) == l_y_bis / l_z);
-
-        std::cout << l_y_bis << " / " << l_x_bis << " => " << l_y_bis / l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,
-                                                        3
-                                                       ) == l_y_bis / l_x_bis);
-
-        std::cout << l_y_bis << " / " << l_y_bis2 << " => " << l_y_bis / l_y_bis2 << std::endl;
-        assert(1 == l_y_bis / l_y_bis2);
-
-        std::cout << l_y_bis << " / " << l_z_bis << " => " << l_y_bis / l_z_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(10,
-                                                        9
-                                                       ) == l_y_bis / l_z_bis);
+        l_ok &= quicky_test::check_expected(l_y_bis / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,3), std::to_string(l_y_bis) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_y_bis) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(10,9), std::to_string(l_y_bis) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-4,3), std::to_string(l_y_bis) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_y_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_y_bis) + " / " + std::to_string(l_y_bis2));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(10,9), std::to_string(l_y_bis) + " / " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        std::cout << l_z_bis << " / " << l_x << " => " << l_z_bis / l_x << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,
-                                                        5
-                                                       ) == l_z_bis / l_x);
-
-        std::cout << l_z_bis << " / " << l_y << " => " << l_z_bis / l_y << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,
-                                                        10
-                                                       ) == l_z_bis / l_y);
-
-        std::cout << l_z_bis << " / " << l_z << " => " << l_z_bis / l_z << std::endl;
-        assert(1 == l_z_bis / l_z);
-
-        std::cout << l_z_bis << " / " << l_x_bis << " => " << l_z_bis / l_x_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,
-                                                        5
-                                                       ) == l_z_bis / l_x_bis);
-
-        std::cout << l_z_bis << " / " << l_y_bis << " => " << l_z_bis / l_y_bis << std::endl;
-        assert(quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,
-                                                        10
-                                                       ) == l_z_bis / l_y_bis);
-
-        std::cout << l_z_bis << " / " << l_z_bis2 << " => " << l_z_bis / l_z_bis2 << std::endl;
-        assert(1 == l_z_bis / l_z_bis2);
+        l_ok &= quicky_test::check_expected(l_z_bis / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,5), std::to_string(l_z_bis) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,10), std::to_string(l_z_bis) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_z_bis) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-6,5), std::to_string(l_z_bis) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>(9,10), std::to_string(l_z_bis) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_z_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1), std::to_string(l_z_bis) + " / " + std::to_string(l_z_bis2));
 
         std::cout << "Operator ++" << std::endl;
-        std::cout << l_x << std::endl;
+        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1, 2), "l_x = 1/2");
         ++l_x;
-        std::cout << l_x << std::endl;
+        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(3, 2), "l_x = 3/2");
         l_x++;
-        std::cout << l_x << std::endl;
+        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(5, 2), "l_x = 5/2");
         std::cout << "Operator --" << std::endl;
-        std::cout << l_x << std::endl;
         --l_x;
-        std::cout << l_x << std::endl;
+        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(3, 2), "l_x = 3/2");
         l_x--;
-        std::cout << l_x << std::endl;
+        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1, 2), "l_x = 1/2");
 
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_zero(1,
-                                                        2
-                                                       );
+        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_zero(1,2);
         assert(l_zero);
-        l_zero -= quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                           2
-                                                          );
+        l_zero -= quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,2);
         assert(!l_zero);
 
-        l_x = quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                       2
-                                                      );
-        l_y = quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,
-                                                       5
-                                                      );
-        std::cout << l_x << " < " << l_y << " => " << (l_x < l_y ? "true" : "false") << std::endl;
-        assert(!(l_x < l_y));
-        std::cout << l_x << " > " << l_y << " => " << (l_x > l_y ? "true" : "false") << std::endl;
-        assert(l_x > l_y);
-        std::cout << l_x << " <= " << l_y << " => " << (l_x <= l_y ? "true" : "false") << std::endl;
-        assert(!(l_x <= l_y));
-        std::cout << l_x << " >= " << l_y << " => " << (l_x >= l_y ? "true" : "false") << std::endl;
-        assert(l_x >= l_y);
-        l_y = quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                       5
-                                                      );
-        std::cout << l_x << " != " << l_y << " => " << (l_x != l_y ? "true" : "false") << std::endl;
-        assert(l_x != l_y);
-        std::cout << l_x << " == " << l_y << " => " << (l_x == l_y ? "true" : "false") << std::endl;
-        assert(!(l_x == l_y));
+        l_x = quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,2);
+        l_y = quicky_utils::fract<FRACT_INTERNAL_TYPE>(2,5);
+        l_ok &= quicky_test::check_expected(l_x < l_y, false, std::to_string(l_x) + " < " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x > l_y, true, std::to_string(l_x) + " > " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x <= l_y, false, std::to_string(l_x) + " <= " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x >= l_y, true, std::to_string(l_x) + " >= " + std::to_string(l_y));
+        l_y = quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,5);
+        l_ok &= quicky_test::check_expected(l_x != l_y, true, std::to_string(l_x) + " != " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x == l_y, false, std::to_string(l_x) + " == " + std::to_string(l_y));
 
 
-        l_y = -quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        5
-                                                       );
-        std::cout << l_y << std::endl;
-        l_y = +quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                        5
-                                                       );
-        std::cout << l_y << std::endl;
+        l_y = -quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,5);
+        l_ok &= quicky_test::check_expected(l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(-1, 5), "l_y = -1/5");
+        l_y = +quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,5);
+        l_ok &= quicky_test::check_expected(l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(1, 5), "l_y = 1/5");
         l_y += (quicky_utils::fract<FRACT_INTERNAL_TYPE>) 3;
-        std::cout << l_y << std::endl;
+        l_ok &= quicky_test::check_expected(l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>(16, 5), "l_y = 16/5");
 
-        std::cout << l_x << " < " << 2 << " => " << (l_x < 2 ? "true" : "false") << std::endl;
-        assert(l_x < 2);
-        std::cout << l_x << " <= " << 2 << " => " << (l_x <= 2 ? "true" : "false") << std::endl;
-        assert(l_x <= 2);
-        std::cout << l_x << " > " << 2 << " => " << (l_x > 2 ? "true" : "false") << std::endl;
-        assert(!(l_x > 2));
-        std::cout << l_x << " >= " << 2 << " => " << (l_x >= 2 ? "true" : "false") << std::endl;
-        assert(!(l_x >= 2));
+        l_ok &= quicky_test::check_expected(l_x < 2, true, std::to_string(l_x) + " < 2");
+        l_ok &= quicky_test::check_expected(l_x <= 2, true, std::to_string(l_x) + " <= 2");
+        l_ok &= quicky_test::check_expected(l_x > 2, false, std::to_string(l_x) + " > 2");
+        l_ok &= quicky_test::check_expected(l_x >= 2, false, std::to_string(l_x) + " >= 2");
 
         /* Test for GCC > 4.9.4 */
 #if GCC_VERSION >= 40904
@@ -1020,22 +374,18 @@ namespace quicky_utils
         display_NB<quicky_utils::fract<uint32_t>::PPCM(20,15,nullptr)>();
 #endif // GCC_VERSION
 
-        std::cout << (1 != l_x) << std::endl;
-        std::cout << (l_x != 1) << std::endl;
+        l_ok &= quicky_test::check_expected(1 != l_x, true, std::string("1 != ") + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x != 1, true, std::to_string(l_x) + std::string(" != 1"));
 
         std::cout << "---------------------------------------" << std::endl;
         std::cout << "- to_float and to double" << std::endl;
         std::cout << "---------------------------------------" << std::endl;
-        l_a = quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                       2
-                                                      );
-        l_b = quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,
-                                                       3
-                                                      );
-        std::cout << l_a << " == " << l_a.to_float() << std::endl;
-        std::cout << l_b << " == " << l_b.to_float() << std::endl;
-        std::cout << l_a << " == " << l_a.to_double() << std::endl;
-        std::cout << l_b << " == " << l_b.to_double() << std::endl;
+        l_a = quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,2);
+        l_b = quicky_utils::fract<FRACT_INTERNAL_TYPE>(1,3);
+        l_ok &= quicky_test::check_expected(l_a.to_float(), 1.0f / 2.0f, std::to_string(l_a) + " to float");
+        l_ok &= quicky_test::check_expected(l_b.to_float(), 1.0f / 3.0f, std::to_string(l_b) + " to float");
+        l_ok &= quicky_test::check_expected(l_a.to_double(), 1.0 / 2.0, std::to_string(l_a) + " to double");
+        l_ok &= quicky_test::check_expected(l_b.to_double(), 1.0 / 3.0, std::to_string(l_b) + " to double");
 
         return l_ok;
     }
