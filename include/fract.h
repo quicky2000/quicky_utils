@@ -145,20 +145,48 @@ namespace quicky_utils
 
     inline constexpr fract(const t_coef_num & p_num);
 
-    inline constexpr fract(const t_coef_den & p_den,
-			   std::nullptr_t
-			   );
+    inline constexpr fract(const t_coef_den & p_den
+	                      ,std::nullptr_t
+		                  );
 
-    inline constexpr fract(const t_coef_num & p_num,
-			   const t_coef_num & p_den,
-			   std::nullptr_t
-			   );
+    inline fract(const t_coef_num & p_num
+                ,const t_coef_num & p_den
+                );
 
-    inline fract(const t_coef_num & p_num,
-		 const t_coef_num & p_den
-		 );
+    inline fract(const t_coef_num & p_num
+                ,const t_coef_den & p_den
+                );
 
-    inline fract operator+(const fract & p_op1
+    inline fract(const t_coef_den & p_num
+                ,const t_coef_den & p_den
+                );
+
+    inline fract(const t_coef_den & p_num
+                ,const t_coef_num & p_den
+                );
+
+
+    inline constexpr fract(const t_coef_num & p_num
+                          ,const t_coef_num & p_den
+                          ,std::nullptr_t
+                          );
+
+    inline constexpr fract(const t_coef_num & p_num
+                          ,const t_coef_den & p_den
+                          ,std::nullptr_t
+                          );
+
+    inline constexpr fract(const t_coef_den & p_num
+                          ,const t_coef_num & p_den
+                          ,std::nullptr_t
+                          );
+
+    inline constexpr fract(const t_coef_den & p_num
+                          ,const t_coef_den & p_den
+                          ,std::nullptr_t
+                          );
+
+      inline fract operator+(const fract & p_op1
 			   ) const;
 
     inline fract operator-(const fract & p_op1
@@ -454,9 +482,22 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
-  fract<T>::fract(const t_coef_num & p_num,
-	       const t_coef_num & p_den
-	       )
+  constexpr fract<T>::fract(const t_coef_den & p_den
+                           ,std::nullptr_t
+                           ):
+#ifdef FRACT_DOUBLE_CHECK
+            m_double(((double)1)/((double)p_den)),
+#endif // FRACT_DOUBLE_CHECK
+          m_num(1),
+          m_den(p_den)
+  {
+  }
+
+    //----------------------------------------------------------------------------
+  template <typename T>
+  fract<T>::fract(const t_coef_num & p_num
+	             ,const t_coef_num & p_den
+	             )
 #ifdef FRACT_DOUBLE_CHECK
     :m_double(((double)p_num)/((double)p_den))
 #endif // FRACT_DOUBLE_CHECK
@@ -469,40 +510,117 @@ namespace quicky_utils
        (p_num < (decltype(m_num))0 && p_den > (decltype(m_num))0)
        )
       {
-	m_num = -m_num;
+          m_num = -m_num;
       }
     m_den = (t_coef_den)(abs(p_den)) / l_pgcd;
   }
 
   //----------------------------------------------------------------------------
   template <typename T>
-  constexpr fract<T>::fract(const t_coef_num & p_num,
-			 const t_coef_num & p_den,
-			 std::nullptr_t
-			 ):
+  fract<T>::fract(const t_coef_num & p_num
+                 ,const t_coef_den & p_den
+                 )
 #ifdef FRACT_DOUBLE_CHECK
-    m_double(((double)p_num)/((double)p_den)),
+    :m_double(((double)p_num)/((double)p_den))
 #endif // FRACT_DOUBLE_CHECK
-    m_num((abs(p_num) / ((t_coef_num)PGCD(p_num,p_den,nullptr))) * (((p_num > 0 && p_den < 0) || (p_num < 0 && p_den > 0))? -1 : 1)),
-    m_den((t_coef_den)(abs(p_den)) / PGCD(p_num,p_den,nullptr))
   {
-    //    static_assert(p_den);
+      assert(p_den);
+      t_coef_den l_pgcd = PGCD(p_num,p_den);
+      m_num = p_num / ((t_coef_num)l_pgcd);
+      m_den = p_den / l_pgcd;
   }
 
   //----------------------------------------------------------------------------
   template <typename T>
-  constexpr fract<T>::fract(const t_coef_den & p_den,
-			 std::nullptr_t
-			 ):
+  fract<T>::fract(const t_coef_den & p_num
+                 ,const t_coef_den & p_den
+                 )
 #ifdef FRACT_DOUBLE_CHECK
-    m_double(((double)1)/((double)p_den)),
+    :m_double(((double)p_num)/((double)p_den))
 #endif // FRACT_DOUBLE_CHECK
-    m_num(1),
-    m_den(p_den)
   {
+      assert(p_den);
+      t_coef_den l_pgcd = PGCD(p_num,p_den);
+      m_num = (t_coef_num)(p_num / l_pgcd);
+      m_den = p_den / l_pgcd;
   }
 
   //----------------------------------------------------------------------------
+  template <typename T>
+  fract<T>::fract(const t_coef_den & p_num
+                 ,const t_coef_num & p_den
+                 )
+#ifdef FRACT_DOUBLE_CHECK
+    :m_double(((double)p_num)/((double)p_den))
+#endif // FRACT_DOUBLE_CHECK
+  {
+      assert(p_den);
+      t_coef_den l_pgcd = PGCD(p_num,p_den);
+      m_num = (t_coef_num)(p_num / l_pgcd) * ((t_coef_num)(p_den < 0 ? - 1: 1));
+      m_den = ((t_coef_den) abs(p_den)) / l_pgcd;
+  }
+
+  //----------------------------------------------------------------------------
+  template <typename T>
+  constexpr fract<T>::fract(const t_coef_num & p_num
+                           ,const t_coef_num & p_den
+                           ,std::nullptr_t
+                           ):
+#ifdef FRACT_DOUBLE_CHECK
+            m_double(((double)p_num)/((double)p_den)),
+#endif // FRACT_DOUBLE_CHECK
+          m_num((abs(p_num) / ((t_coef_num)PGCD(p_num,p_den,nullptr))) * (((p_num > 0 && p_den < 0) || (p_num < 0 && p_den > 0))? -1 : 1)),
+          m_den((t_coef_den)(abs(p_den)) / PGCD(p_num,p_den,nullptr))
+  {
+      //    static_assert(p_den);
+  }
+
+  //----------------------------------------------------------------------------
+  template <typename T>
+  constexpr fract<T>::fract(const t_coef_num & p_num
+                           ,const t_coef_den & p_den
+                           ,std::nullptr_t
+                           ):
+#ifdef FRACT_DOUBLE_CHECK
+            m_double(((double)p_num)/((double)p_den)),
+#endif // FRACT_DOUBLE_CHECK
+          m_num(p_num / ((t_coef_num)PGCD(p_num,p_den,nullptr))),
+          m_den(p_den / PGCD(p_num,p_den,nullptr))
+  {
+      //    static_assert(p_den);
+  }
+
+  //----------------------------------------------------------------------------
+  template <typename T>
+  constexpr fract<T>::fract(const t_coef_den & p_num
+                           ,const t_coef_num & p_den
+                           ,std::nullptr_t
+                           ):
+#ifdef FRACT_DOUBLE_CHECK
+            m_double(((double)p_num)/((double)p_den)),
+#endif // FRACT_DOUBLE_CHECK
+            m_num(((t_coef_num)(p_num / PGCD(p_num,p_den,nullptr))) * ((t_coef_num )(p_den < 0 ? -1 : 1))),
+            m_den((t_coef_den)(abs(p_den)) / PGCD(p_num,p_den,nullptr))
+    {
+        //    static_assert(p_den);
+    }
+
+  //----------------------------------------------------------------------------
+  template <typename T>
+  constexpr fract<T>::fract(const t_coef_den & p_num
+                           ,const t_coef_den & p_den
+                           ,std::nullptr_t
+                           ):
+#ifdef FRACT_DOUBLE_CHECK
+            m_double(((double)p_num)/((double)p_den)),
+#endif // FRACT_DOUBLE_CHECK
+          m_num(((t_coef_num)(p_num / PGCD(p_num,p_den,nullptr)))),
+          m_den(p_den / PGCD(p_num,p_den,nullptr))
+  {
+      //    static_assert(p_den);
+  }
+
+    //----------------------------------------------------------------------------
   template <typename T>
   fract<T> fract<T>::operator+(const fract & p_op
 			 ) const

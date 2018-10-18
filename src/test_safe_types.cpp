@@ -86,12 +86,8 @@ namespace quicky_utils
         std::cout << abs(l_safe_int) << std::endl;
         assert(l_safe_uint);
         assert(l_safe_int);
-        quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract(1,
-                                                                       12
-                                                                      );
-        quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract2(1,
-                                                                        4
-                                                                       );
+        quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract((quicky_utils::fract<quicky_utils::safe_uint<uint16_t>>::t_coef_den)1, (quicky_utils::fract<quicky_utils::safe_uint<uint16_t>>::t_coef_den)12);
+        quicky_utils::fract<quicky_utils::safe_uint<uint16_t>> l_fract2((quicky_utils::fract<quicky_utils::safe_uint<uint16_t>>::t_coef_den)1,(quicky_utils::fract<quicky_utils::safe_uint<uint16_t>>::t_coef_den)4);
         std::cout << (l_fract + l_fract2) << std::endl;
 
         // Try to change a safe_int in a safe_uint
