@@ -992,5 +992,20 @@ namespace quicky_utils
 #endif // QUICKY_UTILS_SELF_TEST
 
 }
+
+namespace std
+{
+    template <typename T>
+    quicky_utils::ext_int<T>
+    abs(const quicky_utils::ext_int<T> & p_ext_int)
+    {
+        if (p_ext_int.get_root() < 0)
+        {
+            return -p_ext_int;
+        }
+        return p_ext_int;
+    }
+
+}
 #endif //QUICKY_UTILS_EXT_INT_H
 // EOF

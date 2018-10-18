@@ -509,6 +509,16 @@ namespace quicky_utils
             }
         }
 
+        // Check abs operator
+        for(auto l_iter1: l_test_values)
+        {
+            int64_t l_result = llabs((int64_t)l_iter1.first);
+            l_ok &= quicky_test::check_expected(std::abs(l_iter1.second),
+                                                quicky_utils::ext_int<int8_t>(l_result),
+                                                "abs(" + (std::string)l_iter1.second +")"
+                                               );
+        }
+
         // Experiments around int type
         int16_t l_int = -1;
         for(unsigned int l_index = 0; l_index < 16; ++ l_index)
