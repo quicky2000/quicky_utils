@@ -18,7 +18,10 @@
 #ifndef QUICKY_UTILS_TEST_FRACT_H
 #define QUICKY_UTILS_TEST_FRACT_H
 
+#include "safe_types.h"
+#include "ext_int.h"
 #include "fract.h"
+#include <inttypes.h>
 #include <iostream>
 #include "quicky_test.h"
 
@@ -31,93 +34,105 @@ namespace quicky_utils
         std::cout << NB << std::endl;
     }
 
+    bool test_fract_normal()
+    {
+        bool l_ok = true;
+        // PGCD
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(1071, 1029),21, "PGCD(1071,1029)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(1029, 1071),21, "PGCD(1029,1071)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(60, 168),12, "PGCD(60,168)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(168, 60),12, "PGCD(168,60)");
+
+        // PPCM
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PPCM(60, 168), 840, "PPCM(60,168)");
+        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PPCM(168, 60), 840, "PPCM(168,60)");
+        return l_ok;
+    }
+
     template <typename FRACT_INTERNAL_TYPE>
     bool
-    test_fract()
+    test_fract_generic()
     {
+        typedef typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den t_coef_den;
+        typedef typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num t_coef_num;
+        typedef typename quicky_utils::fract<FRACT_INTERNAL_TYPE> t_fract;
         bool l_ok = true;
         std::cout << "---------------------------------------" << std::endl;
         std::cout << "- PGCD" << std::endl;
         std::cout << "---------------------------------------" << std::endl;
 
-        auto l_pos_num = (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den) (unsigned int)3;
-        auto l_neg_num = (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3;
-        auto l_pos_den = (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den) (unsigned int)6;
-        auto l_neg_den = (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-6;
+        auto l_pos_num = (t_coef_den) (unsigned int)3;
+        auto l_neg_num = (t_coef_num)-3;
+        auto l_pos_den = (t_coef_den) (unsigned int)6;
+        auto l_neg_den = (t_coef_num)-6;
 
-	    l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_pos_num, l_pos_den), (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3, "PGCD( 3, 6)");
-	    l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_neg_num, l_pos_den), (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3, "PGCD(-3, 6)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_pos_num, l_neg_den), (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3, "PGCD( 3,-6)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD(l_neg_num, l_neg_den), (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3, "PGCD(-3,-6)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(1071, 1029),21, "PGCD(1071,1029)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(1029, 1071),21, "PGCD(1029,1071)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(60, 168),12, "PGCD(60,168)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PGCD(168, 60),12, "PGCD(168,60)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PGCD((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6
-                                                                                                                                                         ,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9
-                                                                                                                                                         )
-                                                                                                          ,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3
-                                                                                                          ,"PGCD(6,9)"
-                                                                                                          );
+	    l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PGCD(l_pos_num, l_pos_den), (t_coef_den)(unsigned int)3, "PGCD( 3, 6)");
+	    l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PGCD(l_neg_num, l_pos_den), (t_coef_den)(unsigned int)3, "PGCD(-3, 6)");
+        l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PGCD(l_pos_num, l_neg_den), (t_coef_den)(unsigned int)3, "PGCD( 3,-6)");
+        l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PGCD(l_neg_num, l_neg_den), (t_coef_den)(unsigned int)3, "PGCD(-3,-6)");
+        l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PGCD((t_coef_den)(unsigned int)6
+                                                                     ,(t_coef_den)(unsigned int)9
+                                                                     )
+                                                       ,(t_coef_den)(unsigned int)3
+                                                       ,"PGCD(6,9)"
+                                                       );
 
         std::cout << std::endl;
         std::cout << "---------------------------------------" << std::endl;
         std::cout << "- PPCM" << std::endl;
         std::cout << "---------------------------------------" << std::endl;
 
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_pos_num, l_pos_den), (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6, "PPCM( 3, 6)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_neg_num, l_pos_den), (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6, "PPCM(-3, 6)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_pos_num, l_neg_den), (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6, "PPCM( 3,-6)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM(l_neg_num, l_neg_den), (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6, "PPCM(-3,-6)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PPCM(60, 168), 840, "PPCM(60,168)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<uint32_t>::t_coef_den>(quicky_utils::fract<uint32_t>::PPCM(168, 60), 840, "PPCM(168,60)");
-        l_ok &= quicky_test::check_expected<typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den>(quicky_utils::fract<FRACT_INTERNAL_TYPE>::PPCM((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6
-                                                                                                                                                         ,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9
-                                                                                                                                                         )
-                                                                                                          , (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)18
-                                                                                                          , "PPCM(6,9)"
-                                                                                                          );
+        l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PPCM(l_pos_num, l_pos_den), (t_coef_den)(unsigned int)6, "PPCM( 3, 6)");
+        l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PPCM(l_neg_num, l_pos_den), (t_coef_den)(unsigned int)6, "PPCM(-3, 6)");
+        l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PPCM(l_pos_num, l_neg_den), (t_coef_den)(unsigned int)6, "PPCM( 3,-6)");
+        l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PPCM(l_neg_num, l_neg_den), (t_coef_den)(unsigned int)6, "PPCM(-3,-6)");
+        l_ok &= quicky_test::check_expected<t_coef_den>(t_fract::PPCM((t_coef_den)(unsigned int)6
+                                                                     ,(t_coef_den)(unsigned int)9
+                                                                     )
+                                                       , (t_coef_den)(unsigned int)18
+                                                       , "PPCM(6,9)"
+                                                       );
 
         std::cout << "---------------------------------------" << std::endl;
 
-        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num) -3, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1) * quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)7, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1), quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-21), "-3/1 * 7/1 == -21");
-        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-21, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1) / quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1), quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-7, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2), "-21/1 / 6/1 == -7/2");
-        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num) -4, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1) - quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-21, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2), "-4/1 - (-21/6) == -1/2");
+        l_ok &= quicky_test::check_expected(t_fract((t_coef_num) -3, (t_coef_den)(unsigned int)1) * t_fract((t_coef_den)(unsigned int)7, (t_coef_den)(unsigned int)1), t_fract((t_coef_num)-21), "-3/1 * 7/1 == -21");
+        l_ok &= quicky_test::check_expected(t_fract((t_coef_num)-21, (t_coef_den)(unsigned int)1) / t_fract((t_coef_den)(unsigned int)6, (t_coef_den)(unsigned int)1), t_fract((t_coef_num)-7, (t_coef_den)(unsigned int)2), "-21/1 / 6/1 == -7/2");
+        l_ok &= quicky_test::check_expected(t_fract((t_coef_num) -4, (t_coef_den)(unsigned int)1) - t_fract((t_coef_num)-21, (t_coef_den)(unsigned int)6), t_fract((t_coef_num)-1, (t_coef_den)(unsigned int)2), "-4/1 - (-21/6) == -1/2");
 
-        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-2).to_double(),  0.5, "(num,num) constructor");
-        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int) 2).to_double(), -0.5, "(num,den) constructor");
-        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int) 1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-2).to_double(), -0.5, "(den,num) constructor");
-        l_ok &= quicky_test::check_expected(quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int) 1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int) 2).to_double(),  0.5, "(den,den) constructor");
+        l_ok &= quicky_test::check_expected(t_fract((t_coef_num)-1, (t_coef_num)-2).to_double(),  0.5, "(num,num) constructor");
+        l_ok &= quicky_test::check_expected(t_fract((t_coef_num)-1, (t_coef_den)(unsigned int) 2).to_double(), -0.5, "(num,den) constructor");
+        l_ok &= quicky_test::check_expected(t_fract((t_coef_den)(unsigned int) 1, (t_coef_num)-2).to_double(), -0.5, "(den,num) constructor");
+        l_ok &= quicky_test::check_expected(t_fract((t_coef_den)(unsigned int) 1, (t_coef_den)(unsigned int) 2).to_double(),  0.5, "(den,den) constructor");
 
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_nb1((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_nb2((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)2);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_nb3((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2);
-        l_ok &= quicky_test::check_expected(l_nb3, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)5), "10/2 == 5");
+        t_fract l_nb1((t_coef_den)(unsigned int)1, (t_coef_den)(unsigned int)2);
+        t_fract l_nb2((t_coef_num)2);
+        t_fract l_nb3((t_coef_den)(unsigned int)10, (t_coef_den)(unsigned int)2);
+        l_ok &= quicky_test::check_expected(l_nb3, t_fract((t_coef_num)5), "10/2 == 5");
         std::cout << l_nb1 << std::endl;
         std::cout << l_nb2 << std::endl;
         std::cout << l_nb3 << std::endl;
 
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_a((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_b((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4);
+        t_fract l_a((t_coef_den)(unsigned int)1, (t_coef_den)(unsigned int)3);
+        t_fract l_b((t_coef_den)(unsigned int)1, (t_coef_den)(unsigned int)4);
 
-        l_ok &= quicky_test::check_expected(l_a + l_b, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)7, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)12),std::to_string(l_a) + " + " + std::to_string(l_b));
-        l_ok &= quicky_test::check_expected(l_a - l_b, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)12),std::to_string(l_a) + " - " + std::to_string(l_b));
-        l_ok &= quicky_test::check_expected(l_a * l_b, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)12),std::to_string(l_a) + " * " + std::to_string(l_b));
-        l_ok &= quicky_test::check_expected(l_a / l_b, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3),std::to_string(l_a) + " / " + std::to_string(l_b));
-        l_ok &= quicky_test::check_expected(1   + l_a, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), "1 + " + std::to_string(l_a));
+        l_ok &= quicky_test::check_expected(l_a + l_b, t_fract((t_coef_den)(unsigned int)7, (t_coef_den)(unsigned int)12),std::to_string(l_a) + " + " + std::to_string(l_b));
+        l_ok &= quicky_test::check_expected(l_a - l_b, t_fract((t_coef_den)(unsigned int)1, (t_coef_den)(unsigned int)12),std::to_string(l_a) + " - " + std::to_string(l_b));
+        l_ok &= quicky_test::check_expected(l_a * l_b, t_fract((t_coef_den)(unsigned int)1, (t_coef_den)(unsigned int)12),std::to_string(l_a) + " * " + std::to_string(l_b));
+        l_ok &= quicky_test::check_expected(l_a / l_b, t_fract((t_coef_den)(unsigned int)4, (t_coef_den)(unsigned int)3),std::to_string(l_a) + " / " + std::to_string(l_b));
+        l_ok &= quicky_test::check_expected(1   + l_a, t_fract((t_coef_den)(unsigned int)4, (t_coef_den)(unsigned int)3), "1 + " + std::to_string(l_a));
 
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int) 1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int) 2);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x2(l_x);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int) 2, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y2(l_y);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int) 5);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z2(l_z);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x_bis((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-2);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_x_bis2(l_x_bis);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y_bis((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-2, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_y_bis2(l_y_bis);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z_bis((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int) 3, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-5);
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_z_bis2(l_z_bis);
+        t_fract l_x((t_coef_den)(unsigned int) 1, (t_coef_den)(unsigned int) 2);
+        t_fract l_x2(l_x);
+        t_fract l_y((t_coef_den)(unsigned int) 2, (t_coef_num)-3);
+        t_fract l_y2(l_y);
+        t_fract l_z((t_coef_num)-3, (t_coef_den)(unsigned int) 5);
+        t_fract l_z2(l_z);
+        t_fract l_x_bis((t_coef_num)-1, (t_coef_num)-2);
+        t_fract l_x_bis2(l_x_bis);
+        t_fract l_y_bis((t_coef_num)-2, (t_coef_den)(unsigned int)3);
+        t_fract l_y_bis2(l_y_bis);
+        t_fract l_z_bis((t_coef_den)(unsigned int) 3, (t_coef_num)-5);
+        t_fract l_z_bis2(l_z_bis);
 
         // Check equality independantly of - position ( num or den)
         l_ok &= quicky_test::check_expected(l_x == l_x_bis, true, std::to_string(l_x) + " == " + std::to_string(l_x_bis));
@@ -126,245 +141,245 @@ namespace quicky_utils
         l_ok &= quicky_test::check_expected(l_x != l_y, true, std::to_string(l_x) + " != " + std::to_string(l_y));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_x + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_x) + " + " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_x + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x) + " + " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_x + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x) + " + " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_x + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_x) + " + " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_x + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x) + " + " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_x + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x) + " + " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_x + l_x, t_fract((t_coef_num)1), std::to_string(l_x) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x + l_y, t_fract((t_coef_num)-1, (t_coef_den)(unsigned int)6), std::to_string(l_x) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x + l_z, t_fract((t_coef_num)-1, (t_coef_den)(unsigned int)10), std::to_string(l_x) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x + l_x_bis, t_fract((t_coef_num)1), std::to_string(l_x) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x + l_y_bis, t_fract((t_coef_num)-1, (t_coef_den)(unsigned int)6), std::to_string(l_x) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x + l_z_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)10), std::to_string(l_x) + " + " + std::to_string(l_z_bis));
 
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_y + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y) + " + " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_y + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y) + " + " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_y + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-19,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_y) + " + " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_y + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y) + " + " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_y + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y) + " + " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_y + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-19,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_y) + " + " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_y + l_x, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)6), std::to_string(l_y) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y + l_y, t_fract((t_coef_num)-4,(t_coef_den)(unsigned int)3), std::to_string(l_y) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y + l_z, t_fract((t_coef_num)-19,(t_coef_den)(unsigned int)15), std::to_string(l_y) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y + l_x_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)6), std::to_string(l_y) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y + l_y_bis, t_fract((t_coef_num)-4,(t_coef_den)(unsigned int)3), std::to_string(l_y) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y + l_z_bis, t_fract((t_coef_num)-19,(t_coef_den)(unsigned int)15), std::to_string(l_y) + " + " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_z + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z) + " + " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_z + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-19,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_z) + " + " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_z + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-6,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z) + " + " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_z + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z) + " + " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_z + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-19,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_z) + " + " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_z + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-6,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z) + " + " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_z + l_x, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)10), std::to_string(l_z) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z + l_y, t_fract((t_coef_num)-19,(t_coef_den)(unsigned int)15), std::to_string(l_z) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z + l_z, t_fract((t_coef_num)-6,(t_coef_den)(unsigned int)5), std::to_string(l_z) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z + l_x_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)10), std::to_string(l_z) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z + l_y_bis, t_fract((t_coef_num)-19,(t_coef_den)(unsigned int)15), std::to_string(l_z) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z + l_z_bis, t_fract((t_coef_num)-6,(t_coef_den)(unsigned int)5), std::to_string(l_z) + " + " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_x_bis + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_x_bis) + " + " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_x_bis + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " + " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_x_bis + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " + " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_x_bis + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_x_bis) + " + " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_x_bis + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " + " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_x_bis + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " + " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_x, t_fract((t_coef_num)1), std::to_string(l_x_bis) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_y, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_z, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_x_bis, t_fract((t_coef_num)1), std::to_string(l_x_bis) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_y_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis + l_z_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " + " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_y_bis + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y_bis) + " + " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_y_bis + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " + " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_y_bis + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-19,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_y_bis) + " + " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_y_bis + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y_bis) + " + " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_y_bis + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " + " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_y_bis + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-19,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_y_bis) + " + " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_x, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)6), std::to_string(l_y_bis) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_y, t_fract((t_coef_num)-4,(t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_z, t_fract((t_coef_num)-19,(t_coef_den)(unsigned int)15), std::to_string(l_y_bis) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_x_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)6), std::to_string(l_y_bis) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_y_bis, t_fract((t_coef_num)-4,(t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis + l_z_bis, t_fract((t_coef_num)-19,(t_coef_den)(unsigned int)15), std::to_string(l_y_bis) + " + " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_z_bis + l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " + " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_z_bis + l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-19,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_z_bis) + " + " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_z_bis + l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-6,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " + " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_z_bis + l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " + " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_z_bis + l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-19,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_z_bis) + " + " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_z_bis + l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-6,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " + " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_x, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " + " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_y, t_fract((t_coef_num)-19,(t_coef_den)(unsigned int)15), std::to_string(l_z_bis) + " + " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_z, t_fract((t_coef_num)-6,(t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " + " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_x_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " + " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_y_bis, t_fract((t_coef_num)-19,(t_coef_den)(unsigned int)15), std::to_string(l_z_bis) + " + " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis + l_z_bis, t_fract((t_coef_num)-6,(t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " + " + std::to_string(l_z_bis));
 
         //----------------------------------------
         // Operator -
         //----------------------------------------
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_x - l_x2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_x) + " - " + std::to_string(l_x2));
-        l_ok &= quicky_test::check_expected(l_x - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)7,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x) + " - " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_x - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)11,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x) + " - " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_x - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_x) + " - " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_x - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)7,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x) + " - " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_x - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)11,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x) + " - " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_x - l_x2, t_fract((t_coef_num)0), std::to_string(l_x) + " - " + std::to_string(l_x2));
+        l_ok &= quicky_test::check_expected(l_x - l_y, t_fract((t_coef_den)(unsigned int)7,(t_coef_den)(unsigned int)6), std::to_string(l_x) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x - l_z, t_fract((t_coef_den)(unsigned int)11,(t_coef_den)(unsigned int)10), std::to_string(l_x) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x - l_x_bis, t_fract((t_coef_num)0), std::to_string(l_x) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x - l_y_bis, t_fract((t_coef_den)(unsigned int)7,(t_coef_den)(unsigned int)6), std::to_string(l_x) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x - l_z_bis, t_fract((t_coef_den)(unsigned int)11,(t_coef_den)(unsigned int)10), std::to_string(l_x) + " - " + std::to_string(l_z_bis));
 
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_y - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-7,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y) + " - " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_y - l_y2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_y) + " - " + std::to_string(l_y2));
-        l_ok &= quicky_test::check_expected(l_y - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_y) + " - " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_y - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-7,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y) + " - " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_y - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_y) + " - " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_y - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_y) + " - " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_y - l_x, t_fract((t_coef_num)-7,(t_coef_den)(unsigned int)6), std::to_string(l_y) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y - l_y2, t_fract((t_coef_num)0), std::to_string(l_y) + " - " + std::to_string(l_y2));
+        l_ok &= quicky_test::check_expected(l_y - l_z, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)15), std::to_string(l_y) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y - l_x_bis, t_fract((t_coef_num)-7,(t_coef_den)(unsigned int)6), std::to_string(l_y) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y - l_y_bis, t_fract((t_coef_num)0), std::to_string(l_y) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y - l_z_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)15), std::to_string(l_y) + " - " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_z - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-11,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z) + " - " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_z - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_z) + " - " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_z - l_z2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_z) + " - " + std::to_string(l_z2));
-        l_ok &= quicky_test::check_expected(l_z - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-11,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z) + " - " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_z - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_z) + " - " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_z - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_z) + " - " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_z - l_x, t_fract((t_coef_num)-11,(t_coef_den)(unsigned int)10), std::to_string(l_z) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z - l_y, t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)15), std::to_string(l_z) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z - l_z2, t_fract((t_coef_num)0), std::to_string(l_z) + " - " + std::to_string(l_z2));
+        l_ok &= quicky_test::check_expected(l_z - l_x_bis, t_fract((t_coef_num)-11,(t_coef_den)(unsigned int)10), std::to_string(l_z) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z - l_y_bis, t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)15), std::to_string(l_z) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z - l_z_bis, t_fract((t_coef_num)0), std::to_string(l_z) + " - " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_x_bis - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_x_bis) + " - " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_x_bis - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)7,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " - " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_x_bis - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)11,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " - " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_x_bis - l_x_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_x_bis) + " - " + std::to_string(l_x_bis2));
-        l_ok &= quicky_test::check_expected(l_x_bis - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)7,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " - " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_x_bis - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)11,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " - " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_x, t_fract((t_coef_num)0), std::to_string(l_x_bis) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_y, t_fract((t_coef_den)(unsigned int)7,(t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_z, t_fract((t_coef_den)(unsigned int)11,(t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_x_bis2, t_fract((t_coef_num)0), std::to_string(l_x_bis) + " - " + std::to_string(l_x_bis2));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_y_bis, t_fract((t_coef_den)(unsigned int)7,(t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis - l_z_bis, t_fract((t_coef_den)(unsigned int)11,(t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " - " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_y_bis - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-7,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y_bis) + " - " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_y_bis - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_y_bis) + " - " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_y_bis - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_y_bis) + " - " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_y_bis - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-7,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y_bis) + " - " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_y_bis - l_y_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_y_bis) + " - " + std::to_string(l_y_bis2));
-        l_ok &= quicky_test::check_expected(l_y_bis - l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_y_bis) + " - " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_x, t_fract((t_coef_num)-7,(t_coef_den)(unsigned int)6), std::to_string(l_y_bis) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_y, t_fract((t_coef_num)0), std::to_string(l_y_bis) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_z, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)15), std::to_string(l_y_bis) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_x_bis, t_fract((t_coef_num)-7,(t_coef_den)(unsigned int)6), std::to_string(l_y_bis) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_y_bis2, t_fract((t_coef_num)0), std::to_string(l_y_bis) + " - " + std::to_string(l_y_bis2));
+        l_ok &= quicky_test::check_expected(l_y_bis - l_z_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)15), std::to_string(l_y_bis) + " - " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_z_bis - l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-11,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " - " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_z_bis - l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_z_bis) + " - " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_z_bis - l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_z_bis) + " - " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_z_bis - l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-11,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " - " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_z_bis - l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)15), std::to_string(l_z_bis) + " - " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_z_bis - l_z_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)0), std::to_string(l_z_bis) + " - " + std::to_string(l_z_bis2));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_x, t_fract((t_coef_num)-11,(t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " - " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_y, t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)15), std::to_string(l_z_bis) + " - " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_z, t_fract((t_coef_num)0), std::to_string(l_z_bis) + " - " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_x_bis, t_fract((t_coef_num)-11,(t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " - " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_y_bis, t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)15), std::to_string(l_z_bis) + " - " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis - l_z_bis2, t_fract((t_coef_num)0), std::to_string(l_z_bis) + " - " + std::to_string(l_z_bis2));
 
 
         //----------------------------------------
         // Operator *
         //----------------------------------------
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_x * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4), std::to_string(l_x) + " * " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_x * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x) + " * " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_x * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x) + " * " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_x * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4), std::to_string(l_x) + " * " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_x * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x) + " * " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_x * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x) + " * " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_x * l_x, t_fract((t_coef_num)1,(t_coef_den)(unsigned int)4), std::to_string(l_x) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x * l_y, t_fract((t_coef_num)-2,(t_coef_den)(unsigned int)6), std::to_string(l_x) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x * l_z, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)10), std::to_string(l_x) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x * l_x_bis, t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)4), std::to_string(l_x) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x * l_y_bis, t_fract((t_coef_num)-2,(t_coef_den)(unsigned int)6), std::to_string(l_x) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x * l_z_bis, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)10), std::to_string(l_x) + " * " + std::to_string(l_z_bis));
 
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_y * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y) + " * " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_y * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9), std::to_string(l_y) + " * " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_y * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_y) + " * " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_y * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_y) + " * " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_y * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9), std::to_string(l_y) + " * " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_y * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_y) + " * " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_y * l_x, t_fract((t_coef_num)-2,(t_coef_den)(unsigned int)6), std::to_string(l_y) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y * l_y, t_fract((t_coef_den)(unsigned int)4,(t_coef_den)(unsigned int)9), std::to_string(l_y) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y * l_z, t_fract((t_coef_den)(unsigned int)2,(t_coef_den)(unsigned int)5), std::to_string(l_y) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y * l_x_bis, t_fract((t_coef_num)-2,(t_coef_den)(unsigned int)6), std::to_string(l_y) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y * l_y_bis, t_fract((t_coef_den)(unsigned int)4,(t_coef_den)(unsigned int)9), std::to_string(l_y) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y * l_z_bis, t_fract((t_coef_den)(unsigned int)2,(t_coef_den)(unsigned int)5), std::to_string(l_y) + " * " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_z * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z) + " * " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_z * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z) + " * " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_z * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)25), std::to_string(l_z) + " * " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_z * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z) + " * " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_z * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z) + " * " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_z * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)25), std::to_string(l_z) + " * " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_z * l_x, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)10), std::to_string(l_z) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z * l_y, t_fract((t_coef_den)(unsigned int)2,(t_coef_den)(unsigned int)5), std::to_string(l_z) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z * l_z, t_fract((t_coef_den)(unsigned int)9,(t_coef_den)(unsigned int)25), std::to_string(l_z) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z * l_x_bis, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)10), std::to_string(l_z) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z * l_y_bis, t_fract((t_coef_den)(unsigned int)2,(t_coef_den)(unsigned int)5), std::to_string(l_z) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z * l_z_bis, t_fract((t_coef_den)(unsigned int)9,(t_coef_den)(unsigned int)25), std::to_string(l_z) + " * " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_x_bis * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4), std::to_string(l_x_bis) + " * " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_x_bis * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_x_bis) + " * " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_x_bis * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " * " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_x_bis * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4), std::to_string(l_x_bis) + " * " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_x_bis * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_x_bis) + " * " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_x_bis * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " * " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_x, t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)4), std::to_string(l_x_bis) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_y, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)3), std::to_string(l_x_bis) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_z, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_x_bis, t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)4), std::to_string(l_x_bis) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_y_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)3), std::to_string(l_x_bis) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis * l_z_bis, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)10), std::to_string(l_x_bis) + " * " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_y_bis * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " * " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_y_bis * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9), std::to_string(l_y_bis) + " * " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_y_bis * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_y_bis) + " * " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_y_bis * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " * " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_y_bis * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9), std::to_string(l_y_bis) + " * " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_y_bis * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_y_bis) + " * " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_x, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_y, t_fract((t_coef_den)(unsigned int)4,(t_coef_den)(unsigned int)9), std::to_string(l_y_bis) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_z, t_fract((t_coef_den)(unsigned int)2,(t_coef_den)(unsigned int)5), std::to_string(l_y_bis) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_x_bis, t_fract((t_coef_num)-1,(t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_y_bis, t_fract((t_coef_den)(unsigned int)4,(t_coef_den)(unsigned int)9), std::to_string(l_y_bis) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis * l_z_bis, t_fract((t_coef_den)(unsigned int)2,(t_coef_den)(unsigned int)5), std::to_string(l_y_bis) + " * " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_z_bis * l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " * " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_z_bis * l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " * " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_z_bis * l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)25), std::to_string(l_z_bis) + " * " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_z_bis * l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " * " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_z_bis * l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " * " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_z_bis * l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)25), std::to_string(l_z_bis) + " * " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_x, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " * " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_y, t_fract((t_coef_den)(unsigned int)2,(t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " * " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_z, t_fract((t_coef_den)(unsigned int)9,(t_coef_den)(unsigned int)25), std::to_string(l_z_bis) + " * " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_x_bis, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " * " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_y_bis, t_fract((t_coef_den)(unsigned int)2,(t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " * " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis * l_z_bis, t_fract((t_coef_den)(unsigned int)9,(t_coef_den)(unsigned int)25), std::to_string(l_z_bis) + " * " + std::to_string(l_z_bis));
 
         //----------------------------------------
         // Operator /
         //----------------------------------------
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_x / l_x2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_x) + " / " + std::to_string(l_x2));
-        l_ok &= quicky_test::check_expected(l_x / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4), std::to_string(l_x) + " / " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_x / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-5,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x) + " / " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_x / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_x) + " / " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_x / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4), std::to_string(l_x) + " / " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_x / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-5,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x) + " / " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_x / l_x2, t_fract((t_coef_num)1), std::to_string(l_x) + " / " + std::to_string(l_x2));
+        l_ok &= quicky_test::check_expected(l_x / l_y, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)4), std::to_string(l_x) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x / l_z, t_fract((t_coef_num)-5,(t_coef_den)(unsigned int)6), std::to_string(l_x) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x / l_x_bis, t_fract((t_coef_num)1), std::to_string(l_x) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_x / l_y_bis, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)4), std::to_string(l_x) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x / l_z_bis, t_fract((t_coef_num)-5,(t_coef_den)(unsigned int)6), std::to_string(l_x) + " / " + std::to_string(l_z_bis));
 
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_y / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y) + " / " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_y / l_y2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_y) + " / " + std::to_string(l_y2));
-        l_ok &= quicky_test::check_expected(l_y / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9), std::to_string(l_y) + " / " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_y / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y) + " / " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_y / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_y) + " / " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_y / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9), std::to_string(l_y) + " / " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_y / l_x, t_fract((t_coef_num)-4,(t_coef_den)(unsigned int)3), std::to_string(l_y) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y / l_y2, t_fract((t_coef_num)1), std::to_string(l_y) + " / " + std::to_string(l_y2));
+        l_ok &= quicky_test::check_expected(l_y / l_z, t_fract((t_coef_den)(unsigned int)10,(t_coef_den)(unsigned int)9), std::to_string(l_y) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y / l_x_bis, t_fract((t_coef_num)-4,(t_coef_den)(unsigned int)3), std::to_string(l_y) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y / l_y_bis, t_fract((t_coef_num)1), std::to_string(l_y) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_y / l_z_bis, t_fract((t_coef_den)(unsigned int)10,(t_coef_den)(unsigned int)9), std::to_string(l_y) + " / " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_z / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-6,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z) + " / " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_z / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z) + " / " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_z / l_z2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_z) + " / " + std::to_string(l_z2));
-        l_ok &= quicky_test::check_expected(l_z / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-6,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z) + " / " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_z / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z) + " / " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_z / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_z) + " / " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_z / l_x, t_fract((t_coef_num)-6,(t_coef_den)(unsigned int)5), std::to_string(l_z) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z / l_y, t_fract((t_coef_den)(unsigned int)9,(t_coef_den)(unsigned int)10), std::to_string(l_z) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z / l_z2, t_fract((t_coef_num)1), std::to_string(l_z) + " / " + std::to_string(l_z2));
+        l_ok &= quicky_test::check_expected(l_z / l_x_bis, t_fract((t_coef_num)-6,(t_coef_den)(unsigned int)5), std::to_string(l_z) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z / l_y_bis, t_fract((t_coef_den)(unsigned int)9,(t_coef_den)(unsigned int)10), std::to_string(l_z) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z / l_z_bis, t_fract((t_coef_num)1), std::to_string(l_z) + " / " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_x_bis / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_x_bis) + " / " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_x_bis / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4), std::to_string(l_x_bis) + " / " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_x_bis / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-5,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " / " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_x_bis / l_x_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_x_bis) + " / " + std::to_string(l_x_bis2));
-        l_ok &= quicky_test::check_expected(l_x_bis / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-3,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)4), std::to_string(l_x_bis) + " / " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_x_bis / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-5,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " / " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_x, t_fract((t_coef_num)1), std::to_string(l_x_bis) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_y, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)4), std::to_string(l_x_bis) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_z, t_fract((t_coef_num)-5,(t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_x_bis2, t_fract((t_coef_num)1), std::to_string(l_x_bis) + " / " + std::to_string(l_x_bis2));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_y_bis, t_fract((t_coef_num)-3,(t_coef_den)(unsigned int)4), std::to_string(l_x_bis) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_x_bis / l_z_bis, t_fract((t_coef_num)-5,(t_coef_den)(unsigned int)6), std::to_string(l_x_bis) + " / " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_y_bis / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " / " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_y_bis / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_y_bis) + " / " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_y_bis / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9), std::to_string(l_y_bis) + " / " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_y_bis / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-4,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " / " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_y_bis / l_y_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_y_bis) + " / " + std::to_string(l_y_bis2));
-        l_ok &= quicky_test::check_expected(l_y_bis / l_z_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9), std::to_string(l_y_bis) + " / " + std::to_string(l_z_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_x, t_fract((t_coef_num)-4,(t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_y, t_fract((t_coef_num)1), std::to_string(l_y_bis) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_z, t_fract((t_coef_den)(unsigned int)10,(t_coef_den)(unsigned int)9), std::to_string(l_y_bis) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_x_bis, t_fract((t_coef_num)-4,(t_coef_den)(unsigned int)3), std::to_string(l_y_bis) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_y_bis2, t_fract((t_coef_num)1), std::to_string(l_y_bis) + " / " + std::to_string(l_y_bis2));
+        l_ok &= quicky_test::check_expected(l_y_bis / l_z_bis, t_fract((t_coef_den)(unsigned int)10,(t_coef_den)(unsigned int)9), std::to_string(l_y_bis) + " / " + std::to_string(l_z_bis));
 
         //------------------------------------------------------------------------
-        l_ok &= quicky_test::check_expected(l_z_bis / l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-6,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " / " + std::to_string(l_x));
-        l_ok &= quicky_test::check_expected(l_z_bis / l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " / " + std::to_string(l_y));
-        l_ok &= quicky_test::check_expected(l_z_bis / l_z, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_z_bis) + " / " + std::to_string(l_z));
-        l_ok &= quicky_test::check_expected(l_z_bis / l_x_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-6,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " / " + std::to_string(l_x_bis));
-        l_ok &= quicky_test::check_expected(l_z_bis / l_y_bis, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)9,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " / " + std::to_string(l_y_bis));
-        l_ok &= quicky_test::check_expected(l_z_bis / l_z_bis2, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)1), std::to_string(l_z_bis) + " / " + std::to_string(l_z_bis2));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_x, t_fract((t_coef_num)-6,(t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " / " + std::to_string(l_x));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_y, t_fract((t_coef_den)(unsigned int)9,(t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " / " + std::to_string(l_y));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_z, t_fract((t_coef_num)1), std::to_string(l_z_bis) + " / " + std::to_string(l_z));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_x_bis, t_fract((t_coef_num)-6,(t_coef_den)(unsigned int)5), std::to_string(l_z_bis) + " / " + std::to_string(l_x_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_y_bis, t_fract((t_coef_den)(unsigned int)9,(t_coef_den)(unsigned int)10), std::to_string(l_z_bis) + " / " + std::to_string(l_y_bis));
+        l_ok &= quicky_test::check_expected(l_z_bis / l_z_bis2, t_fract((t_coef_num)1), std::to_string(l_z_bis) + " / " + std::to_string(l_z_bis2));
 
         std::cout << "Operator ++" << std::endl;
-        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2), "l_x = 1/2");
+        l_ok &= quicky_test::check_expected(l_x, t_fract((t_coef_den)(unsigned int)1, (t_coef_den)(unsigned int)2), "l_x = 1/2");
         ++l_x;
-        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2), "l_x = 3/2");
+        l_ok &= quicky_test::check_expected(l_x, t_fract((t_coef_den)(unsigned int)3, (t_coef_den)(unsigned int)2), "l_x = 3/2");
         l_x++;
-        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2), "l_x = 5/2");
+        l_ok &= quicky_test::check_expected(l_x, t_fract((t_coef_den)(unsigned int)5, (t_coef_den)(unsigned int)2), "l_x = 5/2");
         std::cout << "Operator --" << std::endl;
         --l_x;
-        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2), "l_x = 3/2");
+        l_ok &= quicky_test::check_expected(l_x, t_fract((t_coef_den)(unsigned int)3, (t_coef_den)(unsigned int)2), "l_x = 3/2");
         l_x--;
-        l_ok &= quicky_test::check_expected(l_x, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2), "l_x = 1/2");
+        l_ok &= quicky_test::check_expected(l_x, t_fract((t_coef_den)(unsigned int)1, (t_coef_den)(unsigned int)2), "l_x = 1/2");
 
-        quicky_utils::fract<FRACT_INTERNAL_TYPE> l_zero((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2);
+        t_fract l_zero((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)2);
         assert(l_zero);
-        l_zero -= quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2);
+        l_zero -= t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)2);
         assert(!l_zero);
 
-        l_x = quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2);
-        l_y = quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5);
+        l_x = t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)2);
+        l_y = t_fract((t_coef_den)(unsigned int)2,(t_coef_den)(unsigned int)5);
         l_ok &= quicky_test::check_expected(l_x < l_y, false, std::to_string(l_x) + " < " + std::to_string(l_y));
         l_ok &= quicky_test::check_expected(l_x > l_y, true, std::to_string(l_x) + " > " + std::to_string(l_y));
         l_ok &= quicky_test::check_expected(l_x <= l_y, false, std::to_string(l_x) + " <= " + std::to_string(l_y));
         l_ok &= quicky_test::check_expected(l_x >= l_y, true, std::to_string(l_x) + " >= " + std::to_string(l_y));
-        l_y = quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5);
+        l_y = t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)5);
         l_ok &= quicky_test::check_expected(l_x != l_y, true, std::to_string(l_x) + " != " + std::to_string(l_y));
         l_ok &= quicky_test::check_expected(l_x == l_y, false, std::to_string(l_x) + " == " + std::to_string(l_y));
 
 
-        l_y = -quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5);
-        l_ok &= quicky_test::check_expected(l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)-1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), "l_y = -1/5");
-        l_y = +quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5);
-        l_ok &= quicky_test::check_expected(l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), "l_y = 1/5");
-        l_y += (quicky_utils::fract<FRACT_INTERNAL_TYPE>)((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num)3);
-        l_ok &= quicky_test::check_expected(l_y, quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)16, (typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)5), "l_y = 16/5");
+        l_y = -t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)5);
+        l_ok &= quicky_test::check_expected(l_y, t_fract((t_coef_num)-1, (t_coef_den)(unsigned int)5), "l_y = -1/5");
+        l_y = +t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)5);
+        l_ok &= quicky_test::check_expected(l_y, t_fract((t_coef_den)(unsigned int)1, (t_coef_den)(unsigned int)5), "l_y = 1/5");
+        l_y += (t_fract)((t_coef_num)3);
+        l_ok &= quicky_test::check_expected(l_y, t_fract((t_coef_den)(unsigned int)16, (t_coef_den)(unsigned int)5), "l_y = 16/5");
 
         l_ok &= quicky_test::check_expected(l_x < 2, true, std::to_string(l_x) + " < 2");
         l_ok &= quicky_test::check_expected(l_x <= 2, true, std::to_string(l_x) + " <= 2");
@@ -383,13 +398,23 @@ namespace quicky_utils
         std::cout << "---------------------------------------" << std::endl;
         std::cout << "- to_float and to double" << std::endl;
         std::cout << "---------------------------------------" << std::endl;
-        l_a = quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)2);
-        l_b = quicky_utils::fract<FRACT_INTERNAL_TYPE>((typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)1,(typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den)(unsigned int)3);
+        l_a = t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)2);
+        l_b = t_fract((t_coef_den)(unsigned int)1,(t_coef_den)(unsigned int)3);
         l_ok &= quicky_test::check_expected(l_a.to_float(), 1.0f / 2.0f, std::to_string(l_a) + " to float");
         l_ok &= quicky_test::check_expected(l_b.to_float(), 1.0f / 3.0f, std::to_string(l_b) + " to float");
         l_ok &= quicky_test::check_expected(l_a.to_double(), 1.0 / 2.0, std::to_string(l_a) + " to double");
         l_ok &= quicky_test::check_expected(l_b.to_double(), 1.0 / 3.0, std::to_string(l_b) + " to double");
 
+        return l_ok;
+    }
+
+    bool test_fract()
+    {
+        bool l_ok = true;
+        l_ok &= test_fract_normal();
+        l_ok &= test_fract_generic<uint32_t>();
+        l_ok &= test_fract_generic<quicky_utils::safe_int<int32_t>>();
+        l_ok &= test_fract_generic<quicky_utils::ext_int<int32_t>>();
         return l_ok;
     }
 }
