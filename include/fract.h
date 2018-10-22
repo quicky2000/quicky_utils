@@ -17,6 +17,7 @@
 #ifndef _FRACT_H_
 #define _FRACT_H_
 
+#include "type_string.h"
 #include <iostream>
 #include <cinttypes>
 #include <cstdlib>
@@ -1253,6 +1254,8 @@ namespace quicky_utils
     return fabs(fabs(p_op1) - fabs(p_op2)) < l_epsilon;
   }
 #endif // FRACT_DOUBLE_CHECK
+  declare_template_specialise_type_string(typename T,fract<T>,"fract<" + type_string<T>::name() + ">");
+  template_specialise_type_string(typename T,fract<T>,"fract<" + type_string<T>::name() + ">");
 
 }
 

@@ -56,6 +56,7 @@ namespace quicky_utils
         typedef typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_den t_coef_den;
         typedef typename quicky_utils::fract<FRACT_INTERNAL_TYPE>::t_coef_num t_coef_num;
         typedef typename quicky_utils::fract<FRACT_INTERNAL_TYPE> t_fract;
+        std::cout << "Testing " << quicky_utils::type_string<t_fract>::name() << std::endl;
         bool l_ok = true;
         std::cout << "---------------------------------------" << std::endl;
         std::cout << "- PGCD" << std::endl;
