@@ -466,7 +466,7 @@ namespace quicky_utils
     m_double(0.0),
 #endif // FRACT_DOUBLE_CHECK
     m_num(0),
-    m_den(1)
+    m_den((unsigned int)1)
   {
   }
 
