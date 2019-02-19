@@ -406,6 +406,7 @@ namespace quicky_utils
         l_ok &= quicky_test::check_expected(l_a.to_double(), 1.0 / 2.0, std::to_string(l_a) + " to double");
         l_ok &= quicky_test::check_expected(l_b.to_double(), 1.0 / 3.0, std::to_string(l_b) + " to double");
 
+        l_ok &= quicky_test::check_expected(std::abs(t_fract((t_coef_num)-1, (t_coef_den)(unsigned int)3)), t_fract((t_coef_num)1,(t_coef_den)(unsigned int)3), "std::abs(fract)");
         return l_ok;
     }
 

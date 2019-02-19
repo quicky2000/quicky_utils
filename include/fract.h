@@ -248,6 +248,8 @@ namespace quicky_utils
     inline float to_float(void)const;
     inline double to_double(void)const;
 
+    fract abs() const;
+
     /**
        Return PGCD computed yusing Euclide algorithm
        @param first number
@@ -1245,6 +1247,14 @@ namespace quicky_utils
     return p_op1 >= fract<T>((typename fract<T>::t_coef_num)p_op2);
   }
 
+  //---------------------------------------------------------------------------
+  template <typename T>
+  fract<T>
+  fract<T>::abs() const
+  {
+        return fract<T>((t_coef_den)std::abs(m_num), m_den);
+  }
+
 #ifdef FRACT_DOUBLE_CHECK
   bool fract<T>::double_equal(const double & p_op1,
 			   const double & p_op2
@@ -1328,6 +1338,14 @@ namespace std
       static constexpr bool tinyness_before = false;
       static constexpr float_round_style round_style = round_toward_zero;
     };
+
+  //---------------------------------------------------------------------------
+    template <typename T>
+    quicky_utils::fract<T> abs(const quicky_utils::fract<T> & p_fract)
+    {
+        return p_fract.abs();
+    }
+
 }
 
 #endif // _FRACT_H_
