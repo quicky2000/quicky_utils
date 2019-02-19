@@ -144,7 +144,7 @@ namespace quicky_utils
 
     inline constexpr fract(void) noexcept;
 
-    inline constexpr fract(const t_coef_num & p_num);
+    inline explicit constexpr fract(const t_coef_num & p_num);
 
     inline constexpr fract(const t_coef_den & p_den
 	                      ,std::nullptr_t
