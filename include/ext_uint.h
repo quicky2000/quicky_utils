@@ -76,23 +76,43 @@ namespace quicky_utils
          * Constructor from uint32_t
          * @param p_value value to convert to ext_uint
          */
+#ifndef EXT_UINT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_UINT_DISABLE_EXPLICIT
         ext_uint(const uint32_t & p_value);
 
         /**
          * Constructor from uint64_t
          * @param p_value value to convert to ext_uint
          */
+#ifndef EXT_UINT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
         ext_uint(const uint64_t & p_value);
 
         /**
          * Constructor from ext_uint
          * @param T
          */
-        explicit ext_uint(const ext_int<typename std::make_signed<T>::type> & p_ext_int);
+#ifndef EXT_UINT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        ext_uint(const ext_int<typename std::make_signed<T>::type> & p_ext_int);
 
-        explicit operator bool() const;
-        explicit operator float() const;
-        explicit operator double() const;
+#ifndef EXT_UINT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        operator bool() const;
+
+#ifndef EXT_UINT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        operator float() const;
+
+#ifndef EXT_UINT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        operator double() const;
 
         /**
          * Accessor returning number of words composing type

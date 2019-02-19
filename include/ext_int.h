@@ -88,31 +88,46 @@ namespace quicky_utils
          * Constructor from uint32_t
          * @param p_value value to convert to ext_int
          */
-        explicit ext_int(const uint32_t & p_value);
+#ifndef EXT_INT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        ext_int(const uint32_t & p_value);
 
         /**
          * Constructor from int32_t
          * @param p_value value to convert to ext_int
          */
-        explicit ext_int(const int32_t & p_value);
+#ifndef EXT_INT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        ext_int(const int32_t & p_value);
 
         /**
          * Constructor from uint64_t
          * @param p_value value to convert to ext_int
          */
-        explicit ext_int(const uint64_t & p_value);
+#ifndef EXT_INT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        ext_int(const uint64_t & p_value);
 
         /**
          * Constructor from int64_t
          * @param p_value value to convert to ext_int
          */
-        explicit ext_int(const int64_t & p_value);
+#ifndef EXT_INT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        ext_int(const int64_t & p_value);
 
         /**
          * Constructor from ext_uint
          * @param p_value
          */
-        explicit ext_int(const ext_uint<ubase_type > & p_value);
+#ifndef EXT_INT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        ext_int(const ext_uint<ubase_type > & p_value);
 
         /**
          * Display content of ext_int in hexadecimal
@@ -138,9 +153,20 @@ namespace quicky_utils
          */
         ext_int<T> & operator=(const ext_int<T> & p_op);
 
-        explicit operator bool() const;
-        explicit operator float() const;
-        explicit operator double() const;
+#ifndef EXT_INT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        operator bool() const;
+
+#ifndef EXT_INT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        operator float() const;
+
+#ifndef EXT_INT_DISABLE_EXPLICIT
+        explicit
+#endif // EXT_INT_DISABLE_EXPLICIT
+        operator double() const;
 
         bool
         operator==(const ext_int & p_op) const;
