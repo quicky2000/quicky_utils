@@ -505,7 +505,7 @@ namespace quicky_utils
   {
     assert(p_den);
     t_coef_den l_pgcd = PGCD(p_num,p_den);
-    m_num = abs(p_num) / ((t_coef_num)l_pgcd);
+    m_num = std::abs(p_num) / ((t_coef_num)l_pgcd);
 
     if((p_num > (decltype(m_num))0 && p_den < (decltype(m_num))0) ||
        (p_num < (decltype(m_num))0 && p_den > (decltype(m_num))0)
@@ -513,7 +513,7 @@ namespace quicky_utils
       {
           m_num = -m_num;
       }
-    m_den = (t_coef_den)(abs(p_den)) / l_pgcd;
+    m_den = (t_coef_den)(std::abs(p_den)) / l_pgcd;
   }
 
   //----------------------------------------------------------------------------
@@ -558,7 +558,7 @@ namespace quicky_utils
       assert(p_den);
       t_coef_den l_pgcd = PGCD(p_num,p_den);
       m_num = (t_coef_num)(p_num / l_pgcd) * ((t_coef_num)(p_den < ((t_coef_num)0) ? - 1: 1));
-      m_den = ((t_coef_den) abs(p_den)) / l_pgcd;
+      m_den = ((t_coef_den) std::abs(p_den)) / l_pgcd;
   }
 
   //----------------------------------------------------------------------------
@@ -570,8 +570,8 @@ namespace quicky_utils
 #ifdef FRACT_DOUBLE_CHECK
             m_double(((double)p_num)/((double)p_den)),
 #endif // FRACT_DOUBLE_CHECK
-          m_num((abs(p_num) / ((t_coef_num)PGCD(p_num,p_den,nullptr))) * (((p_num > 0 && p_den < 0) || (p_num < 0 && p_den > 0))? -1 : 1)),
-          m_den((t_coef_den)(abs(p_den)) / PGCD(p_num,p_den,nullptr))
+          m_num((std::abs(p_num) / ((t_coef_num)PGCD(p_num,p_den,nullptr))) * (((p_num > 0 && p_den < 0) || (p_num < 0 && p_den > 0))? -1 : 1)),
+          m_den((t_coef_den)(std::abs(p_den)) / PGCD(p_num,p_den,nullptr))
   {
       //    static_assert(p_den);
   }
@@ -601,7 +601,7 @@ namespace quicky_utils
             m_double(((double)p_num)/((double)p_den)),
 #endif // FRACT_DOUBLE_CHECK
             m_num(((t_coef_num)(p_num / PGCD(p_num,p_den,nullptr))) * ((t_coef_num )(p_den < 0 ? -1 : 1))),
-            m_den((t_coef_den)(abs(p_den)) / PGCD(p_num,p_den,nullptr))
+            m_den((t_coef_den)(std::abs(p_den)) / PGCD(p_num,p_den,nullptr))
     {
         //    static_assert(p_den);
     }
@@ -953,7 +953,7 @@ namespace quicky_utils
                                               ,const t_coef_num & p_b
                                               )
   {
-      return PGCD((t_coef_den) abs(p_a),(t_coef_den) abs(p_b));
+      return PGCD((t_coef_den) std::abs(p_a),(t_coef_den) std::abs(p_b));
   }
 
   //----------------------------------------------------------------------------
@@ -962,7 +962,7 @@ namespace quicky_utils
                                               ,const t_coef_den & p_b
                                               )
   {
-      return PGCD((t_coef_den) abs(p_a), p_b);
+      return PGCD((t_coef_den) std::abs(p_a), p_b);
   }
 
   //----------------------------------------------------------------------------
@@ -971,7 +971,7 @@ namespace quicky_utils
                                               ,const t_coef_num & p_b
                                               )
   {
-      return PGCD(p_a, (t_coef_den) abs(p_b));
+      return PGCD(p_a, (t_coef_den) std::abs(p_b));
   }
 
   //----------------------------------------------------------------------------
@@ -981,7 +981,7 @@ namespace quicky_utils
 					                                    ,std::nullptr_t
 					                                    )
   {
-    return ((p_a % p_b) ? PGCD((fract<T>::t_coef_den)abs(p_b),(fract<T>::t_coef_den)abs(p_a) % (fract<T>::t_coef_den)abs(p_b),nullptr) : (fract<T>::t_coef_den)abs(p_b));
+    return ((p_a % p_b) ? PGCD((fract<T>::t_coef_den)std::abs(p_b),(fract<T>::t_coef_den)std::abs(p_a) % (fract<T>::t_coef_den)std::abs(p_b),nullptr) : (fract<T>::t_coef_den)std::abs(p_b));
   }
 
   //----------------------------------------------------------------------------
@@ -1001,7 +1001,7 @@ namespace quicky_utils
                                                         ,std::nullptr_t
                                                         )
   {
-      return ((p_a % p_b) ? PGCD((fract<T>::t_coef_den)abs(p_b),p_a % (fract<T>::t_coef_den)abs(p_b),nullptr) : (fract<T>::t_coef_den)abs(p_b));
+      return ((p_a % p_b) ? PGCD((fract<T>::t_coef_den)std::abs(p_b),p_a % (fract<T>::t_coef_den)std::abs(p_b),nullptr) : (fract<T>::t_coef_den)std::abs(p_b));
   }
 
   //----------------------------------------------------------------------------
@@ -1011,7 +1011,7 @@ namespace quicky_utils
                                                         ,std::nullptr_t
                                                         )
   {
-      return ((p_a % p_b) ? PGCD(p_b,abs(p_a) % p_b,nullptr) : p_b);
+      return ((p_a % p_b) ? PGCD(p_b,std::abs(p_a) % p_b,nullptr) : p_b);
   }
 
   //----------------------------------------------------------------------------
@@ -1029,7 +1029,7 @@ namespace quicky_utils
                                                const t_coef_num & p_b
                                               )
   {
-      return PPCM((t_coef_den )abs(p_a), (t_coef_den)abs(p_b));
+      return PPCM((t_coef_den )std::abs(p_a), (t_coef_den)std::abs(p_b));
   }
 
   //----------------------------------------------------------------------------
@@ -1038,7 +1038,7 @@ namespace quicky_utils
                                                const t_coef_den & p_b
                                               )
   {
-      return PPCM((t_coef_den )abs(p_a), p_b);
+      return PPCM((t_coef_den )std::abs(p_a), p_b);
   }
 
   //----------------------------------------------------------------------------
@@ -1047,7 +1047,7 @@ namespace quicky_utils
                                                const t_coef_num & p_b
                                               )
   {
-      return PPCM(p_a, (t_coef_den)abs(p_b));
+      return PPCM(p_a, (t_coef_den)std::abs(p_b));
   }
 
 
@@ -1068,7 +1068,7 @@ namespace quicky_utils
                                                          std::nullptr_t
                                                         )
   {
-    return ((t_coef_den)abs(p_a)) * ((t_coef_den)abs(p_b)) / PGCD(((t_coef_den )abs(p_a)),((t_coef_den )abs(p_b)),nullptr);
+    return ((t_coef_den)std::abs(p_a)) * ((t_coef_den)std::abs(p_b)) / PGCD(((t_coef_den )std::abs(p_a)),((t_coef_den )std::abs(p_b)),nullptr);
   }
 
   //----------------------------------------------------------------------------
@@ -1078,7 +1078,7 @@ namespace quicky_utils
                                                          std::nullptr_t
                                                         )
   {
-      return p_a * ((t_coef_den)abs(p_b)) / PGCD(p_a,((t_coef_den )abs(p_b)),nullptr);
+      return p_a * ((t_coef_den)std::abs(p_b)) / PGCD(p_a,((t_coef_den )std::abs(p_b)),nullptr);
   }
 
   //----------------------------------------------------------------------------
@@ -1088,7 +1088,7 @@ namespace quicky_utils
                                                          std::nullptr_t
                                                         )
   {
-      return ((t_coef_den)abs(p_a)) * p_b / PGCD(((t_coef_den )abs(p_a)),p_b,nullptr);
+      return ((t_coef_den)std::abs(p_a)) * p_b / PGCD(((t_coef_den )std::abs(p_a)),p_b,nullptr);
   }
 
   //----------------------------------------------------------------------------

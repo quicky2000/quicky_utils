@@ -1317,7 +1317,7 @@ namespace quicky_utils
                     l_reminder = (m_ext[l_index] >> l_apply_shift) & l_select_mask;
                 }
                 l_new_root = (m_root << l_real_shift) | l_reminder;
-                l_reminder = (abs(m_root) >> l_apply_shift) & l_select_mask;
+                l_reminder = (((ubase_type )std::abs(m_root)) >> l_apply_shift) & l_select_mask;
                 if(l_reminder || (l_new_root < 0 && m_root > 0))
                 {
                     l_new_ext.push_back((ubase_type)l_new_root);
