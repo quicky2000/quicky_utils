@@ -429,7 +429,6 @@ namespace quicky_utils
 
 namespace std
 {
-    template<>
     template<typename T>
     struct is_integral<quicky_utils::safe_uint<T>>
     {
@@ -437,7 +436,6 @@ namespace std
         static constexpr bool value = true;
     };
 
-    template<>
     template<typename T>
     struct is_arithmetic<quicky_utils::safe_uint<T>>
     {
@@ -445,7 +443,6 @@ namespace std
         static constexpr bool value = true;
     };
 
-    template<>
     template<typename T>
     struct is_scalar<quicky_utils::safe_uint<T>>
     {
@@ -453,7 +450,6 @@ namespace std
         static constexpr bool value = true;
     };
 
-    template<>
     template <typename T>
     class is_signed<quicky_utils::safe_uint<T> >
     {
@@ -461,7 +457,6 @@ namespace std
         static const bool value = false;
     };
 
-    template<>
     template <typename T>
     class make_signed<quicky_utils::safe_uint<T> >
     {
@@ -469,7 +464,6 @@ namespace std
         typedef quicky_utils::safe_int<typename std::make_signed<T>::type> type;
     };
 
-    template<>
     template <typename T>
     class make_unsigned<quicky_utils::safe_uint<T> >
     {
@@ -477,7 +471,6 @@ namespace std
         typedef quicky_utils::safe_uint<typename std::make_unsigned<T>::type> type;
     };
 
-    template<>
     template <typename T>
     class numeric_limits<quicky_utils::safe_uint<T> >
     {

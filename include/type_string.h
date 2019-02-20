@@ -52,7 +52,6 @@ namespace quicky_utils
     const std::string type_string<T>::m_name = "Unknown type";
 
 #define declare_template_specialise_type_string(template_arg,type,type_name)      \
-    template <>                                                                   \
     template <template_arg>                                                       \
     class type_string<type>                                                       \
     {                                                                             \

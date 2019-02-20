@@ -1273,7 +1273,6 @@ namespace quicky_utils
 
 namespace std
 {
-  template<>
   template <typename T>
     class is_signed<quicky_utils::fract<T>>
     {
@@ -1281,7 +1280,6 @@ namespace std
       static const bool value = true;
     };
 
-  template<>
   template <typename T>
     class numeric_limits<quicky_utils::fract<T>>
     {
