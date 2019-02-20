@@ -20,6 +20,7 @@
 #include "fract.h"
 #include "quicky_test.h"
 #include <cassert>
+#include <array>
 
 namespace quicky_utils
 {
