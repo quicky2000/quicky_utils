@@ -27,7 +27,7 @@
 #include <sstream>
 #include <cassert>
 #include <functional>
-#include <cmath>
+#include <cstdlib>
 
 namespace quicky_utils
 {

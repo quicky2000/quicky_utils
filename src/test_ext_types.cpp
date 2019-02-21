@@ -16,11 +16,12 @@
 */
 
 #ifdef QUICKY_UTILS_SELF_TEST
+#include <cstdlib>
+#include <cmath>
 #include "ext_uint.h"
 #include "ext_int.h"
 #include "quicky_test.h"
 #include <cassert>
-#include <cmath>
 
 namespace quicky_utils
 {

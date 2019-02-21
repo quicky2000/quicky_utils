@@ -20,6 +20,8 @@
 
 #include "safe_type_exception.h"
 #include "type_string.h"
+#include <cstdlib>
+#include <cmath>
 #include <limits>
 #include <iostream>
 #include <type_traits>
