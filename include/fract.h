@@ -146,6 +146,9 @@ namespace quicky_utils
 
     inline explicit constexpr fract(const t_coef_num & p_num);
 
+    template <typename T_ARG>
+    inline explicit constexpr fract(const T_ARG & p_num);
+
     inline constexpr fract(const t_coef_den & p_den
 	                      ,std::nullptr_t
 		                  );
@@ -482,6 +485,18 @@ namespace quicky_utils
     m_den((unsigned int)1)
   {
   }
+
+  //----------------------------------------------------------------------------
+  template <typename T>
+  template <typename T_ARG>
+  constexpr fract<T>::fract(const T_ARG & p_num):
+#ifdef FRACT_DOUBLE_CHECK
+          m_double(p_num),
+#endif // FRACT_DOUBLE_CHECK
+          m_num(p_num),
+          m_den((unsigned int)1)
+    {
+    }
 
   //----------------------------------------------------------------------------
   template <typename T>
