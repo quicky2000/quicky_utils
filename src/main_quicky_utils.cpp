@@ -55,6 +55,7 @@ int main(int argc,char ** argv)
         }
         quicky_test::set_ostream(l_report_file);
 
+        l_ok &= test_quicky_bitfield();
         l_ok &= check_test_utilities();
         l_ok &= test_ext_uint();
         l_ok &= test_ext_int();

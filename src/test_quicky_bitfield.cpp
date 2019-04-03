@@ -1,4 +1,105 @@
-//
-// Created by quickux on 03/04/19.
-//
+/*    This file is part of quicky_utils
+      Copyright (C) 2019 Julien Thevenon ( julien_thevenon at yahoo.fr )
 
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version.
+
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+
+      You should have received a copy of the GNU General Public License
+      along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+#ifdef QUICKY_UTILS_SELF_TEST
+
+#include "quicky_bitfield.h"
+#include "quicky_test.h"
+#include <sstream>
+
+namespace quicky_utils
+{
+    template <typename T>
+    bool test()
+    {
+        bool l_ok = true;
+        quicky_bitfield<T> l_bitfield1(48);
+        l_ok &= quicky_test::check_expected(l_bitfield1.bitsize(), (size_t)48, "bitsize");
+        l_ok &= quicky_test::check_expected(l_bitfield1.size(), sizeof(T) * (48 / (8 * sizeof(T)) + (0 != (48 % (8 * sizeof(T))))),"array size");
+        unsigned int l_data = 0xDEAD;
+        l_bitfield1.set(l_data, 16, 30);
+        unsigned int l_data2;
+        l_bitfield1.get(l_data2, 16, 30);
+        l_ok &= quicky_test::check_expected(l_data2, l_data, "set/get");
+
+        unsigned int l_index = 0;
+        std::string l_string("HELLO!  ");
+        for(auto l_iter: l_string)
+        {
+            l_bitfield1.set((unsigned int)l_iter, 8, 8 * l_index);
+            ++l_index;
+        }
+        std::stringstream l_stream;
+        l_bitfield1.dump_in(l_stream);
+        l_ok &= quicky_test::check_expected(l_stream.str(), l_string, "dump_in");
+
+        quicky_bitfield<T> l_bitfield_bis(l_bitfield1);
+        std::stringstream l_stream_bis;
+        l_bitfield_bis.dump_in(l_stream_bis);
+        l_ok &= quicky_test::check_expected(l_stream.str(), l_stream_bis.str(), "copy constructor");
+
+        std::string l_string2("ABCDEFGH");
+        std::stringstream l_stream2;
+        l_stream2 << l_string2;
+        l_bitfield1.read_from(l_stream2);
+        for(l_index = 0; l_index < l_string2.size(); ++l_index)
+        {
+            l_bitfield1.get(l_data2, 8, 8 * l_index);
+            l_string[l_index] = (char) l_data2;
+        }
+
+        l_ok &= quicky_test::check_expected(l_string, l_string2, "read_from");
+
+        l_bitfield1.set(0xDEAD, 16 ,16);
+        l_bitfield1.set(0xCAFE, 16 ,0);
+        l_bitfield1.set(0xBEEF, 16 ,32);
+        l_bitfield_bis.set(0xFF00, 16, 16);
+        l_bitfield_bis.set(0x0000, 16, 0);
+        l_bitfield_bis.set(0xFF, 16, 32);
+        l_bitfield1.apply_and(l_bitfield1, l_bitfield_bis);
+        l_bitfield1.get(l_data, 16, 0);
+        l_ok &= quicky_test::check_expected(l_data, 0x0000u, "apply_and");
+        l_bitfield1.get(l_data, 16, 32);
+        l_ok &= quicky_test::check_expected(l_data, 0xEFu, "apply_and");
+        l_bitfield1.get(l_data, 16, 24);
+        l_ok &= quicky_test::check_expected(l_data, 0xEFDEu, "apply_and");
+        quicky_bitfield<T> l_bitfield2(32);
+        l_ok &= quicky_test::check_expected(l_bitfield2.size(), 1 * sizeof(T),"array size");
+
+        quicky_bitfield<T> l_bitfield3(64);
+        l_ok &= quicky_test::check_expected(l_bitfield3.ffs(), 0, "ffs");
+        for(l_index = 0; l_index < 64; ++l_index)
+        {
+            l_bitfield3.set(1, 1, l_index);
+            l_ok &= quicky_test::check_expected((unsigned int)l_bitfield3.ffs(), l_index + 1, "ffs");
+            l_bitfield3.set(0, 1, l_index);
+        }
+        l_ok &= quicky_test::check_expected(l_bitfield2.size(), 1 * sizeof(T),"array size");
+        return l_ok;
+    }
+
+    bool test_quicky_bitfield()
+    {
+        bool l_ok = true;
+        l_ok &= test<uint32_t>();
+        l_ok &= test<uint64_t>();
+        return l_ok;
+    }
+}
+
+#endif // QUICKY_UTILS_SELF_TEST
+// EOF

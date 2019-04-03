@@ -82,6 +82,7 @@ else()
         src/test_ext_types.cpp
         src/test_safe_types.cpp
         src/test_type_string.cpp
+        src/test_quicky_bitfield.cpp
         ${MY_SOURCE_FILES}
         )
     add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main_${PROJECT_NAME}.cpp)

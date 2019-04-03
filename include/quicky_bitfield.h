@@ -455,6 +455,11 @@ namespace quicky_utils
     {
         delete[] m_array;
     }
+
+#ifdef QUICKY_UTILS_SELF_TEST
+    bool test_quicky_bitfield();
+#endif // QUICKY_UTILS_SELF_TEST
+
 }
 #endif // QUICKY_BITFIELD
 //EOF
