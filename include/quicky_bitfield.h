@@ -94,8 +94,13 @@ namespace quicky_utils
 
         inline
         void apply_and(const quicky_bitfield & p_operand1
-                      ,const quicky_bitfield & p_operand2
+                ,const quicky_bitfield & p_operand2
                       );
+
+        inline
+        void apply_or(const quicky_bitfield & p_operand1
+                     ,const quicky_bitfield & p_operand2
+                     );
 
         inline
         int ffs() const;
@@ -454,6 +459,21 @@ namespace quicky_utils
     quicky_bitfield<T>::~quicky_bitfield()
     {
         delete[] m_array;
+    }
+
+    //----------------------------------------------------------------------------
+    template <class T>
+    void
+    quicky_bitfield<T>::apply_or(const quicky_bitfield & p_operand1
+                                ,const quicky_bitfield & p_operand2
+                                )
+    {
+        assert(m_size == p_operand1.m_size);
+        assert(m_size == p_operand2.m_size);
+        for(unsigned int l_index = 0 ; l_index < m_array_size ; ++l_index)
+        {
+            m_array[l_index] = p_operand1.m_array[l_index] | p_operand2.m_array[l_index];
+        }
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST

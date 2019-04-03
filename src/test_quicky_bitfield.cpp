@@ -88,6 +88,22 @@ namespace quicky_utils
             l_ok &= quicky_test::check_expected((unsigned int)l_bitfield3.ffs(), l_index + 1, "ffs");
             l_bitfield3.set(0, 1, l_index);
         }
+
+        l_bitfield1.set(0x0, 16, 0);
+        l_bitfield1.set(0x0, 16, 16);
+        l_bitfield1.set(0x0, 16, 32);
+        l_bitfield_bis.set(0x0, 16, 0);
+        l_bitfield_bis.set(0x0, 16, 16);
+        l_bitfield_bis.set(0x0, 16, 32);
+        l_bitfield1.set(1, 1, 0);
+        l_bitfield_bis.set(1, 1, 47);
+        l_bitfield1.apply_or(l_bitfield1, l_bitfield_bis);
+        l_bitfield1.get(l_data, 16, 0);
+        l_ok &= quicky_test::check_expected(l_data, 1u, "apply_or");
+        l_bitfield1.get(l_data, 16, 16);
+        l_ok &= quicky_test::check_expected(l_data, 0u, "apply_or");
+        l_bitfield1.get(l_data, 16, 32);
+        l_ok &= quicky_test::check_expected(l_data, 0x8000u, "apply_or");
         l_ok &= quicky_test::check_expected(l_bitfield2.size(), 1 * sizeof(T),"array size");
         return l_ok;
     }
