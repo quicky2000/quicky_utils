@@ -98,19 +98,14 @@ namespace quicky_utils
                       );
 
         inline
-        int ffs(void) const;
+        int ffs() const;
 
         inline
         quicky_utils::quicky_bitfield<T> & operator=(const quicky_bitfield<T> & p_bitfield);
 
       private:
         const unsigned int m_size;
-        //#define INTERNAL_64_BIT_ARRAY_UNIT
-#ifndef INTERNAL_64_BIT_ARRAY_UNIT
-        typedef uint32_t t_array_unit;
-#else
-        typedef uint64_t t_array_unit;
-#endif // INTERNAL_64_BIT_ARRAY_UNIT
+        typedef T t_array_unit;
         const unsigned int m_array_size;
         t_array_unit * m_array;
     };
