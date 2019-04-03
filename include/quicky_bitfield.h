@@ -52,7 +52,7 @@ namespace quicky_utils
          @param p_size : bitfield size in bits
         */
         inline
-        quicky_bitfield(void);
+        quicky_bitfield();
 
         inline
         quicky_bitfield(const unsigned int & p_size
@@ -63,7 +63,7 @@ namespace quicky_utils
         quicky_bitfield(const quicky_bitfield & p_bitfield);
 
         inline
-        ~quicky_bitfield(void);
+        ~quicky_bitfield();
 
         inline
         void set(const unsigned int & p_data
@@ -87,10 +87,10 @@ namespace quicky_utils
         void read_from(std::istream & p_stream);
 
         inline
-        const size_t size(void) const;
+        const size_t size() const;
 
         inline
-        const size_t bitsize(void) const;
+        const size_t bitsize() const;
 
         inline
         void apply_and(const quicky_bitfield & p_operand1
@@ -140,7 +140,7 @@ namespace quicky_utils
 
     //----------------------------------------------------------------------------
     template <class T>
-    int quicky_bitfield<T>::ffs(void) const
+    int quicky_bitfield<T>::ffs() const
     {
         unsigned int l_index = 0;
         int l_result = 0;
@@ -159,7 +159,7 @@ namespace quicky_utils
 
     //----------------------------------------------------------------------------
     template <>
-    inline int quicky_bitfield<uint32_t>::ffs(void) const
+    inline int quicky_bitfield<uint32_t>::ffs() const
     {
         unsigned int l_index = 0;
         int l_result = 0;
@@ -218,7 +218,7 @@ namespace quicky_utils
 
     //----------------------------------------------------------------------------
     template <>
-    inline int quicky_bitfield<uint64_t>::ffs(void) const
+    inline int quicky_bitfield<uint64_t>::ffs() const
     {
         unsigned int l_index = 0;
         int l_result = 0;
@@ -323,14 +323,14 @@ namespace quicky_utils
 
     //----------------------------------------------------------------------------
     template <class T>
-    const size_t quicky_bitfield<T>::bitsize(void) const
+    const size_t quicky_bitfield<T>::bitsize() const
     {
         return m_size;
     }
 
     //----------------------------------------------------------------------------
     template <class T>
-    const size_t quicky_bitfield<T>::size(void) const
+    const size_t quicky_bitfield<T>::size() const
     {
         return m_array_size * sizeof(t_array_unit);
     }
@@ -351,7 +351,7 @@ namespace quicky_utils
 
     //----------------------------------------------------------------------------
     template <class T>
-    quicky_bitfield<T>::quicky_bitfield(void)
+    quicky_bitfield<T>::quicky_bitfield()
     :m_size(0)
     ,m_array_size(0)
     ,m_array(nullptr)
@@ -451,7 +451,7 @@ namespace quicky_utils
 
     //----------------------------------------------------------------------------
     template <class T>
-    quicky_bitfield<T>::~quicky_bitfield(void)
+    quicky_bitfield<T>::~quicky_bitfield()
     {
         delete[] m_array;
     }
