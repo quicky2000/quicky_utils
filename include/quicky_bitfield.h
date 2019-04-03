@@ -54,7 +54,7 @@ namespace quicky_utils
         inline
         quicky_bitfield();
 
-        inline
+        inline explicit
         quicky_bitfield(const unsigned int & p_size
                        ,bool p_reset_value = false
                        );
