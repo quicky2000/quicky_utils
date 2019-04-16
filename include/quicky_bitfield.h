@@ -388,6 +388,16 @@ namespace quicky_utils
     void quicky_bitfield<T>::reset(bool p_reset_value)
     {
         memset(m_array,p_reset_value ? 0xFF : 0,sizeof(t_array_unit) * m_array_size);
+        if(p_reset_value)
+        {
+            unsigned int l_remaining_bits = m_size % (8 * sizeof(t_array_unit));
+            if (l_remaining_bits)
+            {
+                t_array_unit l_mask = (((t_array_unit) 1) << l_remaining_bits) - 1;
+                t_array_unit l_result = m_array[m_array_size - 1] & l_mask;
+                m_array[m_array_size - 1] = l_result;
+            }
+        }
     }
 
     //----------------------------------------------------------------------------

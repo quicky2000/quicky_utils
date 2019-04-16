@@ -105,6 +105,18 @@ namespace quicky_utils
         l_bitfield1.get(l_data, 16, 32);
         l_ok &= quicky_test::check_expected(l_data, 0x8000u, "apply_or");
         l_ok &= quicky_test::check_expected(l_bitfield2.size(), 1 * sizeof(T),"array size");
+
+        {
+            quicky_bitfield<T> l_bitfield4(14, true);
+            unsigned int l_bit_index = 0;
+            unsigned int l_nb_bit = 0;
+            while ((l_bit_index = (unsigned int)l_bitfield4.ffs()) != 0)
+            {
+                l_bitfield4.set(0, 1, l_bit_index - 1);
+                ++l_nb_bit;
+            }
+            l_ok &= quicky_test::check_expected(l_nb_bit, (unsigned int)l_bitfield4.bitsize(), "Nb bits seen with FFS");
+        }
         return l_ok;
     }
 
