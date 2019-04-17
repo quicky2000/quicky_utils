@@ -36,37 +36,40 @@ namespace quicky_utils
         l_bitfield1.get(l_data2, 16, 30);
         l_ok &= quicky_test::check_expected(l_data2, l_data, "set/get");
 
-        unsigned int l_index = 0;
-        std::string l_string("HELLO!  ");
-        for(auto l_iter: l_string)
         {
-            l_bitfield1.set((unsigned int)l_iter, 8, 8 * l_index);
-            ++l_index;
+            quicky_bitfield<T> l_bitfield_string(64);
+            unsigned int l_index = 0;
+            std::string l_string("HELLO!  ");
+            for (auto l_iter: l_string)
+            {
+                l_bitfield_string.set((unsigned int) l_iter, 8, 8 * l_index);
+                ++l_index;
+            }
+            std::stringstream l_stream;
+            l_bitfield_string.dump_in(l_stream);
+            l_ok &= quicky_test::check_expected(l_stream.str(), l_string, "dump_in");
+
+            quicky_bitfield<T> l_bitfield_string_bis(l_bitfield_string);
+            std::stringstream l_stream_bis;
+            l_bitfield_string_bis.dump_in(l_stream_bis);
+            l_ok &= quicky_test::check_expected(l_stream.str(), l_stream_bis.str(), "copy constructor");
+
+            std::string l_string2("ABCDEFGH");
+            std::stringstream l_stream2;
+            l_stream2 << l_string2;
+            l_bitfield_string.read_from(l_stream2);
+            for (l_index = 0; l_index < l_string2.size(); ++l_index)
+            {
+                l_bitfield_string.get(l_data2, 8, 8 * l_index);
+                l_string[l_index] = (char) l_data2;
+            }
+
+            l_ok &= quicky_test::check_expected(l_string, l_string2, "read_from");
         }
-        std::stringstream l_stream;
-        l_bitfield1.dump_in(l_stream);
-        l_ok &= quicky_test::check_expected(l_stream.str(), l_string, "dump_in");
-
-        quicky_bitfield<T> l_bitfield_bis(l_bitfield1);
-        std::stringstream l_stream_bis;
-        l_bitfield_bis.dump_in(l_stream_bis);
-        l_ok &= quicky_test::check_expected(l_stream.str(), l_stream_bis.str(), "copy constructor");
-
-        std::string l_string2("ABCDEFGH");
-        std::stringstream l_stream2;
-        l_stream2 << l_string2;
-        l_bitfield1.read_from(l_stream2);
-        for(l_index = 0; l_index < l_string2.size(); ++l_index)
-        {
-            l_bitfield1.get(l_data2, 8, 8 * l_index);
-            l_string[l_index] = (char) l_data2;
-        }
-
-        l_ok &= quicky_test::check_expected(l_string, l_string2, "read_from");
-
         l_bitfield1.set(0xDEAD, 16 ,16);
         l_bitfield1.set(0xCAFE, 16 ,0);
         l_bitfield1.set(0xBEEF, 16 ,32);
+        quicky_bitfield<T> l_bitfield_bis(48);
         l_bitfield_bis.set(0xFF00, 16, 16);
         l_bitfield_bis.set(0x0000, 16, 0);
         l_bitfield_bis.set(0xFF, 16, 32);
@@ -82,7 +85,7 @@ namespace quicky_utils
 
         quicky_bitfield<T> l_bitfield3(64);
         l_ok &= quicky_test::check_expected(l_bitfield3.ffs(), 0, "ffs");
-        for(l_index = 0; l_index < 64; ++l_index)
+        for(unsigned int l_index = 0; l_index < 64; ++l_index)
         {
             l_bitfield3.set(1, 1, l_index);
             l_ok &= quicky_test::check_expected((unsigned int)l_bitfield3.ffs(), l_index + 1, "ffs");
