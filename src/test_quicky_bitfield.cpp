@@ -120,6 +120,22 @@ namespace quicky_utils
             }
             l_ok &= quicky_test::check_expected(l_nb_bit, (unsigned int)l_bitfield4.bitsize(), "Nb bits seen with FFS");
         }
+        {
+            quicky_bitfield<T> l_bitfield_a(72);
+            quicky_bitfield<T> l_bitfield_b(72);
+            for(unsigned int l_index1 = 0; l_index1 < 72; ++l_index1)
+            {
+                l_bitfield_a.set(1, 1, l_index1);
+                for(unsigned int l_index2 = 0; l_index2 < 72; ++l_index2)
+                {
+                    l_bitfield_b.set(1, 1, l_index2);
+                    l_ok &= quicky_test::check_expected(l_bitfield_a.and_not_null(l_bitfield_b), l_index1 == l_index2, "ANN not null");
+                    l_ok &= quicky_test::check_expected(l_bitfield_b.and_not_null(l_bitfield_a), l_index1 == l_index2, "ANN not null");
+                    l_bitfield_b.set(0, 1, l_index2);
+                }
+                l_bitfield_a.set(0, 1, l_index1);
+            }
+        }
         return l_ok;
     }
 
