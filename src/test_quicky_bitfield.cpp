@@ -129,8 +129,10 @@ namespace quicky_utils
                 for(unsigned int l_index2 = 0; l_index2 < 72; ++l_index2)
                 {
                     l_bitfield_b.set(1, 1, l_index2);
-                    l_ok &= quicky_test::check_expected(l_bitfield_a.and_not_null(l_bitfield_b), l_index1 == l_index2, "ANN not null");
-                    l_ok &= quicky_test::check_expected(l_bitfield_b.and_not_null(l_bitfield_a), l_index1 == l_index2, "ANN not null");
+                    l_ok &= quicky_test::check_expected(l_bitfield_a.and_not_null(l_bitfield_b), l_index1 == l_index2, "AND not null");
+                    l_ok &= quicky_test::check_expected(l_bitfield_b.and_not_null(l_bitfield_a), l_index1 == l_index2, "AND not null");
+                    l_ok &= quicky_test::check_expected(l_bitfield_a.r_and_not_null(l_bitfield_b), l_index1 == l_index2, "reverse AND not null");
+                    l_ok &= quicky_test::check_expected(l_bitfield_b.r_and_not_null(l_bitfield_a), l_index1 == l_index2, "reverse AND not null");
                     l_bitfield_b.set(0, 1, l_index2);
                 }
                 l_bitfield_a.set(0, 1, l_index1);
