@@ -126,6 +126,20 @@ namespace quicky_utils
         inline
         bool r_and_not_null(const quicky_bitfield & p_operand1) const;
 
+        /**
+         * Method checking if bitwise AND between two bitfields will result
+         * in a bitfield with some non null bits
+         * Method exit at first non null word
+         * Start by the end and stop when reaching limit index
+         * @param p_operand1 operand with which bitwise AND is performed
+         * @param p_limit_bit firt non null bit
+         * @return true if some results bits are 1 or false if no result bits are at zero
+         */
+        inline
+        bool r_and_not_null(const quicky_bitfield & p_operand1
+                           ,unsigned int p_limit_bit
+                           ) const;
+
         inline
         quicky_utils::quicky_bitfield<T> & operator=(const quicky_bitfield<T> & p_bitfield);
 
@@ -532,6 +546,26 @@ namespace quicky_utils
     {
         assert(m_size == p_operand1.m_size);
         for(unsigned int l_index = m_array_size - 1 ; l_index < m_array_size ; --l_index)
+        {
+            if(m_array[l_index] & p_operand1.m_array[l_index])
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //----------------------------------------------------------------------------
+    template <class T>
+    bool
+    quicky_bitfield<T>::r_and_not_null(const quicky_bitfield & p_operand1
+                                      ,unsigned int p_limit_bit
+                                      ) const
+    {
+        assert(m_size == p_operand1.m_size);
+        assert(p_limit_bit < m_size);
+        int l_limit_index = p_limit_bit / (8 * sizeof(t_array_unit));
+        for(int l_index = (int)(m_array_size - 1) ; l_index >= l_limit_index ; --l_index)
         {
             if(m_array[l_index] & p_operand1.m_array[l_index])
             {
