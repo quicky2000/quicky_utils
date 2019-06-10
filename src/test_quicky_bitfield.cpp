@@ -113,6 +113,10 @@ namespace quicky_utils
         {
             l_bitfield3.set(1, 1, l_index);
             l_ok &= quicky_test::check_expected((unsigned int)l_bitfield3.ffs(), l_index + 1, "ffs");
+            for(unsigned int l_word_index = 0; l_word_index <= l_index / (8 * sizeof(T)); ++ l_word_index)
+            {
+                l_ok &= quicky_test::check_expected((unsigned int)l_bitfield3.ffs(8 * sizeof(T) * l_word_index), l_index + 1, "ffs(start_index)");
+            }
             l_bitfield3.set(0, 1, l_index);
         }
 
