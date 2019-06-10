@@ -94,7 +94,13 @@ namespace quicky_utils
 
         inline
         void apply_and(const quicky_bitfield & p_operand1
-                ,const quicky_bitfield & p_operand2
+                      ,const quicky_bitfield & p_operand2
+                      );
+
+        inline
+        void apply_and(const quicky_bitfield & p_operand1
+                      ,const quicky_bitfield & p_operand2
+                      ,unsigned int p_limit_bit
                       );
 
         inline
@@ -146,6 +152,9 @@ namespace quicky_utils
         inline
         bool operator==(const quicky_bitfield<T> & p_operand) const;
       private:
+        inline
+        unsigned int compute_limit_index(unsigned int p_limit_bit) const;
+
         const unsigned int m_size;
         typedef T t_array_unit;
         const unsigned int m_array_size;
@@ -365,6 +374,22 @@ namespace quicky_utils
 
     //----------------------------------------------------------------------------
     template <class T>
+    void quicky_bitfield<T>::apply_and(const quicky_bitfield & p_operand1
+                                      ,const quicky_bitfield & p_operand2
+                                      ,unsigned int p_limit_bit
+                                      )
+    {
+        assert(m_size == p_operand1.m_size);
+        assert(m_size == p_operand2.m_size);
+        auto l_limit_index = compute_limit_index(p_limit_bit);
+        for(unsigned int l_index = l_limit_index ; l_index < m_array_size ; ++l_index)
+        {
+            m_array[l_index] = p_operand1.m_array[l_index] & p_operand2.m_array[l_index];
+        }
+    }
+
+    //----------------------------------------------------------------------------
+    template <class T>
     const size_t quicky_bitfield<T>::bitsize() const
     {
         return m_size;
@@ -565,8 +590,7 @@ namespace quicky_utils
                                       ) const
     {
         assert(m_size == p_operand1.m_size);
-        assert(p_limit_bit < m_size);
-        int l_limit_index = p_limit_bit / (8 * sizeof(t_array_unit));
+        auto l_limit_index = (int) compute_limit_index(p_limit_bit);
         for(int l_index = (int)(m_array_size - 1) ; l_index >= l_limit_index ; --l_index)
         {
             if(m_array[l_index] & p_operand1.m_array[l_index])
@@ -575,6 +599,16 @@ namespace quicky_utils
             }
         }
         return false;
+    }
+
+    //----------------------------------------------------------------------------
+    template <class T>
+    unsigned int
+    quicky_bitfield<T>::compute_limit_index(unsigned int p_limit_bit) const
+    {
+        assert(p_limit_bit < m_size);
+        unsigned int l_limit_index = p_limit_bit / (8 * sizeof(t_array_unit));
+        return l_limit_index;
     }
 
     //----------------------------------------------------------------------------

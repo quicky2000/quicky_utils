@@ -80,6 +80,30 @@ namespace quicky_utils
         l_ok &= quicky_test::check_expected(l_data, 0xEFu, "apply_and");
         l_bitfield1.get(l_data, 16, 24);
         l_ok &= quicky_test::check_expected(l_data, 0xEFDEu, "apply_and");
+
+        {
+            quicky_bitfield<T> l_bitfield_a(72, true);
+            quicky_bitfield<T> l_bitfield_b(72, true);
+            quicky_bitfield<T> l_bitfield_a_masked(l_bitfield_a);
+            unsigned int l_previous_word_index = 0;
+            for(unsigned int l_bit_index = 0; l_bit_index < 72; ++l_bit_index)
+            {
+                unsigned int l_limit_word_index = l_bit_index / (8 * sizeof(T));
+                if(l_limit_word_index != l_previous_word_index)
+                {
+                    for(unsigned int l_bit_mask_index = 8 * sizeof(T) * l_previous_word_index; l_bit_mask_index < 8 * sizeof(T) * l_limit_word_index; ++l_bit_mask_index)
+                    {
+                        l_bitfield_a_masked.set(0x0, 1, l_bit_mask_index);
+                    }
+                    l_previous_word_index = l_limit_word_index;
+                }
+                quicky_bitfield<T> l_bitfield_result(72);
+                l_bitfield_result.apply_and(l_bitfield_a, l_bitfield_b, l_bit_index);
+                quicky_bitfield<T> l_bitfield_ref(72);
+                l_bitfield_ref.apply_and(l_bitfield_a_masked, l_bitfield_b, l_bit_index);
+                l_ok &= quicky_test::check_expected(l_bitfield_result, l_bitfield_ref, "apply_and(" + std::to_string(l_bit_index) + ")");
+            }
+        }
         quicky_bitfield<T> l_bitfield2(32);
         l_ok &= quicky_test::check_expected(l_bitfield2.size(), 1 * sizeof(T),"array size");
 
