@@ -143,6 +143,8 @@ namespace quicky_utils
         inline
         quicky_utils::quicky_bitfield<T> & operator=(const quicky_bitfield<T> & p_bitfield);
 
+        inline
+        bool operator==(const quicky_bitfield<T> & p_operand) const;
       private:
         const unsigned int m_size;
         typedef T t_array_unit;
@@ -573,6 +575,14 @@ namespace quicky_utils
             }
         }
         return false;
+    }
+
+    //----------------------------------------------------------------------------
+    template <class T>
+    bool
+    quicky_bitfield<T>::operator==(const quicky_bitfield<T> & p_operand) const
+    {
+        return m_size == p_operand.m_size && !memcmp(m_array, p_operand.m_array, m_array_size);
     }
 
 #ifdef QUICKY_UTILS_SELF_TEST
