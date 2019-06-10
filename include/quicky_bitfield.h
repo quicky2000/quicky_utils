@@ -157,7 +157,7 @@ namespace quicky_utils
         p_stream << "0x";
         for(unsigned int l_index = 0 ; l_index < p_bitfield.m_array_size ; ++l_index)
         {
-            p_stream << std::hex << std::setfill('0') << std::setw(2*sizeof(quicky_bitfield<T>::t_array_unit)) << p_bitfield.m_array[l_index];
+            p_stream << std::hex << std::setfill('0') << std::setw(2*sizeof(typename quicky_bitfield<T>::t_array_unit)) << p_bitfield.m_array[l_index];
         }
         return p_stream;
     }
