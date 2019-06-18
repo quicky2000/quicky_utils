@@ -103,6 +103,24 @@ namespace quicky_utils
                       ,unsigned int p_limit_bit
                       );
 
+        /**
+         * Apply bitwise AND on 2 bitfields and store result in this in a multi
+         * thread way and only on part defined by first containing limit bit
+         * index until the end of bitfield
+         * @param p_operand1 first operand
+         * @param p_operand2 second operand
+         * @param p_limit_bit first non null bit
+         * @param p_thread_id thread id
+         * @param p_thread_nb thread number
+         */
+        inline
+        void apply_and(const quicky_bitfield & p_operand1
+                      ,const quicky_bitfield & p_operand2
+                      ,unsigned int p_limit_bit
+                      ,unsigned int p_thread_id
+                      ,unsigned int p_thread_nb
+                      );
+
         inline
         void apply_or(const quicky_bitfield & p_operand1
                      ,const quicky_bitfield & p_operand2
@@ -564,6 +582,25 @@ namespace quicky_utils
         assert(m_size == p_operand2.m_size);
         auto l_limit_index = compute_limit_index(p_limit_bit);
         for(unsigned int l_index = l_limit_index ; l_index < m_array_size ; ++l_index)
+        {
+            m_array[l_index] = p_operand1.m_array[l_index] & p_operand2.m_array[l_index];
+        }
+    }
+
+    //----------------------------------------------------------------------------
+    template <class T>
+    void
+    quicky_bitfield<T>::apply_and(const quicky_bitfield & p_operand1,
+                                  const quicky_bitfield & p_operand2,
+                                  unsigned int p_limit_bit,
+                                  unsigned int p_thread_id,
+                                  unsigned int p_thread_nb
+                                 )
+    {
+        assert(m_size == p_operand1.m_size);
+        assert(m_size == p_operand2.m_size);
+        auto l_limit_index = compute_limit_index(p_limit_bit);
+        for(unsigned int l_index = l_limit_index + p_thread_id; l_index < m_array_size ; l_index += p_thread_nb)
         {
             m_array[l_index] = p_operand1.m_array[l_index] & p_operand2.m_array[l_index];
         }
