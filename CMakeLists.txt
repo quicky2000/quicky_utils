@@ -26,6 +26,8 @@ set(MY_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/type_string.h
     include/ext_int.h
     src/type_string.cpp
+    include/multi_thread_signal_handler.h
+    include/multi_thread_signal_handler_listener_if.h
    )
 
 # List header directories in project
@@ -40,7 +42,7 @@ LIST(APPEND DEPENDANCY_LIST "quicky_exception")
 #- Generic part
 #------------------------------
 set(DEPENDANCY_OBJECTS "")
-set(LINKED_LIBRARIES "")
+set(LINKED_LIBRARIES "-lpthread")
 #iterate on dependancies
 foreach(DEPENDANCY_ITEM IN ITEMS ${DEPENDANCY_LIST})
     message("${PROJECT_NAME} need dependancy ${DEPENDANCY_ITEM}")
@@ -83,6 +85,7 @@ else()
         src/test_safe_types.cpp
         src/test_type_string.cpp
         src/test_quicky_bitfield.cpp
+        src/test_multi_thread_signal_handler.cpp
         ${MY_SOURCE_FILES}
         )
     add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main_${PROJECT_NAME}.cpp)

@@ -1,5 +1,7 @@
 # For users
 #------------
+quicky_utils_v0.4:
+    - Introduce multi-thread signal handler
 
 quicky_utils_v0.3:
     - Improve MinGW support

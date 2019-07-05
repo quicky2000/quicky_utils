@@ -24,6 +24,7 @@
 #include "test_fract.h"
 #include "quicky_test.h"
 #include "ansi_colors.h"
+#include "multi_thread_signal_handler.h"
 #include <fstream>
 #include <iostream>
 #include <functional>
@@ -55,6 +56,7 @@ int main(int argc,char ** argv)
         }
         quicky_test::set_ostream(l_report_file);
 
+        l_ok &= test_multi_thread_signal_handler();
         l_ok &= test_quicky_bitfield();
         l_ok &= check_test_utilities();
         l_ok &= test_ext_uint();
