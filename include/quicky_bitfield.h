@@ -599,8 +599,27 @@ namespace quicky_utils
     {
         assert(m_size == p_operand1.m_size);
         assert(m_size == p_operand2.m_size);
+#ifndef SIMPLE
+        // Ensure pthread nb is a power of 2
+        assert(!((p_thread_nb - 1) & p_thread_nb));
+
         auto l_limit_index = compute_limit_index(p_limit_bit);
+
+        unsigned int l_effective_size = (m_array_size - l_limit_index);
+        unsigned int l_trunk_size = l_effective_size / p_thread_nb;
+        // std::cout << "Computed trunk size : " << l_trunk_size << std::endl;
+        bool l_truncated = (( l_effective_size - 1) & l_effective_size);
+        if(l_truncated)
+        {
+            // std::cout << "TRUNCATED!" << std::endl;
+            ++l_trunk_size;
+        }
+        unsigned int l_index = l_limit_index + p_thread_id * l_trunk_size;
+        unsigned int l_end_index = p_thread_nb - 1 != p_thread_id ?  l_index + l_trunk_size: m_array_size;
+        for(; l_index < l_end_index ; ++l_index)
+#else // SIMPLE
         for(unsigned int l_index = l_limit_index + p_thread_id; l_index < m_array_size ; l_index += p_thread_nb)
+#endif // SIMPLE
         {
             m_array[l_index] = p_operand1.m_array[l_index] & p_operand2.m_array[l_index];
         }
