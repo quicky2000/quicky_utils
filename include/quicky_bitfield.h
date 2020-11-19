@@ -87,10 +87,10 @@ namespace quicky_utils
         void read_from(std::istream & p_stream);
 
         inline
-        const size_t size() const;
+        size_t size() const;
 
         inline
-        const size_t bitsize() const;
+        size_t bitsize() const;
 
         inline
         void apply_and(const quicky_bitfield & p_operand1
@@ -627,14 +627,14 @@ namespace quicky_utils
 
     //----------------------------------------------------------------------------
     template <class T>
-    const size_t quicky_bitfield<T>::bitsize() const
+    size_t quicky_bitfield<T>::bitsize() const
     {
         return m_size;
     }
 
     //----------------------------------------------------------------------------
     template <class T>
-    const size_t quicky_bitfield<T>::size() const
+    size_t quicky_bitfield<T>::size() const
     {
         return m_array_size * sizeof(t_array_unit);
     }
