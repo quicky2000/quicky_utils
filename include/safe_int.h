@@ -195,7 +195,7 @@ namespace  quicky_utils
     template <typename T>
     safe_int<T>::safe_int(const safe_uint<typename std::make_unsigned<T>::type> & p_value)
     {
-        if(p_value.get_value() > std::numeric_limits<T>::max())
+        if(p_value.get_value() > static_cast<typename std::make_unsigned<T>::type>(std::numeric_limits<T>::max()))
         {
             throw safe_type_exception("Unsigned to signed constructor overflow",
                                       __LINE__,

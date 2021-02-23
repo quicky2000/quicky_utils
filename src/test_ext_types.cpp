@@ -162,7 +162,7 @@ namespace quicky_utils
     {
         EXT_INT_T l_number(p_mantissa);
         FLOATING_T l_float = p_mantissa;
-        FLOATING_T l_previous_float;
+        FLOATING_T l_previous_float = l_float - 1.0;
         bool l_ok = true;
         while(l_float != l_previous_float)
         {
