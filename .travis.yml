@@ -2,9 +2,14 @@ matrix:
   include:
     - os: linux
       sudo: required
-      dist: trusty
+      dist: focal
+      compiler: gcc
+    - os: linux
+      sudo: required
+      dist: bionic
       compiler: gcc
     - os: osx
+      osx_image: xcode10.3
 
 language: cpp
 
@@ -17,8 +22,6 @@ before_install:
   - export QUICKY_REPOSITORY
   - MY_LOCATION=`pwd`
   - cd $MY_LOCATION/repositories
-  - sed -e "s,c++14,c++11,g" quicky_utils/infra_infos.txt > quicky_utils/infra_infos.txt.new
-  - mv quicky_utils/infra_infos.txt.new quicky_utils/infra_infos.txt
   - git clone https://github.com/quicky2000/quicky_tools.git
   - git clone https://github.com/quicky2000/quicky_exception.git
   - cd quicky_tools/setup
@@ -30,5 +33,8 @@ before_install:
 
 script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then generate_makefile quicky_utils; make test; ./bin/quicky_utils.exe; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cmake $QUICKY_REPOSITORY/quicky_utils; make; ./quicky_utils; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build ; fi
+  - cmake $QUICKY_REPOSITORY/quicky_utils
+  - make
+  - ./quicky_utils
 #EOF
