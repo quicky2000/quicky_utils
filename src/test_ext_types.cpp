@@ -21,7 +21,7 @@
 #include "ext_uint.h"
 #include "ext_int.h"
 #include "quicky_test.h"
-#include <cassert>
+#include "common.h"
 
 namespace quicky_utils
 {
@@ -131,6 +131,7 @@ namespace quicky_utils
     * @param p_floating floating type to revert
     */
     template <typename T>
+    [[maybe_unused]]
     void rdisplay_floating(const T & p_floating)
     {
         int l_exp;
@@ -166,7 +167,7 @@ namespace quicky_utils
         bool l_ok = true;
         while(l_float != l_previous_float)
         {
-            FLOATING_T l_float_ext = (FLOATING_T) l_number;
+            auto l_float_ext = (FLOATING_T) l_number;
             l_ok &= quicky_test::check_expected(l_float_ext,
                                                 l_float,
                                                 "To float " + std::string(l_number)
@@ -195,7 +196,7 @@ namespace quicky_utils
                              )
     {
         T1 l_value = 0;
-        uint8_t * l_ptr = (uint8_t*)&l_value;
+        auto * l_ptr = (uint8_t*)&l_value;
         for(unsigned int l_i = 0;
             l_i < pow(p_bytes.size(),sizeof(T1));
             ++l_i
@@ -382,13 +383,13 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " + operator" << std::endl;
         // Check + operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
-                uint64_t l_result = (uint64_t)l_iter1.first + (uint64_t)l_iter2.first;
+                uint64_t l_loop_result = (uint64_t)l_iter1.first + (uint64_t)l_iter2.first;
                 l_ok &= quicky_test::check_expected(l_iter1.second + l_iter2.second,
-                                                    quicky_utils::ext_uint<uint8_t>(l_result),
+                                                    quicky_utils::ext_uint<uint8_t>(l_loop_result),
                                                     (std::string)l_iter1.second + " + " + (std::string)l_iter2.second
                                                    );
             }
@@ -396,17 +397,17 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " - operator" << std::endl;
         // Check - operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 if(l_iter1.first < l_iter2.first)
                 {
                     break;
                 }
-                uint64_t l_result = (uint64_t)l_iter1.first - (uint64_t)l_iter2.first;
+                uint64_t l_loop_result = (uint64_t)l_iter1.first - (uint64_t)l_iter2.first;
                 l_ok &= quicky_test::check_expected(l_iter1.second - l_iter2.second,
-                                                    quicky_utils::ext_uint<uint8_t>(l_result),
+                                                    quicky_utils::ext_uint<uint8_t>(l_loop_result),
                                                     (std::string)l_iter1.second + " - " + (std::string)l_iter2.second
                                                    );
             }
@@ -414,13 +415,13 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " * operator" << std::endl;
         // Check * operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
-                uint64_t l_result = (uint64_t)l_iter1.first * (uint64_t)l_iter2.first;
+                uint64_t l_loop_result = (uint64_t)l_iter1.first * (uint64_t)l_iter2.first;
                 l_ok &= quicky_test::check_expected(l_iter1.second * l_iter2.second,
-                                                    quicky_utils::ext_uint<uint8_t>(l_result),
+                                                    quicky_utils::ext_uint<uint8_t>(l_loop_result),
                                                     (std::string)l_iter1.second + " * " + (std::string)l_iter2.second
                                                    );
             }
@@ -428,15 +429,15 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " / operator" << std::endl;
         // Check / operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 if(l_iter2.first)
                 {
-                    uint64_t l_result = (uint64_t) l_iter1.first / (uint64_t) l_iter2.first;
+                    uint64_t l_loop_result = (uint64_t) l_iter1.first / (uint64_t) l_iter2.first;
                     l_ok &= quicky_test::check_expected(l_iter1.second / l_iter2.second,
-                                                        quicky_utils::ext_uint<uint8_t>(l_result),
+                                                        quicky_utils::ext_uint<uint8_t>(l_loop_result),
                                                         (std::string) l_iter1.second + " / " +
                                                         (std::string) l_iter2.second
                                                        );
@@ -446,15 +447,15 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " % operator" << std::endl;
         // Check % operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 if(l_iter2.first)
                 {
-                    uint64_t l_result = (uint64_t) l_iter1.first % (uint64_t) l_iter2.first;
+                    uint64_t l_loop_result = (uint64_t) l_iter1.first % (uint64_t) l_iter2.first;
                     l_ok &= quicky_test::check_expected(l_iter1.second % l_iter2.second,
-                                                        quicky_utils::ext_uint<uint8_t>(l_result),
+                                                        quicky_utils::ext_uint<uint8_t>(l_loop_result),
                                                         (std::string) l_iter1.second + " % " +
                                                         (std::string) l_iter2.second
                                                        );
@@ -464,13 +465,13 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " >> operator" << std::endl;
         // Check >> operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
             for(unsigned int l_i = 0; l_i < 1 + 8 * sizeof(uint32_t); ++l_i)
             {
-                uint64_t l_result = ((uint64_t) l_iter1.first) >> l_i;
+                uint64_t l_loop_result = ((uint64_t) l_iter1.first) >> l_i;
                 l_ok &= quicky_test::check_expected(l_iter1.second >> ext_uint<uint8_t>(l_i),
-                                                    quicky_utils::ext_uint<uint8_t>(l_result),
+                                                    quicky_utils::ext_uint<uint8_t>(l_loop_result),
                                                     (std::string) l_iter1.second + " >> " +
                                                     std::to_string(l_i)
                                                    );
@@ -479,13 +480,13 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " << operator" << std::endl;
         // Check << operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
             for(unsigned int l_i = 0; l_i < 8 * sizeof(uint32_t); ++l_i)
             {
-                uint64_t l_result = ((uint64_t) l_iter1.first) << l_i;
+                uint64_t l_loop_result = ((uint64_t) l_iter1.first) << l_i;
                 l_ok &= quicky_test::check_expected(l_iter1.second << ext_uint<uint8_t>(l_i),
-                                                    quicky_utils::ext_uint<uint8_t>(l_result),
+                                                    quicky_utils::ext_uint<uint8_t>(l_loop_result),
                                                     (std::string) l_iter1.second + " << " +
                                                     std::to_string(l_i)
                                                    );
@@ -493,7 +494,7 @@ namespace quicky_utils
         }
 
         std::cout << "Check " << l_type_name << " << float()/double() operator" << std::endl;
-        for(auto l_iter: l_test_values)
+        for(const auto & l_iter: l_test_values)
         {
             l_ok &= check_floating_conversion<uint32_t, ext_uint<uint8_t>, float>(l_iter.first);
             l_ok &= check_floating_conversion<uint32_t, ext_uint<uint8_t>, double>(l_iter.first);
@@ -534,7 +535,7 @@ namespace quicky_utils
         // Check ostream operator
         std::cout << "Check " << l_type_name << " ostream operator" << std::endl;
 
-        for(auto l_iter: l_test_values)
+        for(const auto & l_iter: l_test_values)
         {
             // Build reference string from integer
             bool l_neg = l_iter.first < 0;
@@ -557,9 +558,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " == operator" << std::endl;
         // Check == operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 l_ok &= quicky_test::check_expected(l_iter1.second == l_iter2.second,
                                                     l_iter1.first == l_iter2.first,
@@ -570,9 +571,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " != operator" << std::endl;
         // Check != operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 l_ok &= quicky_test::check_expected(l_iter1.second != l_iter2.second,
                                                     l_iter1.first != l_iter2.first,
@@ -583,9 +584,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " < operator" << std::endl;
         // Check < operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 l_ok &= quicky_test::check_expected(l_iter1.second < l_iter2.second,
                                                     l_iter1.first < l_iter2.first,
@@ -596,9 +597,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " <= operator" << std::endl;
         // Check <= operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 l_ok &= quicky_test::check_expected(l_iter1.second <= l_iter2.second,
                                                     l_iter1.first <= l_iter2.first,
@@ -609,9 +610,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " > operator" << std::endl;
         // Check > operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 l_ok &= quicky_test::check_expected(l_iter1.second > l_iter2.second,
                                                     l_iter1.first > l_iter2.first,
@@ -622,9 +623,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " >= operator" << std::endl;
         // Check >= operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 l_ok &= quicky_test::check_expected(l_iter1.second >= l_iter2.second,
                                                     l_iter1.first >= l_iter2.first,
@@ -635,9 +636,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " + operator" << std::endl;
         // Check + operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 int64_t l_result = (int64_t)l_iter1.first + (int64_t)l_iter2.first;
                 l_ok &= quicky_test::check_expected(quicky_utils::ext_int<int8_t>(l_result),
@@ -649,9 +650,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " - operator" << std::endl;
         // Check - operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 int64_t l_result = (int64_t)l_iter1.first - (int64_t)l_iter2.first;
                 l_ok &= quicky_test::check_expected(l_iter1.second - l_iter2.second,
@@ -663,9 +664,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " * operator" << std::endl;
         // Check * operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 int64_t l_result = (int64_t)l_iter1.first * (int64_t)l_iter2.first;
                 l_ok &= quicky_test::check_expected(l_iter1.second * l_iter2.second,
@@ -677,9 +678,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " / operator" << std::endl;
         // Check / operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 if(l_iter2.first)
                 {
@@ -695,9 +696,9 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " % operator" << std::endl;
         // Check % operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 if(l_iter2.first)
                 {
@@ -713,11 +714,11 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " += operator" << std::endl;
         // Check += operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
-                int64_t l_result = (int64_t) l_iter1.first;
+                auto l_result = (int64_t) l_iter1.first;
                 l_result += (int64_t) l_iter2.first;
                 ext_int<int8_t> l_test = l_iter1.second;
                 l_test += l_iter2.second;
@@ -731,11 +732,11 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " -= operator" << std::endl;
         // Check -= operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
-                int64_t l_result = (int64_t) l_iter1.first;
+                auto l_result = (int64_t) l_iter1.first;
                 l_result -= (int64_t) l_iter2.first;
                 ext_int<int8_t> l_test = l_iter1.second;
                 l_test -= l_iter2.second;
@@ -749,11 +750,11 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " *= operator" << std::endl;
         // Check *= operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
-                int64_t l_result = (int64_t) l_iter1.first;
+                auto l_result = (int64_t) l_iter1.first;
                 l_result *= (int64_t) l_iter2.first;
                 ext_int<int8_t> l_test = l_iter1.second;
                 l_test *= l_iter2.second;
@@ -767,13 +768,13 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " /= operator" << std::endl;
         // Check /= operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
-            for(auto l_iter2: l_test_values)
+            for(const auto & l_iter2: l_test_values)
             {
                 if(l_iter2.first)
                 {
-                    int64_t l_result = (int64_t) l_iter1.first;
+                    auto l_result = (int64_t) l_iter1.first;
                     l_result /= (int64_t) l_iter2.first;
                     ext_int<int8_t> l_test = l_iter1.second;
                     l_test /= l_iter2.second;
@@ -788,7 +789,7 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " abs method" << std::endl;
         // Check abs operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
             int64_t l_result = llabs((int64_t)l_iter1.first);
             l_ok &= quicky_test::check_expected(std::abs(l_iter1.second),
@@ -799,7 +800,7 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " >> operator" << std::endl;
         // Check >> operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
             for(unsigned int l_i = 0; l_i < 1 + 8 * sizeof(uint32_t); ++l_i)
             {
@@ -814,7 +815,7 @@ namespace quicky_utils
 
         std::cout << "Check " << l_type_name << " << operator" << std::endl;
         // Check << operator
-        for(auto l_iter1: l_test_values)
+        for(const auto & l_iter1: l_test_values)
         {
             for(unsigned int l_i = 0; l_i < 8 * sizeof(uint32_t); ++l_i)
             {
@@ -915,7 +916,7 @@ namespace quicky_utils
         //           000|0000|0000|0000|0011|1111| Truncated Mantissa
 
         std::cout << "Check " << l_type_name << " << float()/double() operator" << std::endl;
-        for(auto l_iter: l_test_values)
+        for(const auto & l_iter: l_test_values)
         {
           l_ok &= check_floating_conversion<int32_t, ext_int<int8_t>, float>(l_iter.first);
           l_ok &= check_floating_conversion<int32_t, ext_int<int8_t>, double>(l_iter.first);

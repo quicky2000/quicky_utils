@@ -25,6 +25,7 @@
 #include <limits>
 #include <iostream>
 #include <type_traits>
+#include "common.h"
 
 namespace  quicky_utils
 {
@@ -54,7 +55,7 @@ namespace  quicky_utils
     class safe_int
     {
       public:
-        safe_int(void);
+        safe_int();
         safe_int(const T & p_value);
 
         safe_int(const safe_uint<typename std::make_unsigned<T>::type> & p_value);
@@ -97,10 +98,10 @@ namespace  quicky_utils
         operator%(const safe_int & p_op) const;
 
         safe_int
-        operator-(void)const;
+        operator-()const;
 
         safe_int
-        operator+(void)const;
+        operator+()const;
 
         safe_int
         operator+=(const safe_int & p_op);
@@ -114,7 +115,7 @@ namespace  quicky_utils
         safe_int
         operator/=(const safe_int & p_op);
 
-        const T & get_value(void)const;
+        const T & get_value()const;
 
         friend std::ostream &
         operator<< <>(std::ostream & os,
@@ -152,8 +153,11 @@ namespace  quicky_utils
                   bool & p_overflow
                  );
 
+        [[maybe_unused]]
         typedef T base_type;
+
       private:
+
         static_assert(std::is_signed<T>::value,"Ckeck base type is signed");
         T m_value;
     };
@@ -181,14 +185,14 @@ namespace  quicky_utils
 
     //-----------------------------------------------------------------------------
     template <typename T>
-    safe_int<T>::safe_int(void):
-            m_value(0)
+    safe_int<T>::safe_int()
+    :m_value(0)
     {}
 
     //-----------------------------------------------------------------------------
     template <typename T>
-    safe_int<T>::safe_int(const T & m_value):
-            m_value(m_value)
+    safe_int<T>::safe_int(const T & p_value)
+    :m_value(p_value)
     {}
 
     //-----------------------------------------------------------------------------
@@ -310,7 +314,7 @@ namespace  quicky_utils
             }
             else
             {
-                switch ((l_pos1 << 1) + l_pos2)
+                switch ((l_pos1 << 1u) + l_pos2)
                 {
                     case 0:
                         l_exception = (std::numeric_limits<T>::max() / -m_value) < -p_op.m_value;
@@ -372,7 +376,7 @@ namespace  quicky_utils
     //-----------------------------------------------------------------------------
     template <typename T>
     safe_int<T>
-    safe_int<T>::operator-(void)const
+    safe_int<T>::operator-()const
     {
         if (std::numeric_limits<T>::min() == m_value)
         {
@@ -387,7 +391,7 @@ namespace  quicky_utils
     //-----------------------------------------------------------------------------
     template <typename T>
     safe_int<T>
-    safe_int<T>::operator+(void)const
+    safe_int<T>::operator+()const
     {
         return *this;
     }
@@ -431,7 +435,7 @@ namespace  quicky_utils
     //-----------------------------------------------------------------------------
     template <typename T>
     const T &
-    safe_int<T>::get_value(void) const
+    safe_int<T>::get_value() const
     {
         return m_value;
     }
@@ -508,21 +512,21 @@ namespace  quicky_utils
 namespace std
 {
     template<typename T>
-    struct is_integral<quicky_utils::safe_int<T>>
+    struct [[maybe_unused]] is_integral<quicky_utils::safe_int<T>>
     {
       public:
         static constexpr bool value = true;
     };
 
     template<typename T>
-    struct is_arithmetic<quicky_utils::safe_int<T>>
+    struct [[maybe_unused]] is_arithmetic<quicky_utils::safe_int<T>>
     {
       public:
         static constexpr bool value = true;
     };
 
     template<typename T>
-    struct is_scalar<quicky_utils::safe_int<T>>
+    struct [[maybe_unused]] is_scalar<quicky_utils::safe_int<T>>
     {
       public:
         static constexpr bool value = true;
@@ -567,7 +571,9 @@ namespace std
     class numeric_limits<quicky_utils::safe_int<T> >
     {
       public:
-        static constexpr bool is_specialized = true;
+        [[maybe_unused]]
+        static
+        constexpr bool is_specialized = true;
 
         static constexpr quicky_utils::safe_int<T>
         min() noexcept
@@ -587,13 +593,33 @@ namespace std
             return quicky_utils::safe_int<T>(std::numeric_limits<T>::lowest());
         }
 
-        static constexpr int digits = std::numeric_limits<T>::digits;
-        static constexpr int digits10 = std::numeric_limits<T>::digits10;
-        static constexpr int max_digits10 = std::numeric_limits<T>::max_digits10;
-        static constexpr bool is_signed = true;
-        static constexpr bool is_integer = true;
-        static constexpr bool is_exact = true;
-        static constexpr int radix = 2;
+        [[maybe_unused]]
+        static
+        constexpr int digits = std::numeric_limits<T>::digits;
+
+        [[maybe_unused]]
+        static
+        constexpr int digits10 = std::numeric_limits<T>::digits10;
+
+        [[maybe_unused]]
+        static
+        constexpr int max_digits10 = std::numeric_limits<T>::max_digits10;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_signed = true;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_integer = true;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_exact = true;
+
+        [[maybe_unused]]
+        static
+        constexpr int radix = 2;
 
         static constexpr quicky_utils::safe_int<T>
         epsilon() noexcept
@@ -607,34 +633,89 @@ namespace std
             return std::numeric_limits<T>::round_error();
         }
 
-        static constexpr int min_exponent = 0; // No sense
-        static constexpr int min_exponent10 = 0; // No sense
-        static constexpr int max_exponent = 0; // No sense
-        static constexpr int max_exponent10 = 0; // No sense
-        static constexpr bool has_infinity = false;
-        static constexpr bool has_quiet_NaN = false;
-        static constexpr bool has_signaling_NaN = false;
-        static constexpr float_denorm_style has_denorm = denorm_absent;
-        static constexpr bool has_denorm_loss = false;
+        [[maybe_unused]]
+        static
+        constexpr int min_exponent = 0; // No sense
 
-        static constexpr bool
+        [[maybe_unused]]
+        static
+        constexpr int min_exponent10 = 0; // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr int max_exponent = 0; // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr int max_exponent10 = 0; // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_infinity = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_quiet_NaN = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_signaling_NaN = false;
+
+        [[maybe_unused]]
+        static
+        constexpr float_denorm_style has_denorm = denorm_absent;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_denorm_loss = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool
         infinity() noexcept
-        { return 0; } // No sense
-        static constexpr bool
+        { return false; } // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool
         quiet_NaN() noexcept
-        { return 0; } // No sense
-        static constexpr bool
+        { return false; } // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool
         signaling_NaN() noexcept
-        { return 0; } // No sense
-        static constexpr bool
+        { return false; } // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool
         denorm_min() noexcept
-        { return 0; } // No sense
-        static constexpr bool is_iec559 = false;
-        static constexpr bool is_bounded = true;
-        static constexpr bool is_modulo = false;
-        static constexpr bool traps = true;
-        static constexpr bool tinyness_before = false;
-        static constexpr float_round_style round_style = round_toward_zero;
+        { return false; } // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_iec559 = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_bounded = true;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_modulo = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool traps = true;
+
+        [[maybe_unused]]
+        static
+        constexpr bool tinyness_before = false;
+
+        [[maybe_unused]]
+        static
+        constexpr float_round_style round_style = round_toward_zero;
     };
 }
 

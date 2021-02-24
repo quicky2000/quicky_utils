@@ -20,12 +20,17 @@
 
 #include "safe_uint.h"
 #include "safe_int.h"
-#include <inttypes.h>
+#include <cinttypes>
+#include "common.h"
 
 namespace quicky_utils
 {
+    [[maybe_unused]]
     typedef safe_uint<uint8_t> safe_uint8_t;
+
+    [[maybe_unused]]
     typedef safe_uint<uint16_t> safe_uint16_t;
+
     typedef safe_uint<uint32_t> safe_uint32_t;
     typedef safe_uint<uint64_t> safe_uint64_t;
 

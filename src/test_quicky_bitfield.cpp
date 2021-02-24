@@ -139,7 +139,7 @@ namespace quicky_utils
 
         {
             quicky_bitfield<T> l_bitfield4(14, true);
-            unsigned int l_bit_index = 0;
+            unsigned int l_bit_index;
             unsigned int l_nb_bit = 0;
             while ((l_bit_index = (unsigned int)l_bitfield4.ffs()) != 0)
             {

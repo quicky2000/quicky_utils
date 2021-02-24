@@ -23,7 +23,7 @@ namespace quicky_utils
   {
   public:
     virtual void handle(int p_signal)=0;
-    inline virtual ~signal_handler_listener_if(void){}
+    virtual ~signal_handler_listener_if() = default;
   };
 }
 #endif // SIGNAL_HANDLER_LISTENER_IF_H

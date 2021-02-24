@@ -46,8 +46,8 @@ namespace quicky_utils
                              );
 
     template <typename SAFE_TYPE, typename REFERENCE_TYPE>
-    bool test_safe_operator(const REFERENCE_TYPE l_op1,
-                            const REFERENCE_TYPE l_op2,
+    bool test_safe_operator(REFERENCE_TYPE l_op1,
+                            REFERENCE_TYPE l_op2,
                             char p_operator
                            );
 
@@ -168,8 +168,8 @@ namespace quicky_utils
 
     //------------------------------------------------------------------------------
     template <typename SAFE_TYPE, typename REFERENCE_TYPE>
-    bool test_safe_operator(const REFERENCE_TYPE l_op1,
-                            const REFERENCE_TYPE l_op2,
+    bool test_safe_operator(REFERENCE_TYPE l_op1,
+                            REFERENCE_TYPE l_op2,
                             char p_operator
                            )
     {

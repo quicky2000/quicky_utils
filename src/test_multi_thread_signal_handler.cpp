@@ -166,11 +166,9 @@ namespace quicky_utils
 
     //-------------------------------------------------------------------------
     test_multi_thread::test_multi_thread()
+    :m_thread_finished{}
     {
-        for (unsigned int l_index = 0; l_index < m_thread_finished.size(); ++l_index)
-        {
-            m_thread_finished[l_index] = false;
-        }
+        m_thread_finished.fill(false);
     }
 
     //-------------------------------------------------------------------------

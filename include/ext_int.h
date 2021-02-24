@@ -39,8 +39,8 @@ namespace quicky_utils
 
     template <typename T>
     std::ostream &
-    operator<<(std::ostream & p_stream,
-               const ext_int<T> & p_ext_uint
+    operator<<(std::ostream & p_stream
+              ,const ext_int<T> & p_ext_int
               );
 
     template <typename T>
@@ -144,7 +144,7 @@ namespace quicky_utils
          * @param p_op value to move
          * @return assigned object
          */
-        ext_int<T> & operator=(ext_int<T> && p_op);
+        ext_int<T> & operator=(ext_int<T> && p_op) noexcept;
 
         /**
          * Assignment operator
@@ -201,13 +201,13 @@ namespace quicky_utils
         ext_int<T>
         operator%(const ext_int & p_op) const;
 
-        ext_int<T> operator~(void) const;
+        ext_int<T> operator~() const;
 
         ext_int<T>
-        operator-(void)const;
+        operator-()const;
 
         ext_int<T>
-        operator+(void)const;
+        operator+()const;
 
         ext_int<T>
         operator+=(const ext_int & p_op);
@@ -249,6 +249,7 @@ namespace quicky_utils
          * Accessor returning number of bytes composing type
          * @return number of bytes composing type
          */
+        [[maybe_unused]] [[nodiscard]]
         size_t get_nb_bytes() const;
 
       private:
@@ -281,6 +282,7 @@ namespace quicky_utils
          * Method checking ig object has the shortest possible representation
          * @return true if object don't have shortest possible representation
          */
+        [[nodiscard]]
         bool is_trimmable() const;
 
         /**
@@ -299,6 +301,7 @@ namespace quicky_utils
          * @return root value
          */
         template <typename INT_TYPE, typename std::enable_if<!(sizeof(INT_TYPE) <= sizeof(T)), int>::type = 0>
+        [[maybe_unused]]
         static
         T extract(const INT_TYPE & p_value,
                   std::vector<ubase_type> & p_vector
@@ -313,6 +316,7 @@ namespace quicky_utils
          * @return root value
          */
         template <typename INT_TYPE, typename std::enable_if<sizeof(INT_TYPE)<= sizeof(T), int>::type = 0>
+        [[maybe_unused]]
         static
         T extract(const INT_TYPE & p_value,
                   std::vector<ubase_type> & p_vector
@@ -525,7 +529,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     ext_int<T> &
-    ext_int<T>::operator=(ext_int<T> && p_op)
+    ext_int<T>::operator=(ext_int<T> && p_op) noexcept
     {
         m_root = std::move(p_op.m_root);
         m_ext = std::move(p_op.m_ext);
@@ -776,7 +780,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     ext_int<T>
-    ext_int<T>::operator~(void) const
+    ext_int<T>::operator~() const
     {
         T l_root = ~m_root;
         std::vector<ubase_type> l_new_ext;
@@ -790,7 +794,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     ext_int<T>
-    ext_int<T>::operator-(void) const
+    ext_int<T>::operator-() const
     {
         return (~*this + ext_int<T>(1,{}));
     }
@@ -798,7 +802,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     ext_int<T>
-    ext_int<T>::operator+(void) const
+    ext_int<T>::operator+() const
     {
         return *this;
     }
@@ -979,6 +983,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     template <typename INT_TYPE, typename std::enable_if<!(sizeof(INT_TYPE) <= sizeof(T)), int>::type>
+    [[maybe_unused]]
     T
     ext_int<T>::extract(const INT_TYPE & p_value,
                         std::vector<ext_int::ubase_type> & p_vector
@@ -990,11 +995,7 @@ namespace quicky_utils
         {
             ubase_type l_chunk = l_value & ((ubase_type) -1);
             l_value = l_value >> (8 * sizeof(ubase_type));
-            if(l_value)
-            {
-                p_vector.push_back(l_chunk);
-            }
-            else if(p_value > 0 && ((T)l_chunk) < 0)
+            if(l_value || (p_value > 0 && ((T)l_chunk) < 0))
             {
                 p_vector.push_back(l_chunk);
             }
@@ -1009,6 +1010,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     template <typename INT_TYPE, typename std::enable_if<sizeof(INT_TYPE) <= sizeof(T), int>::type>
+    [[maybe_unused]]
     T
     ext_int<T>::extract(const INT_TYPE & p_value,
                         std::vector<ext_int::ubase_type> & p_vector
@@ -1051,28 +1053,24 @@ namespace quicky_utils
                 auto l_op_abs = ext_uint<ubase_type>(-p_op);
                 return ext_int<T>(l_this_abs * l_op_abs);
             }
-                break;
             case 1:
             {
                 auto l_this_abs = ext_uint<ubase_type>(-*this);
                 auto l_op_abs = ext_uint<ubase_type>(p_op);
                 return -ext_int<T>(l_this_abs * l_op_abs);
             }
-                break;
             case 2:
             {
                 auto l_this_abs = ext_uint<ubase_type>(*this);
                 auto l_op_abs = ext_uint<ubase_type>(-p_op);
                 return -ext_int<T>(l_this_abs * l_op_abs);
             }
-                break;
             case 3:
             {
                 auto l_this_abs = ext_uint<ubase_type>(*this);
                 auto l_op_abs = ext_uint<ubase_type>(p_op);
                 return ext_int<T>(l_this_abs * l_op_abs);
             }
-                break;
             default:
                 // Should never occur
                 assert(false);
@@ -1124,7 +1122,6 @@ namespace quicky_utils
                 }
                 return ext_int<T>(l_this_abs / l_op_abs);
             }
-                break;
             case 1:
             {
                 auto l_this_abs = ext_uint<ubase_type>(-*this);
@@ -1135,7 +1132,6 @@ namespace quicky_utils
                 }
                 return -ext_int<T>(l_this_abs / l_op_abs);
             }
-                break;
             case 2:
             {
                 auto l_this_abs = ext_uint<ubase_type>(*this);
@@ -1146,7 +1142,6 @@ namespace quicky_utils
                 }
                 return -ext_int<T>(l_this_abs / l_op_abs);
             }
-                break;
             case 3:
             {
                 auto l_this_abs = ext_uint<ubase_type>(*this);
@@ -1157,7 +1152,6 @@ namespace quicky_utils
                 }
                 return ext_int<T>(l_this_abs / l_op_abs);
             }
-                break;
             default:
                 // Should never occur
                 assert(false);
@@ -1207,7 +1201,6 @@ namespace quicky_utils
                 l_this_abs.div(l_op_abs, true, l_mult);
                 return -ext_int<T>(l_this_abs - l_mult);
             }
-                break;
             case 1:
             {
                 auto l_this_abs = ext_uint<ubase_type>(-*this);
@@ -1219,7 +1212,6 @@ namespace quicky_utils
                 l_this_abs.div(l_op_abs, true, l_mult);
                 return -ext_int<T>(l_this_abs - l_mult);
             }
-                break;
             case 2:
             {
                 auto l_this_abs = ext_uint<ubase_type>(*this);
@@ -1231,7 +1223,6 @@ namespace quicky_utils
                 l_this_abs.div(l_op_abs, true, l_mult);
                 return ext_int<T>(l_this_abs - l_mult);
             }
-                break;
             case 3:
             {
                 auto l_this_abs = ext_uint<ubase_type>(*this);
@@ -1243,7 +1234,6 @@ namespace quicky_utils
                 l_this_abs.div(l_op_abs, true, l_mult);
                 return ext_int<T>(l_this_abs - l_mult);
             }
-                break;
             default:
                 // Should never occur
                 assert(false);
@@ -1440,6 +1430,7 @@ namespace quicky_utils
 
     //-------------------------------------------------------------------------
     template <typename T>
+    [[maybe_unused]]
     size_t
     ext_int<T>::get_nb_bytes() const
     {
@@ -1473,35 +1464,35 @@ namespace std
     }
 
     template<typename T>
-    struct is_integral<quicky_utils::ext_int<T>>
+    struct [[maybe_unused]] is_integral<quicky_utils::ext_int<T>>
     {
       public:
         static constexpr bool value = true;
     };
 
     template<typename T>
-    struct is_arithmetic<quicky_utils::ext_int<T>>
+    struct [[maybe_unused]] is_arithmetic<quicky_utils::ext_int<T>>
     {
       public:
         static constexpr bool value = true;
     };
 
     template<typename T>
-    struct is_scalar<quicky_utils::ext_int<T>>
+    struct [[maybe_unused]] is_scalar<quicky_utils::ext_int<T>>
     {
       public:
         static constexpr bool value = true;
     };
 
     template <typename T>
-    class is_signed<quicky_utils::ext_int<T> >
+    class [[maybe_unused]] is_signed<quicky_utils::ext_int<T> >
     {
       public:
         static const bool value = true;
     };
 
     template <typename T>
-    class make_signed<quicky_utils::ext_int<T> >
+    class [[maybe_unused]] make_signed<quicky_utils::ext_int<T> >
     {
       public:
         typedef quicky_utils::ext_int<typename std::make_signed<T>::type> type;

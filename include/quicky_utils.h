@@ -17,23 +17,38 @@
 #ifndef QUICKY_UTILS_HPP
 #define QUICKY_UTILS_HPP
 
+#include "common.h"
+
 namespace quicky_utils
 {
-  template<unsigned int VALUE>
+    template<unsigned int VALUE>
     class quicky_utils
     {
-    private:
-      static inline unsigned int get_nb_bits_for_value(void)
-	{
-	  return (VALUE == 0) ? 0 : (1+quicky_utils<(VALUE >> 1)>::get_nb_bits());
-	}
-    public:
-      static const unsigned int m_nb_bits_for_value;
-      static const unsigned int m_nb_bits_for_nb_values;
+      private:
+
+        [[maybe_unused]]
+        static inline
+        unsigned int get_nb_bits_for_value()
+        {
+            return (VALUE == 0) ? 0 : (1+quicky_utils<(VALUE >> 1u)>::get_nb_bits());
+        }
+
+      public:
+
+        static
+        const unsigned int m_nb_bits_for_value;
+
+        [[maybe_unused]]
+        static
+        const unsigned int m_nb_bits_for_nb_values;
     };
 
-  template<unsigned int VALUE> const unsigned int quicky_utils<VALUE>::m_nb_bits_for_value = (VALUE == 0) ? 0 : (1+quicky_utils<(VALUE >> 1)>::m_nb_bits_for_value);
-  template<unsigned int VALUE> const unsigned int quicky_utils<VALUE>::m_nb_bits_for_nb_values = quicky_utils<VALUE-1>::m_nb_bits_for_value;
+  template<unsigned int VALUE>
+  const unsigned int quicky_utils<VALUE>::m_nb_bits_for_value = (VALUE == 0) ? 0 : (1+quicky_utils<(VALUE >> 1u)>::m_nb_bits_for_value);
+
+  template<unsigned int VALUE>
+  [[maybe_unused]]
+  const unsigned int quicky_utils<VALUE>::m_nb_bits_for_nb_values = quicky_utils<VALUE-1>::m_nb_bits_for_value;
 }
 #endif // QUICKY_UTILS_HPP
 //EOF

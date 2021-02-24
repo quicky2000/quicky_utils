@@ -29,7 +29,7 @@ namespace quicky_utils
                      ) = 0;
 
         inline
-        virtual ~multi_thread_signal_handler_listener_if(void) = default;
+        virtual ~multi_thread_signal_handler_listener_if() = default;
     };
 }
 #endif //QUICKY_UTILS_MULTI_THREAD_SIGNAL_HANDLER_LISTENER_IF_H

@@ -25,6 +25,8 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <type_traits>
+#include "common.h"
 
 #ifdef __MINGW32__ // seems to be defined by both mingw-32 nd mingw-64
 #include <_mingw.h> // private MinGW header
@@ -86,9 +88,11 @@ namespace quicky_utils
         inline
         void read_from(std::istream & p_stream);
 
+        [[nodiscard]]
         inline
         size_t size() const;
 
+        [[nodiscard]]
         inline
         size_t bitsize() const;
 
@@ -113,6 +117,7 @@ namespace quicky_utils
          * @param p_thread_id thread id
          * @param p_thread_nb thread number
          */
+        [[maybe_unused]]
         inline
         void apply_and(const quicky_bitfield & p_operand1
                       ,const quicky_bitfield & p_operand2
@@ -130,6 +135,7 @@ namespace quicky_utils
          * Return index of first bit set
          * @return 0 if no bit set, index of first bit set ( first bit has index 1 )
          */
+        [[nodiscard]]
         inline
         int ffs() const;
 
@@ -138,6 +144,7 @@ namespace quicky_utils
          * @param p_start_index bit index from which search start
          * @return 0 if no bit set, index of first bit set ( first bit has index 1 )
          */
+        [[nodiscard]]
         inline
         int ffs(unsigned int p_start_index) const;
 
@@ -148,6 +155,7 @@ namespace quicky_utils
          * @param p_operand1 operand with which bitwise AND is performed
          * @return true if some results bits are 1 or false if no result bits are at zero
          */
+        [[nodiscard]]
         inline
         bool and_not_null(const quicky_bitfield & p_operand1) const;
 
@@ -159,6 +167,7 @@ namespace quicky_utils
          * @param p_operand1 operand with which bitwise AND is performed
          * @return true if some results bits are 1 or false if no result bits are at zero
          */
+        [[nodiscard]]
         inline
         bool r_and_not_null(const quicky_bitfield & p_operand1) const;
 
@@ -171,6 +180,7 @@ namespace quicky_utils
          * @param p_limit_bit firt non null bit
          * @return true if some results bits are 1 or false if no result bits are at zero
          */
+        [[nodiscard]]
         inline
         bool r_and_not_null(const quicky_bitfield & p_operand1
                            ,unsigned int p_limit_bit
@@ -182,9 +192,12 @@ namespace quicky_utils
         inline
         bool operator==(const quicky_bitfield<T> & p_operand) const;
       private:
+
+        [[nodiscard]]
         inline
         unsigned int compute_limit_index(unsigned int p_limit_bit) const;
 
+        static_assert(std::is_unsigned_v<T>, "Check base type is unsigned");
         const unsigned int m_size;
         typedef T t_array_unit;
         const unsigned int m_array_size;
@@ -224,7 +237,7 @@ namespace quicky_utils
     int quicky_bitfield<T>::ffs() const
     {
         unsigned int l_index = 0;
-        int l_result = 0;
+        int l_result;
         while(l_index < m_array_size)
         {
             t_array_unit v = m_array[l_index];
@@ -243,7 +256,7 @@ namespace quicky_utils
     inline int quicky_bitfield<uint32_t>::ffs() const
     {
         unsigned int l_index = 0;
-        int l_result = 0;
+        int l_result;
         while(l_index < m_array_size)
         {
             t_array_unit v = m_array[l_index];
@@ -283,14 +296,14 @@ namespace quicky_utils
                             11, //10,
                             10, // 9
                     };
-            l_result = v ? MultiplyDeBruijnBitPosition[((uint32_t)((v & -v) * 0x077CB531U)) >> 27] : 0;
+            l_result = v ? MultiplyDeBruijnBitPosition[((uint32_t)((v & -v) * 0x077CB531U)) >> 27u] : 0;
 #else
             l_result = ::ffs(v);
 #endif // USE_HARDWARE_FFS
 
             if(l_result)
             {
-                return l_result + 8 * sizeof(t_array_unit) * l_index;
+                return l_result + static_cast<int>(8 * sizeof(t_array_unit) * l_index);
             }
             ++l_index;
         }
@@ -302,7 +315,7 @@ namespace quicky_utils
     inline int quicky_bitfield<uint64_t>::ffs() const
     {
         unsigned int l_index = 0;
-        int l_result = 0;
+        int l_result;
         while(l_index < m_array_size)
         {
             t_array_unit v = m_array[l_index];
@@ -374,14 +387,14 @@ namespace quicky_utils
                             60,
                             59
                     };
-            l_result = v ? MultiplyDeBruijnBitPosition[((uint64_t)((v & -v) * 0x0218a392cd3d5dbfL)) >> 58] : 0;
+            l_result = v ? MultiplyDeBruijnBitPosition[((uint64_t)((v & -v) * 0x0218a392cd3d5dbfUL)) >> 58u] : 0;
 #else
             l_result = ::ffs(v);
 #endif // USE_HARDWARE_FFS
 
             if(l_result)
             {
-                return l_result + 8 * sizeof(t_array_unit) * l_index;
+                return l_result + static_cast<int>(8 * sizeof(t_array_unit) * l_index);
             }
             ++l_index;
         }
@@ -393,7 +406,7 @@ namespace quicky_utils
     int quicky_bitfield<T>::ffs(unsigned int p_start_index) const
     {
         unsigned int l_index = compute_limit_index(p_start_index);
-        int l_result = 0;
+        int l_result;
         while(l_index < m_array_size)
         {
             t_array_unit v = m_array[l_index];
@@ -412,7 +425,7 @@ namespace quicky_utils
     inline int quicky_bitfield<uint32_t>::ffs(unsigned int p_start_index) const
     {
         unsigned int l_index = compute_limit_index(p_start_index);
-        int l_result = 0;
+        int l_result;
         while(l_index < m_array_size)
         {
             t_array_unit v = m_array[l_index];
@@ -452,14 +465,14 @@ namespace quicky_utils
                             11, //10,
                             10, // 9
                     };
-            l_result = v ? MultiplyDeBruijnBitPosition[((uint32_t)((v & -v) * 0x077CB531U)) >> 27] : 0;
+            l_result = v ? MultiplyDeBruijnBitPosition[((uint32_t)((v & -v) * 0x077CB531U)) >> 27u] : 0;
 #else
             l_result = ::ffs(v);
 #endif // USE_HARDWARE_FFS
 
             if(l_result)
             {
-                return l_result + 8 * sizeof(t_array_unit) * l_index;
+                return l_result + static_cast<int>(8 * sizeof(t_array_unit) * l_index);
             }
             ++l_index;
         }
@@ -471,7 +484,7 @@ namespace quicky_utils
     inline int quicky_bitfield<uint64_t>::ffs(unsigned int p_start_index) const
     {
         unsigned int l_index = compute_limit_index(p_start_index);
-        int l_result = 0;
+        int l_result;
         while(l_index < m_array_size)
         {
             t_array_unit v = m_array[l_index];
@@ -543,14 +556,14 @@ namespace quicky_utils
                             60,
                             59
                     };
-            l_result = v ? MultiplyDeBruijnBitPosition[((uint64_t)((v & -v) * 0x0218a392cd3d5dbfL)) >> 58] : 0;
+            l_result = v ? MultiplyDeBruijnBitPosition[((uint64_t)((v & -v) * 0x0218a392cd3d5dbfUL)) >> 58u] : 0;
 #else
             l_result = ::ffs(v);
 #endif // USE_HARDWARE_FFS
 
             if(l_result)
             {
-                return l_result + 8 * sizeof(t_array_unit) * l_index;
+                return l_result + static_cast<int>(8 * sizeof(t_array_unit) * l_index);
             }
             ++l_index;
         }
@@ -589,6 +602,7 @@ namespace quicky_utils
 
     //----------------------------------------------------------------------------
     template <class T>
+    [[maybe_unused]]
     void
     quicky_bitfield<T>::apply_and(const quicky_bitfield & p_operand1,
                                   const quicky_bitfield & p_operand2,

@@ -23,54 +23,62 @@
 #endif
 #include "signal_handler_listener_if.h"
 #include <iostream>
+#include "common.h"
 
 namespace quicky_utils
 {
-
-  class signal_handler
-  {
-  public:
-    inline signal_handler(signal_handler_listener_if & p_listener);
-    inline static void handler(int p_signal);
-  private:
-    static signal_handler_listener_if * m_listener;
-  };
-
-  //----------------------------------------------------------------------------
-  signal_handler::signal_handler(signal_handler_listener_if & p_listener)
+    class [[maybe_unused]] signal_handler
     {
-      m_listener = &p_listener;
+      public:
+
+        [[maybe_unused]]
+        inline
+        signal_handler(signal_handler_listener_if & p_listener);
+
+        inline static
+        void handler(int p_signal);
+
+      private:
+
+        static
+        signal_handler_listener_if * m_listener;
+    };
+
+    //----------------------------------------------------------------------------
+    signal_handler::signal_handler(signal_handler_listener_if & p_listener)
+    {
+        m_listener = &p_listener;
 #ifndef _WIN32
-      //Preparing signal handling to manage stop
-      // Structure declaration to put handlers in place
-      struct sigaction l_signal_action;
+        //Preparing signal handling to manage stop
+        // Structure declaration to put handlers in place
+        struct sigaction l_signal_action;
 
-      // Filling the structure
-      // with handler address
-      l_signal_action.sa_handler=handler;
+        // Filling the structure
+        // with handler address
+        l_signal_action.sa_handler=handler;
 
-      // This flag is theorically ignored but put as zero to be clean
-      l_signal_action.sa_flags=0;
+        // This flag is theorically ignored but put as zero to be clean
+        l_signal_action.sa_flags=0;
 
-      // we don't block specific signals
-      sigemptyset(&l_signal_action.sa_mask);
+        // we don't block specific signals
+        sigemptyset(&l_signal_action.sa_mask);
 
-      // Handlers are put in place for 3 signals
-      sigaction(SIGINT,&l_signal_action,0);
-      sigaction(SIGTERM,&l_signal_action,0);
-      sigaction(SIGUSR1,&l_signal_action,0);
+        // Handlers are put in place for 3 signals
+        sigaction(SIGINT,&l_signal_action, nullptr);
+        sigaction(SIGTERM,&l_signal_action,nullptr);
+        sigaction(SIGUSR1,&l_signal_action,nullptr);
 #else
-      signal(SIGINT,handler);
-      signal(SIGTERM,handler);
-      signal(SIGUSR1,handler);
+        signal(SIGINT,handler);
+        signal(SIGTERM,handler);
+        signal(SIGUSR1,handler);
 #endif
     }
 
-  //----------------------------------------------------------------------------
-  void signal_handler::handler(int p_signal)
-  {
-    m_listener->handle(p_signal);
-  }
+    //----------------------------------------------------------------------------
+    void signal_handler::handler(int p_signal)
+    {
+        m_listener->handle(p_signal);
+    }
 }
 #endif // SIGNAL_HANDLER_H
 //EOF

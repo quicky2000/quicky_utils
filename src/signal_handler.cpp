@@ -19,6 +19,6 @@
 
 namespace quicky_utils
 {
-  signal_handler_listener_if * signal_handler::m_listener = NULL;
+  signal_handler_listener_if * signal_handler::m_listener = nullptr;
 }
 //EOF

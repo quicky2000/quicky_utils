@@ -22,6 +22,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include "common.h"
 
 namespace quicky_utils
 {
@@ -49,7 +50,9 @@ namespace quicky_utils
                    const ansi_escape_code & p_color
                   );
       protected:
-        inline explicit ansi_escape_code(const std::string & p_code);
+
+        inline explicit
+        ansi_escape_code(const std::string & p_code);
 
         std::string m_code;
     };
@@ -57,10 +60,18 @@ namespace quicky_utils
     class esc_8bits
     {
       public:
-        inline const std::string & get_code()const;
+
+        [[nodiscard]]
+        inline
+        const std::string & get_code()const;
+
       protected:
-        inline explicit esc_8bits(unsigned int p_code);
+
+        inline explicit
+        esc_8bits(unsigned int p_code);
+
       private:
+
         const std::string m_code;
     };
 
@@ -133,12 +144,18 @@ namespace quicky_utils
     class color_24b
     {
       public:
-        inline color_24b(unsigned int p_r,
-                         unsigned int p_g,
-                         unsigned int p_b
-                        );
-        inline const std::string & get_code()const;
+        inline
+        color_24b(unsigned int p_r
+                 ,unsigned int p_g
+                 ,unsigned int p_b
+                 );
+
+        [[nodiscard]]
+        inline
+        const std::string & get_code()const;
+
       private:
+
         std::string m_code;
     };
 
@@ -175,8 +192,8 @@ namespace quicky_utils
     }
 
     //-------------------------------------------------------------------------
-    ansi_escape_code::ansi_escape_code(const std::string & p_code):
-            m_code(p_code)
+    ansi_escape_code::ansi_escape_code(const std::string & p_code)
+    :m_code(p_code)
     {
     }
 

@@ -27,6 +27,7 @@
 #include <iomanip>
 #include <sstream>
 #include <type_traits>
+#include "common.h"
 
 namespace quicky_utils
 {
@@ -118,12 +119,14 @@ namespace quicky_utils
          * Accessor returning number of words composing type
          * @return number of word composing type
          */
+        [[nodiscard]] [[maybe_unused]]
         size_t get_nb_words()const;
 
         /**
          * Accessor returning number of bytes composing type
          * @return number of bytes composing type
          */
+        [[nodiscard]] [[maybe_unused]]
         size_t get_nb_bytes() const;
 
         /**
@@ -131,6 +134,7 @@ namespace quicky_utils
          * @param p_index location of word to return
          * @return word located at place defined by paramter
          */
+        [[maybe_unused]]
         const T & get_word(const unsigned int & p_index) const;
 
         /**
@@ -148,7 +152,7 @@ namespace quicky_utils
          * @param p_op value to move
          * @return assigned object
          */
-        ext_uint<T> & operator=(ext_uint<T> && p_op);
+        ext_uint<T> & operator=(ext_uint<T> && p_op) noexcept;
 
         /**
          * Assignment operator
@@ -197,10 +201,10 @@ namespace quicky_utils
         operator%(const ext_uint & p_op) const;
 
         ext_uint<T>
-        operator-(void)const;
+        operator-()const;
 
         ext_uint<T>
-        operator+(void)const;
+        operator+()const;
 
         ext_uint<T>
         operator+=(const ext_uint & p_op);
@@ -220,6 +224,7 @@ namespace quicky_utils
          * Extension accessor
          * @return extension
          */
+        [[maybe_unused]]
         const std::vector<T> & get_extension()const;
 
         /**
@@ -246,6 +251,7 @@ namespace quicky_utils
          * Method checking ig object has the shortest possible representation
          * @return true if object don't have shortest possible representation
          */
+        [[nodiscard]]
         bool is_trimmable() const;
 
         /**
@@ -284,6 +290,7 @@ namespace quicky_utils
          * @param p_vector vector to fill
          * */
         template <typename UINT_TYPE, typename std::enable_if<sizeof(UINT_TYPE) <= sizeof(T), int>::type = 0>
+        [[maybe_unused]]
         static
         void extract(const UINT_TYPE & p_value,
                      std::vector<T> & p_vector
@@ -425,6 +432,7 @@ namespace quicky_utils
 
     //-------------------------------------------------------------------------
     template <typename T>
+    [[maybe_unused]]
     size_t
     ext_uint<T>::get_nb_words() const
     {
@@ -433,6 +441,7 @@ namespace quicky_utils
 
     //-----------------------------------------------------------------------------
     template <typename T>
+    [[maybe_unused]]
     size_t
     ext_uint<T>::get_nb_bytes() const
     {
@@ -441,6 +450,7 @@ namespace quicky_utils
 
     //-------------------------------------------------------------------------
     template <typename T>
+    [[maybe_unused]]
     const T &
     ext_uint<T>::get_word(const unsigned int & p_index) const
     {
@@ -476,7 +486,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     ext_uint<T> &
-    ext_uint<T>::operator=(ext_uint<T> && p_op)
+    ext_uint<T>::operator=(ext_uint<T> && p_op) noexcept
     {
         m_ext = std::move(p_op.m_ext);
         return *this;
@@ -1058,7 +1068,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     ext_uint<T>
-    ext_uint<T>::operator-(void) const
+    ext_uint<T>::operator-() const
     {
         throw safe_type_exception("Illegal ext_uint operator-",
                                   __LINE__,
@@ -1069,7 +1079,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     ext_uint<T>
-    ext_uint<T>::operator+(void) const
+    ext_uint<T>::operator+() const
     {
         return *this;
     }
@@ -1112,6 +1122,7 @@ namespace quicky_utils
 
     //-------------------------------------------------------------------------
     template <typename T>
+    [[maybe_unused]]
     const std::vector<T> &
     ext_uint<T>::get_extension() const
     {
@@ -1121,6 +1132,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     template <typename UINT_TYPE, typename std::enable_if<sizeof(T) < sizeof(UINT_TYPE), int>::type>
+    [[maybe_unused]]
     void
     ext_uint<T>::extract(const UINT_TYPE & p_value,
                          std::vector<T> & p_vector
@@ -1140,6 +1152,7 @@ namespace quicky_utils
     //-------------------------------------------------------------------------
     template <typename T>
     template <typename UINT_TYPE, typename std::enable_if<sizeof(UINT_TYPE) <= sizeof(T), int>::type>
+    [[maybe_unused]]
     void
     ext_uint<T>::extract(const UINT_TYPE & p_value,
                          std::vector<T> & p_vector
@@ -1285,7 +1298,7 @@ namespace quicky_utils
 
       l_exponent += p_add;
 
-      constexpr const int l_max_exp = (1 << l_exp_size) - 1;
+      constexpr const int l_max_exp = (1u << l_exp_size) - 1;
       if(l_max_exp <= l_exponent)
         {
           l_mantissa = 0;
@@ -1314,28 +1327,28 @@ namespace quicky_utils
 namespace std
 {
     template <typename T>
-    struct is_integral<quicky_utils::ext_uint<T>>
+    struct [[maybe_unused]] is_integral<quicky_utils::ext_uint<T>>
     {
       public:
         static constexpr bool value = true;
     };
 
     template <typename T>
-    struct is_arithmetic<quicky_utils::ext_uint<T>>
+    struct [[maybe_unused]] is_arithmetic<quicky_utils::ext_uint<T>>
     {
       public:
         static constexpr bool value = true;
     };
 
     template <typename T>
-    struct is_scalar<quicky_utils::ext_uint<T>>
+    struct [[maybe_unused]] is_scalar<quicky_utils::ext_uint<T>>
     {
       public:
         static constexpr bool value = true;
     };
 
     template <typename T>
-    class is_signed<quicky_utils::ext_uint<T> >
+    class [[maybe_unused]] is_signed<quicky_utils::ext_uint<T> >
     {
       public:
         static const bool value = false;

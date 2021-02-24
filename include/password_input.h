@@ -38,6 +38,7 @@ char *getlogin(void)
     return NULL;
 }
 #endif
+#include "common.h"
 
 void set_stdin_echo(bool enable = true)
 {
@@ -57,15 +58,18 @@ void set_stdin_echo(bool enable = true)
     struct termios tty;
     tcgetattr(STDIN_FILENO, &tty);
     if( !enable )
-        tty.c_lflag &= ~ECHO;
+        tty.c_lflag &= ~static_cast<tcflag_t>(ECHO);
     else
-        tty.c_lflag |= ECHO;
+        tty.c_lflag |= static_cast<tcflag_t>(ECHO);
 
     (void) tcsetattr(STDIN_FILENO, TCSANOW, &tty);
 #endif
 }
 
-void getpass2(std::string & p_passwd, const std::string & p_prompt)
+[[maybe_unused]]
+void getpass2(std::string & p_passwd
+             ,const std::string & p_prompt
+             )
 {
   std::cout << p_prompt;
   set_stdin_echo( false);

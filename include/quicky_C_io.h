@@ -20,39 +20,52 @@
 #include "quicky_exception.h"
 #include <cstdio>
 #include <sstream>
+#include "common.h"
 
 namespace quicky_utils
 {
-    class quicky_C_io
+    class [[maybe_unused]] quicky_C_io
     {
-    public:
-      template<size_t SIZE>
-      static inline void my_fread(void *ptr,size_t nmemb, FILE *stream)
-	{
-	  size_t l_result = fread(ptr,SIZE,nmemb,stream);
-	  if(nmemb != l_result)
-	    {
-	      std::stringstream l_result_str;
-	      l_result_str << l_result;
-	      std::stringstream sizeof_str;
-	      sizeof_str << SIZE;
-	      throw quicky_exception::quicky_runtime_exception("Bad fread return value "+l_result_str.str()+" vs expected "+sizeof_str.str(),__LINE__,__FILE__);
-	    }
-	}
+      public:
 
-      //------------------------------------------------------------------------
-      static inline void my_fread(void *ptr,size_t size,size_t nmemb, FILE *stream)
-	{
-	  size_t l_result = fread(ptr,size,nmemb,stream);
-	  if(nmemb != l_result)
-	    {
-	      std::stringstream l_result_str;
-	      l_result_str << l_result;
-	      std::stringstream sizeof_str;
-	      sizeof_str << size;
-	      throw quicky_exception::quicky_runtime_exception("Bad fread return value "+l_result_str.str()+" vs expected "+sizeof_str.str(),__LINE__,__FILE__);
-	    }
-	}
+        template<size_t SIZE>
+        [[maybe_unused]]
+        static inline
+        void my_fread(void * ptr
+                     ,size_t nmemb
+                     ,FILE * stream
+                     )
+        {
+            size_t l_result = fread(ptr,SIZE,nmemb,stream);
+            if(nmemb != l_result)
+            {
+                std::stringstream l_result_str;
+                l_result_str << l_result;
+                std::stringstream sizeof_str;
+                sizeof_str << SIZE;
+                throw quicky_exception::quicky_runtime_exception("Bad fread return value "+l_result_str.str()+" vs expected "+sizeof_str.str(),__LINE__,__FILE__);
+            }
+        }
+
+        //------------------------------------------------------------------------
+        [[maybe_unused]]
+        static inline
+        void my_fread(void * ptr
+                     ,size_t size
+                     ,size_t nmemb
+                     ,FILE *stream
+                     )
+        {
+            size_t l_result = fread(ptr,size,nmemb,stream);
+            if(nmemb != l_result)
+            {
+                std::stringstream l_result_str;
+                l_result_str << l_result;
+                std::stringstream sizeof_str;
+                sizeof_str << size;
+                throw quicky_exception::quicky_runtime_exception("Bad fread return value "+l_result_str.str()+" vs expected "+sizeof_str.str(),__LINE__,__FILE__);
+            }
+        }
 
     private:
     };

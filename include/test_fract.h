@@ -21,7 +21,7 @@
 #include "safe_types.h"
 #include "ext_int.h"
 #include "fract.h"
-#include <inttypes.h>
+#include <cinttypes>
 #include <iostream>
 #include "quicky_test.h"
 

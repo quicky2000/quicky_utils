@@ -138,6 +138,7 @@ namespace quicky_utils
 
     //-------------------------------------------------------------------------
     template <unsigned int NB_THREAD>
+    [[maybe_unused]]
     void
     multi_thread_signal_handler<NB_THREAD>::create_unique_instance(multi_thread_signal_handler_listener_if & p_listener
                                                                   ,const std::array<std::thread::id, NB_THREAD> & p_thread_ids

@@ -60,13 +60,17 @@ namespace quicky_utils
          * Define test verbosity
          * @param p_verbosity verbosity level
          */
-        static inline void set_verbosity(const test_verbosity_t & p_verbosity);
+        [[maybe_unused]]
+        static inline
+        void set_verbosity(const test_verbosity_t & p_verbosity);
 
         /**
          * Get test verbosity
          * @return verbosity level
          */
-        static inline test_verbosity_t get_verbosity();
+        [[maybe_unused]]
+        static inline
+        test_verbosity_t get_verbosity();
 
         /**
          * Provide string representation of verbosity
@@ -218,7 +222,8 @@ namespace quicky_utils
                                test_verbosity_t p_quiet
                               );
 
-        inline quicky_test(std::ostream & p_ostream);
+        inline
+        quicky_test(std::ostream & p_ostream) noexcept;
 
         std::ostream * m_default_ostream;
         static quicky_test m_unique_instance;
@@ -333,8 +338,8 @@ namespace quicky_utils
     }
 
     //-------------------------------------------------------------------------
-    quicky_test::quicky_test(std::ostream & p_ostream):
-    m_default_ostream(&p_ostream)
+    quicky_test::quicky_test(std::ostream & p_ostream) noexcept
+    :m_default_ostream(&p_ostream)
     {
 
     }
@@ -417,6 +422,7 @@ namespace quicky_utils
     }
 
     //-------------------------------------------------------------------------
+    [[maybe_unused]]
     void
     quicky_test::set_verbosity(const quicky_test::test_verbosity_t & p_verbosity)
     {
@@ -424,6 +430,7 @@ namespace quicky_utils
     }
 
     //-------------------------------------------------------------------------
+    [[maybe_unused]]
     quicky_test::test_verbosity_t
     quicky_test::get_verbosity()
     {
@@ -439,17 +446,13 @@ namespace quicky_utils
         {
             case test_verbosity_t::QUIET:
                 return "QUIET";
-                break;
             case test_verbosity_t::FAILED_ONLY:
                 return "FAILED_ONLY";
-                break;
             case test_verbosity_t::VERBOSE:
                 return "VERBOSE";
-                break;
             default:
                 throw quicky_exception::quicky_logic_exception("Unknown value for test_verbosity_t :" + std::to_string((int)p_verbosity), __LINE__, __FILE__);
         }
-        return "";
     }
 }
 #endif //QUICKY_UTILS_QUICKY_TEST_H

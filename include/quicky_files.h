@@ -17,37 +17,42 @@
 #ifndef QUICKY_FILES_HPP
 #define QUICKY_FILES_HPP
 
-#include <stdio.h>
+#include <cstdio>
 #include <dirent.h>
 #include <vector>
 #include <string>  
 #include <cstring>
+#include "common.h"
 
 namespace quicky_utils
 {
-    class quicky_files
+    class [[maybe_unused]] quicky_files
     {
-    public:
-      static inline void list_content(const std::string & p_name,
-				      std::vector<std::string> & p_list)
-	{
-	  DIR * l_directory = opendir(p_name.c_str());
+      public:
+
+        [[maybe_unused]]
+        static inline
+        void list_content(const std::string & p_name
+                         ,std::vector<std::string> & p_list
+                         )
+        {
+            DIR * l_directory = opendir(p_name.c_str());
      
-	  if (l_directory != NULL)
-	    {
-	      struct dirent * l_item;
+            if (l_directory != nullptr)
+            {
+                struct dirent * l_item;
          
-	      while ((l_item = readdir(l_directory)) != NULL)
-		{
-                  if(strcmp(l_item->d_name,".") && strcmp(l_item->d_name,".."))
+                while ((l_item = readdir(l_directory)) != nullptr)
+                {
+                    if(strcmp(l_item->d_name,".") && strcmp(l_item->d_name,".."))
                     {
-                      p_list.push_back(l_item->d_name);
+                        p_list.emplace_back(l_item->d_name);
                     }
-		}
+                }
 	      
-	      closedir(l_directory);
-	    }
-	}
+                closedir(l_directory);
+            }
+        }
     };
 
 }

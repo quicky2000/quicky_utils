@@ -142,7 +142,7 @@ namespace quicky_utils
     typedef typename std::make_signed<t_coef>::type t_coef_num;
     typedef typename std::make_unsigned<t_coef>::type t_coef_den;
 
-    inline constexpr fract(void) noexcept;
+    inline constexpr fract() noexcept;
 
     inline explicit constexpr fract(const t_coef_num & p_num);
 
@@ -206,13 +206,13 @@ namespace quicky_utils
 
     inline bool operator!=(const fract & p_op)const;
 
-    inline fract operator-(void)const;
-    inline fract operator+(void)const;
+    inline fract operator-()const;
+    inline fract operator+()const;
 
    /**
        Pre increment
     */
-    inline fract & operator++(void);
+    inline fract & operator++();
 
     /**
        Post increment
@@ -222,7 +222,7 @@ namespace quicky_utils
     /**
        Pre decrement
     */
-    inline fract & operator--(void);
+    inline fract & operator--();
 
     /**
        Post decrement
@@ -232,7 +232,7 @@ namespace quicky_utils
     /**
        Conversion operator
     */
-    inline operator bool(void)const;
+    inline operator bool()const;
 
     inline fract & operator+=(const fract & p_op1);
     inline fract & operator-=(const fract & p_op1);
@@ -248,8 +248,13 @@ namespace quicky_utils
     inline fract& operator=(const fract& p_other);
     inline fract(const fract & p_op);
 
-    inline float to_float(void)const;
-    inline double to_double(void)const;
+    [[nodiscard]]
+    inline
+    float to_float()const;
+
+    [[nodiscard]]
+    inline
+    double to_double()const;
 
     fract abs() const;
 
@@ -466,7 +471,7 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
-  constexpr fract<T>::fract(void) noexcept:
+  constexpr fract<T>::fract() noexcept:
 #ifdef FRACT_DOUBLE_CHECK
     m_double(0.0),
 #endif // FRACT_DOUBLE_CHECK
@@ -718,7 +723,7 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
-  fract<T> & fract<T>::operator++(void)
+  fract<T> & fract<T>::operator++()
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -744,7 +749,7 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
-  fract<T> & fract<T>::operator--(void)
+  fract<T> & fract<T>::operator--()
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -770,7 +775,7 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
-  fract<T> fract<T>::operator-(void)const
+  fract<T> fract<T>::operator-()const
   {
 #ifdef FRACT_DOUBLE_CHECK
     double l_before = this->to_double();
@@ -784,14 +789,14 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
-  fract<T> fract<T>::operator+(void)const
+  fract<T> fract<T>::operator+()const
   {
     return fract(m_num, m_den);
   }
 
   //----------------------------------------------------------------------------
   template <typename T>
-  fract<T>::operator bool(void)const
+  fract<T>::operator bool()const
   {
     return (bool)m_num;
   }
@@ -933,7 +938,7 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
-  float fract<T>::to_float(void)const
+  float fract<T>::to_float()const
   {
     return ((float)m_num)/((float)m_den);
 
@@ -941,7 +946,7 @@ namespace quicky_utils
 
   //----------------------------------------------------------------------------
   template <typename T>
-  double fract<T>::to_double(void)const
+  double fract<T>::to_double()const
   {
     return ((double)m_num)/((double)m_den);
   }
@@ -1288,71 +1293,160 @@ namespace quicky_utils
 
 namespace std
 {
-  template <typename T>
+    template <typename T>
     class is_signed<quicky_utils::fract<T>>
     {
-    public:
+      public:
+
       static const bool value = true;
     };
 
-  template <typename T>
+    template <typename T>
     class numeric_limits<quicky_utils::fract<T>>
     {
-    public:
-      static constexpr bool is_specialized = true;
-      static constexpr quicky_utils::fract<T> min() noexcept
-	{
-	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::min());
-	}
-      static constexpr quicky_utils::fract<T> max() noexcept
-	{
-	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::max());
-	}
-      static constexpr quicky_utils::fract<T> lowest() noexcept
-	{
-	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::lowest());
-	}
-      static constexpr int digits = std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::digits;
-      static constexpr int digits10 = std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::digits10;
-      static constexpr int max_digits10 = std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::max_digits10;
-      static constexpr bool is_signed = true;
-      static constexpr bool is_integer = false;
-      static constexpr bool is_exact = true;
-      static constexpr int radix = 2;
-      static constexpr quicky_utils::fract<T> epsilon() noexcept
-	{
-	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_den>::max(),
-				     nullptr
-				     );
-	}
-      static constexpr quicky_utils::fract<T> round_error() noexcept
-	{
-	  return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_den>::max(),
-				     nullptr
-				     );
-	}
-      static constexpr int min_exponent = 0; // No sense
-      static constexpr int min_exponent10 = 0; // No sense
-      static constexpr int max_exponent = 0; // No sense
-      static constexpr int max_exponent10 = 0; // No sense
-      static constexpr bool has_infinity = false;
-      static constexpr bool has_quiet_NaN = false;
-      static constexpr bool has_signaling_NaN = false;
-      static constexpr float_denorm_style has_denorm = denorm_absent;
-      static constexpr bool has_denorm_loss = false;
-      static constexpr bool infinity() noexcept { return 0; } // No sense
-      static constexpr bool quiet_NaN() noexcept { return 0; } // No sense
-      static constexpr bool signaling_NaN() noexcept { return 0; } // No sense
-      static constexpr bool denorm_min() noexcept { return 0; } // No sense
-      static constexpr bool is_iec559 = false;
-      static constexpr bool is_bounded = true;
-      static constexpr bool is_modulo = true;
-      static constexpr bool traps = false;
-      static constexpr bool tinyness_before = false;
-      static constexpr float_round_style round_style = round_toward_zero;
+      public:
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_specialized = true;
+
+        static
+        constexpr quicky_utils::fract<T> min() noexcept
+        {
+            return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::min());
+        }
+
+        static
+        constexpr quicky_utils::fract<T> max() noexcept
+        {
+            return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::max());
+        }
+
+        static
+        constexpr quicky_utils::fract<T> lowest() noexcept
+        {
+            return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::lowest());
+        }
+
+        [[maybe_unused]]
+        static
+        constexpr int digits = std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::digits;
+
+        [[maybe_unused]]
+        static
+        constexpr int digits10 = std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::digits10;
+
+        [[maybe_unused]]
+        static
+        constexpr int max_digits10 = std::numeric_limits<typename quicky_utils::fract<T>::t_coef_num>::max_digits10;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_signed = true;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_integer = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_exact = true;
+
+        [[maybe_unused]]
+        static
+        constexpr int radix = 2;
+
+        static
+        constexpr quicky_utils::fract<T> epsilon() noexcept
+        {
+
+            return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_den>::max(), nullptr);
+        }
+
+        static
+        constexpr quicky_utils::fract<T> round_error() noexcept
+        {
+            return quicky_utils::fract<T>(std::numeric_limits<typename quicky_utils::fract<T>::t_coef_den>::max(),nullptr);
+        }
+
+        [[maybe_unused]]
+        static
+        constexpr int min_exponent = 0; // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr int min_exponent10 = 0; // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr int max_exponent = 0; // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr int max_exponent10 = 0; // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_infinity = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_quiet_NaN = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_signaling_NaN = false;
+
+        [[maybe_unused]]
+        static
+        constexpr float_denorm_style has_denorm = denorm_absent;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_denorm_loss = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool infinity() noexcept { return false; } // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool quiet_NaN() noexcept { return false; } // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool signaling_NaN() noexcept { return false; } // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool denorm_min() noexcept { return false; } // No sense
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_iec559 = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_bounded = true;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_modulo = true;
+
+        [[maybe_unused]]
+        static
+        constexpr bool traps = false;
+
+        [[maybe_unused]]
+        static
+        constexpr bool tinyness_before = false;
+
+        [[maybe_unused]]
+        static
+        constexpr float_round_style round_style = round_toward_zero;
     };
 
-  //---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
     template <typename T>
     quicky_utils::fract<T> abs(const quicky_utils::fract<T> & p_fract)
     {
