@@ -10,6 +10,7 @@ set(ENABLE_CUDA_CODE off)
 
 set(MY_SOURCE_FILES
     include/ansi_colors.h
+    include/common.h
     include/ext_int.h
     include/ext_uint.h
     include/fract.h
