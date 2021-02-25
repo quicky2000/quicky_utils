@@ -18,8 +18,8 @@
 #define QUICKY_UTILS_COMMON_H
 
 #if __cplusplus < 201703L
-#define [[maybe_unused]]
-#define [[nodiscard]]
+#define maybe_unused
+#define nodiscard
 #endif // __cplusplus >= 201703L
 
 #endif //QUICKY_UTILS_COMMON_H

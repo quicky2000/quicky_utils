@@ -197,7 +197,7 @@ namespace quicky_utils
         inline
         unsigned int compute_limit_index(unsigned int p_limit_bit) const;
 
-        static_assert(std::is_unsigned_v<T>, "Check base type is unsigned");
+        static_assert(std::is_unsigned<T>::value, "Check base type is unsigned");
         const unsigned int m_size;
         typedef T t_array_unit;
         const unsigned int m_array_size;
