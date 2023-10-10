@@ -1,7 +1,7 @@
 # Quicky Utils
 #--------------
 Continuous integration with Travis-Ci:
-https://travis-ci.org/quicky2000/quicky_utils
+https://app.travis-ci.com/github/quicky2000/quicky_utils
 
 Some utilities I develop for my personal softwares:
 * quicky_bitfield : my own bitfield implementation allowing to use fields of
