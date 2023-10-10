@@ -26,6 +26,7 @@
 #include <iomanip>
 #include <cmath>
 #include <type_traits>
+#include <cinttypes>
 #include "common.h"
 
 #ifdef __MINGW32__ // seems to be defined by both mingw-32 nd mingw-64
