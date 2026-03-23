@@ -12,8 +12,6 @@ matrix:
       sudo: required
       dist: bionic
       compiler: gcc
-    - os: osx
-      osx_image: xcode14.2
 
 language: cpp
 
@@ -36,8 +34,10 @@ before_install:
   - cd build
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then generate_makefile quicky_utils; make test; ./bin/quicky_utils.exe; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build ; fi
+  - generate_makefile quicky_utils
+  - make test
+  - ./bin/quicky_utils.exe
+  - cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build
   - cmake $QUICKY_REPOSITORY/quicky_utils
   - make
   - ./quicky_utils
